@@ -12,7 +12,7 @@ You need to install the libarys list in requirements.txt
     pip3 install -r requirements.txt
 
 # Usage
-Take a lool at the usahe text.
+Take a look at the usage text.
 
     ./ews.py -h
 
