@@ -1,0 +1,11 @@
+#
+# Check the correct path from ews.cfg config !
+#
+
+/opt/ewsposter/ews.log {
+  rotate 12
+  monthly
+  compress
+  missingok
+  notifempty
+}

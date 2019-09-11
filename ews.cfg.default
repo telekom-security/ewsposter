@@ -1,0 +1,137 @@
+[MAIN]
+homedir = /opt/ews
+spooldir = /opt/ews/spool
+logdir = /opt/ews
+del_malware_after_send = false
+send_malware = true
+sendlimit = 400
+contact = sender@example.com
+proxy = 
+ip = 1.2.3.4
+
+[EWS]
+ews = false
+username = <your ews portal username>
+token = <your ews portal token>
+rhost_first = https://<your ews portal 1>
+rhost_second = https://<your ews portal 2>
+ignorecert = false
+
+[HPFEED]
+hpfeed = false
+host = localhost
+port = 1337
+channels = test
+ident = username
+secret= passwort
+# path/to/certificate for tls broker - or "false" for non-tls broker
+tlscert = false
+# hpfeeds submission format: "ews" (xml) or "json"
+hpfformat = ews
+
+[EWSJSON]
+json = false
+jsondir = /opt/ewsposter/json
+
+[GLASTOPFV3]
+glastopfv3 = false
+nodeid = <your unique analyzer id>
+sqlitedb = /opt/honeypot/glastopf/data/db/glastopf.db
+malwaredir = /opt/honeypot/glastopf/data/files
+
+[GLASTOPFV2]
+glastopfv2 = false
+nodeid =  <your unique analyzer id>
+mysqlhost = localhost
+mysqldb = <your mysql db for kippo>
+mysqluser = <your user for this db>
+mysqlpw = <your password>
+malwaredir = /opt/ewsposter/malware
+
+[KIPPO]
+kippo = false
+nodeid =  <your unique analyzer id>
+mysqlhost = localhost
+mysqldb = <your mysql db for glastopf>
+mysqluser = <your user for this db>
+mysqlpw = <your password>
+malwaredir = /opt/honeypot/kippo/downloads
+
+[COWRIE]
+cowrie = false
+nodeid = <your unique analyzer id>
+logfile = /opt/cowrie/cowrie.json
+
+[DIONAEA]
+dionaea = false
+nodeid =  <your unique analyzer id>
+malwaredir = /opt/honeypot/dionaea/var/download
+sqlitedb = /opt/honeypot/dionaea/var/logsql.sqlite
+
+[HONEYTRAP]
+honeytrap = false
+nodeid =  <your unique analyzer id>
+newversion = true
+payloaddir = /opt/honeypot/honeytrap/attacks
+attackerfile = /opt/honeypot/honeytrap/log/attacker.log
+
+[RDPDETECT]
+rdpdetect = false
+nodeid = <your unique analyzer id>
+iptableslog = /opt/honeypot/db/iptables.log
+targetip = <ip of the RDP dummy system>
+
+[EMOBILITY]
+eMobility = false
+nodeid = <your unique analyzer id>
+logfile = /work2/ewsposter/emobility/emobility.log
+
+[CONPOT]
+conpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/conpot/conpot.json
+
+[ELASTICPOT]
+elasticpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/elasticpot/log/elasticpot.log
+
+[SURICATA]
+suricata = false
+nodeid = <your unique analyzer id>
+logfile = /opt/suricata/logs/suricata_ews.log
+
+[MAILONEY]
+mailoney = false
+nodeid = <your unique analyzer id>
+logfile = /opt/mailoney/commands.log
+
+[RDPY]
+rdpy = false
+nodeid = <your unique analyzer id>
+logfile = /opt/rdpy/log/rdpy.log
+
+[VNCLOWPOT]
+vnclowpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/vnclowpot/log/vnclowpot.log
+
+[HERALDING]
+heralding = false
+nodeid = <your unique analyzer id>
+logfile = /opt/heralding/log/auth.csv
+
+[CISCOASA]
+ciscoasa = false
+nodeid = <your unique analyzer id>
+logfile = /opt/ciscoasa/log/ciscoasa.log
+
+[TANNER]
+tanner = false
+nodeid = <your unique analyzer id>
+logfile = /opt/tanner/log/tanner.log
+
+[GLUTTON]
+glutton = false
+nodeid = <your unique analyzer id>
+logfile = /opt/glutton/log/tanner.log

@@ -1,0 +1,5 @@
+lxml
+mysqldb
+pyOpenSSL
+hpfeeds3
+xmljson

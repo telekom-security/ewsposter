@@ -1,0 +1,13 @@
+*.pyc
+**/*.pyc
+*.log
+*.idx
+ews.cfg
+logs/
+log/
+spool/
+.idea/
+cowrietest/
+ews.ip
+hpfbroker/
+work/
