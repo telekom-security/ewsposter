@@ -274,7 +274,7 @@ def malware(DIR,FILE,KILL, md5):
 
     if os.path.isfile(DIR + os.sep + FILE) is True:
         if os.path.getsize(DIR + os.sep + FILE) <= 5 * 1024 * 1024:
-            malwarefile = base64.encodestring(open(DIR + os.sep + FILE).read()).strip()
+            malwarefile = base64.encodebytes(b'open(DIR + os.sep + FILE).read()).strip()')
             if KILL is True:
                 os.remove(DIR + os.sep + FILE)
             return 0, malwarefile
@@ -750,7 +750,7 @@ def kippo():
 
         if str(row["success"]) == "0":
             login = "Fail"
-        else: 
+        else:
             login = "Success"
 
         ADATA = {
@@ -1181,7 +1181,6 @@ def honeytrap():
             os.rename(filein,filein + "_md5_" +  hashlib.md5(open(filein, 'rb').read()).hexdigest())
 
     # count limit
-
     imin = int(countme(MODUL,'fileline',-1,ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
@@ -1734,7 +1733,7 @@ def suricata():
     jesm = ""
 
     while True:
-    
+
         x,y = viewcounter(MODUL,x,y)
 
         I += 1
@@ -2089,7 +2088,7 @@ def mailoney():
                 countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
                 continue
-                
+
             time = datetime.utcfromtimestamp(float(line.split("][")[0].split(".")[0][1:]))
             sourceip = line.split("][")[1].split(":")[0]
             sport= line.split("][")[1].split(":")[1].split("]")[0]

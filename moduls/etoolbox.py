@@ -28,7 +28,7 @@ def countme(Section,Item,Count,ECFG):
     elif Count == -3:
         z.set(Section,Item,0)
 
-    with open(ECFG["homedir"] + os.sep + "ews.idx", 'wb') as countfile:
+    with open(ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
         z.write(countfile)
         countfile.close
 

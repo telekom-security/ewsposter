@@ -7,7 +7,9 @@ logs/
 log/
 spool/
 .idea/
-cowrietest/
 ews.ip
 hpfbroker/
 work/
+honeypots/
+configs/
+malware.md5
