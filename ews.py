@@ -6,6 +6,7 @@ import sys
 import os
 import time
 import configparser
+import codecs
 import hashlib
 from linecache import getline, clearcache
 from datetime import datetime
@@ -40,11 +41,9 @@ version = "v1.9.7"
 
 
 def init():
-    global hostname
     global externalIP
     global internalIP
     global hpc
-    hostname = getHostname()
     externalIP=ECFG["ip"]
     internalIP=getOwnInternalIP()
     logging.basicConfig()
@@ -215,7 +214,7 @@ def buildews(esm,DATA,REQUEST,ADATA):
     if int(esm.xpath('count(//Alert)')) >= 100:
         sendews(esm)
         esm = ewsauth(ECFG["username"],ECFG["token"])
-	   
+       
     return esm
 
 
@@ -241,7 +240,7 @@ def sendews(esm):
 
 
 def writeews(EWSALERT):
-    with open(ECFG["spooldir"] + os.sep + timestamp() + ".ews",'w') as f:
+    with open(ECFG["spooldir"] + os.sep + timestamp() + ".ews",'wb') as f:
         f.write(EWSALERT)
         f.close()
 
@@ -476,7 +475,7 @@ def glastopfv3():
 
         ADATA = {
                     "sqliteid"    : row ["id"],
-                    "hostname": hostname,
+                    "hostname": ECFG["hostname"],
                     "externalIP": externalIP,
                     "internalIP": internalIP
 
@@ -621,7 +620,7 @@ def glastopfv2():
         ADATA = {
             "mysqlid": str(row["id"]),
             "host": row["host"],
-            "hostname": hostname,
+            "hostname": ECFG["hostname"],
             "externalIP": externalIP,
             "internalIP": internalIP
         }
@@ -641,7 +640,7 @@ def glastopfv2():
         ADATA = {
                  "mysqlid"   : str(row ["id"]),
                  "host"      : row["host"],
-                 "hostname": hostname,
+                 "hostname": ECFG["hostname"],
                  "externalIP": externalIP,
                  "internalIP": internalIP
         }
@@ -761,7 +760,7 @@ def kippo():
                     "login"       : login,
                     "username"    : str(row["username"]),
                     "password"    : str(row["password"]),
-                    "hostname": hostname,
+                    "hostname": ECFG["hostname"],
                     "externalIP": externalIP,
                     "internalIP": internalIP
                 }
@@ -972,7 +971,7 @@ def cowrie():
                  "username"    : cusername,
                  "password"    : cpassword,
                  "input"       : cinput,
-                 "hostname": hostname,
+                 "hostname": ECFG["hostname"],
                  "externalIP": externalIP,
                  "internalIP": internalIP
                 }
@@ -1102,7 +1101,7 @@ def dionaea():
 
         ADATA = {
                  "sqliteid"    : str(row["connection"]),
-                 "hostname": hostname,
+                 "hostname": ECFG["hostname"],
                  "externalIP": externalIP,
                  "internalIP": internalIP
 
@@ -1236,7 +1235,7 @@ def honeytrap():
             # Collect additional Data
 
             ADATA = {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -1347,7 +1346,7 @@ def rdpdetect():
             # Collect additional Data
 
             ADATA =   {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -1444,7 +1443,7 @@ def emobility():
             # Collect additional Data
 
             ADATA =   {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
                       }
@@ -1560,7 +1559,7 @@ def conpot():
                                 "conpot_request"       :   "%s" % content['request'],
                                 "conpot_id"            :   "%s" % content['id'],
                                 "conpot_response"      :   "%s" % content['response'],
-                                "hostname": hostname,
+                                "hostname": ECFG["hostname"],
                                 "externalIP": externalIP,
                                 "internalIP": internalIP
 
@@ -1677,7 +1676,7 @@ def elasticpot():
 
                 ADATA = {
                         "postdata"       : "%s" % content["honeypot"]["postdata"],
-                        "hostname": hostname,
+                        "hostname": ECFG["hostname"],
                         "externalIP": externalIP,
                         "internalIP": internalIP
 
@@ -1791,8 +1790,8 @@ def suricata():
                         # Collect additional Data
 
                         ADATA = {
-                                "cve_id"       : "%s" % content["alert"]["cve_id"],
-                                "hostname": hostname,
+                                "cve_id": "%s" % content["alert"]["cve_id"],
+                                "hostname": ECFG["hostname"],
                                 "externalIP": externalIP,
                                 "internalIP": internalIP
                                 }
@@ -1909,7 +1908,7 @@ def rdpy():
             # Collect additional Data
 
             ADATA = {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -2007,7 +2006,7 @@ def vnclowpot():
             # Collect additional Data
 
             ADATA = {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -2115,7 +2114,7 @@ def mailoney():
             # Collect additional Data
 
             ADATA = {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -2219,7 +2218,7 @@ def heralding():
                 "protocol": linecontent[7],
                 "username": linecontent[8],
                 "password": linecontent[9],
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -2332,7 +2331,7 @@ def ciscoasa():
 
             ADATA = {
                 "payload": str(linecontent['payload_printable']),
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -2428,7 +2427,7 @@ def tanner():
             # Collect additional Data
 
             ADATA = {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
@@ -2472,17 +2471,17 @@ def glutton():
     MODUL = "GLUTTON"
     logme(MODUL, "Starting Glutton Modul.", ("P1"), ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
     ITEMS = ("glutton", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
         logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
 
-    # count limit
+    """ count limit """
 
     imin = int(countme(MODUL, 'fileline', -1, ECFG))
 
@@ -2547,20 +2546,21 @@ def glutton():
             # Collect additional Data
 
             ADATA = {
-                "hostname": hostname,
+                "hostname": ECFG["hostname"],
                 "externalIP": externalIP,
                 "internalIP": internalIP
             }
 
             if "payload_hex" in linecontent:
-                ADATA["binary"] = linecontent['payload_hex'].decode('hex').encode("base64")
+                ADATA["binary"] = codecs.encode(codecs.decode(linecontent['payload_hex'], 'hex'), 'base64').decode()
+                
+            """
+            if re.search("[+]", linecontent['msg']):
+                print "found [] in " + str(linecontent)
 
-        #    if re.search("[+]", linecontent['msg']):
-        #        print "found [] in " + str(linecontent)
 
-
-          #  REQUEST["raw"] = base64.encodestring(reassembledReq.encode('ascii', 'ignore'))
-
+            REQUEST["raw"] = base64.encodestring(reassembledReq.encode('ascii', 'ignore'))
+            """
 
             # generate template and send
 

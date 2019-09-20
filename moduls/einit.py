@@ -6,7 +6,7 @@ import argparse
 import os
 import sys
 from moduls.elog import logme
-from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP
+from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname
 
 def ecfg(name,version):
     MODUL = "EINIT"
@@ -144,6 +144,10 @@ def ecfg(name,version):
 
     ITEMS = ("homedir","spooldir","logdir","contact","del_malware_after_send","send_malware","sendlimit")
     MCFG = readcfg("MAIN",ITEMS, ECFG["cfgfile"])
+
+    """ Setup Hostname """
+    
+    MCFG["hostname"] = getHostname()
 
     # IP Handling
 

@@ -9,6 +9,8 @@ import os
 import ipaddress
 from requests import get
 import socket
+import random
+import string
 
 def countme(Section,Item,Count,ECFG):
 
@@ -157,11 +159,12 @@ def getOwnExternalIP(ECFG):
     return False
 
 def getHostname():
-    if os.environ.get('MY_HOSTNAME') is not None:
-        return  os.environ.get('MY_HOSTNAME')
+    if socket.gethostname() is None:
+        return socket.gethostname()
     else:
-        return "SomeRandomHoneypot"
-
+        rand="".join(random.choice(string.ascii_lowercase) for i in range(16))
+        return "host-"+rand
+        
 def getOwnInternalIP():
     # try MY_INTIP from env
     try:
