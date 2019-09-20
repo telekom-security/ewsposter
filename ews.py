@@ -37,7 +37,7 @@ import socket
 from xmljson import BadgerFish
 
 name = "EWS Poster"
-version = "v1.9.7"
+version = "v1.9.7a"
 
 
 def init():
@@ -2418,10 +2418,10 @@ def tanner():
                 "tprot": "tcp",
                 "tport": "80",
             }
+            
             REQUEST = {
                 "description": "Tanner Honeypot",
                 "url": urllib.parse.quote(linecontent["path"].encode('ascii', 'ignore'))
-
             }
 
             # Collect additional Data
@@ -2438,14 +2438,14 @@ def tanner():
             else:
                 httpversion="HTTP/1.0"
             if len(linecontent['headers']) > 0:
-                reassembledReq=linecontent['method'] + " "  + linecontent['path'] +" "+ httpversion + "\r\n"
+                reassembledReq=linecontent['method'] + " "  + linecontent['path'] +" "+ httpversion + "\n"
                 for i in linecontent['headers']:
                     headercontent = ""
                     if linecontent['headers'][i]:
                         headercontent=linecontent['headers'][i].encode("utf-8")
-                    reassembledReq += str(i.title())+ ": " + str(headercontent, "utf-8") + "\r\n"
-            REQUEST["raw"] = base64.encodestring(reassembledReq.encode('ascii', 'ignore'))
-            # generate template and send
+                    reassembledReq += str(i.title())+ ": " + str(headercontent, "utf-8") + "\n"
+
+            REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore'))
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2538,9 +2538,9 @@ def glutton():
                 "tprot": "tcp",
                 "tport": str(linecontent['dest_port']),
             }
+            
             REQUEST = {
                 "description": "Glutton Honeypot",
-
             }
 
             # Collect additional Data
