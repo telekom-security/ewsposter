@@ -2289,6 +2289,7 @@ def ciscoasa():
         if len(line) == 0:
             break
         else:
+            
             if not line[0] =="{" or not line[-1]=="}":
                 countme(MODUL,'fileline',-2,ECFG)
                 J+=1
@@ -2301,15 +2302,9 @@ def ciscoasa():
                 J += 1
                 continue
 
-            if not 'src_port' in linecontent:
-                countme(MODUL, 'fileline', -2, ECFG)
-                J += 1
-                continue
-
             time = linecontent['timestamp'].split("T")[0]+" "+linecontent['timestamp'].split("T")[1].split(".")[0]
 
-
-            # Prepare and collect Alert Data
+            """ Prepare and collect Alert Data """
 
             DATA = {
                 "aid": HONEYPOT["nodeid"],
@@ -2317,7 +2312,7 @@ def ciscoasa():
                 "sadr": linecontent['src_ip'],
                 "sipv": "ipv" + ip4or6(linecontent['src_ip']),
                 "sprot": "tcp",
-                "sport": str(linecontent['src_port']),
+                "sport": "0",
                 "tipv": "ipv" + ip4or6(externalIP),
                 "tadr": externalIP,
                 "tprot": "tcp",
