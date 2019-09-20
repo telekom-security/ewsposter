@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import re
-import sys
 import os
 import time
-import configparser
 import codecs
 import hashlib
 from linecache import getline, clearcache
@@ -18,7 +16,7 @@ import ast
 from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg, daycounterreset
 from moduls.elog import logme
-from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, getOwnExternalIP, getHostname, getOwnInternalIP, resolveHost
+from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, getOwnExternalIP, getOwnInternalIP, resolveHost
 
 import sqlite3
 import MySQLdb.cursors
@@ -63,9 +61,9 @@ def ewswebservice(ems):
     host = random.choice([ ECFG["rhost_first"] , ECFG["rhost_second"] ])
 
     if ECFG["proxy"] != "NULL" and ECFG["proxy"] != "FALSE":
-       proxydic = { "https" : ECFG["proxy"] }
+        proxydic = { "https" : ECFG["proxy"] }
     else:
-       proxydic = {}
+        proxydic = {}
 
     try:
         if not "https" in proxydic:
@@ -159,7 +157,7 @@ def sender():
             logme(MODUL, "Sender : There are %s jobs to send in %s" %(str(len(FILEIN)),DIR),("P1"),ECFG)
             return True
 
-    def send_job(DIR,MODUL):
+    def send_job(DIR):
         FILEIN = filelist(DIR)
 
         for files in FILEIN:
@@ -202,7 +200,7 @@ def sender():
     if check_job(ECFG["spooldir"],MODUL) is False:
         return
 
-    send_job(ECFG["spooldir"],MODUL)
+    send_job(ECFG["spooldir"])
 
     return
 
@@ -214,7 +212,7 @@ def buildews(esm,DATA,REQUEST,ADATA):
     if int(esm.xpath('count(//Alert)')) >= 100:
         sendews(esm)
         esm = ewsauth(ECFG["username"],ECFG["token"])
-       
+
     return esm
 
 
@@ -256,11 +254,11 @@ def md5malware(malware_md5):
             return True
 
         if malware_md5 in open(ECFG["homedir"] + os.sep + "malware.md5", "r").read():
-            malwarefile.close
+            malwarefile.close()
             return False
         else:
             malwarefile.write(malware_md5+"\n")
-            malwarefile.close
+            malwarefile.close()
             return True
 
 
@@ -339,23 +337,25 @@ def testhpfeedsbroker():
 def buildjson(jesm,DATA,REQUEST,ADATA):
 
     if DATA["sport"] == "":
-       DATA["sport"] = "0"
+        DATA["sport"] = "0"
 
-    jesm += '{"timestamp":"%s","event_type":"alert","src_ip":"%s","src_port":%s,"dest_ip":"%s","dest_port":%s,"honeypot":{"name":"%s","nodeid":"%s"}}' %\
-             (
-                 ("%sT%s.000000" % (DATA["timestamp"][0:10],DATA["timestamp"][11:19])),
-                 DATA["sadr"],
-                 DATA["sport"],
-                 DATA["tadr"],
-                 DATA["tport"],
-                 REQUEST["description"],
-                 DATA["aid"]
-             )
+    REQUEST['raw'] = REQUEST['raw'].decode("utf-8")
 
-    jesm += "\n"
+    myjson ={}
+    myjson['timestamp'] = ("%sT%s.000000" % (DATA["timestamp"][0:10],DATA["timestamp"][11:19]))
+    myjson['event_type'] = "alert"
+    myjson['src_ip'] = DATA["sadr"]
+    myjson['src_port'] = DATA['sport']
+    myjson['dest_ip'] = DATA['tadr']
+    myjson['dest_port'] = DATA['tport']
 
-    return jesm
+    if REQUEST:
+        myjson["request"] = REQUEST
 
+    if ADATA:
+        myjson["additionaldata"] = ADATA
+
+    return json.dumps(myjson)+"\n"
 
 def writejson(jesm):
     if len(jesm) > 0 and ECFG["json"] is True:
@@ -482,13 +482,13 @@ def glastopfv3():
                 }
 
         if "request_raw" in  list(row.keys()) and len(row["request_raw"]) > 0:
-            REQUEST["raw"] = base64.encodestring(row["request_raw"].encode('ascii', 'ignore'))
+            REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore'))
 
         if "filename" in  list(row.keys()) and row["filename"] != None and ECFG["send_malware"] == True:
-           error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
-           if error == 0:
+            error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
+            if error == 0:
                 REQUEST["binary"] = malwarefile
-           else:
+            else:
                 logme(MODUL,"Mission Malwarefile %s" % row["filename"] ,("P1","LOG"),ECFG)
 
         # Collect additional Data
@@ -496,7 +496,7 @@ def glastopfv3():
 
 
         if "request_method" in  list(row.keys()):
-           ADATA["httpmethod"] = row["request_method"]
+            ADATA["httpmethod"] = row["request_method"]
 
         if "request_raw" in  list(row.keys()):
             m = re.search( r'Host: (\b.+\b)', row["request_raw"] , re.M)
@@ -549,7 +549,7 @@ def glastopfv2():
     HONEYPOT["ip"] = readonecfg(MODUL,"ip", ECFG["cfgfile"])
 
     if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
-       HONEYPOT["ip"] = ECFG["ip"]
+        HONEYPOT["ip"] = ECFG["ip"]
 
     # open database
 
@@ -629,10 +629,10 @@ def glastopfv2():
             ADATA["victim"] = row["victim"]
 
         if row["filename"] != None and ECFG["send_malware"] == True:
-           error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
-           if error == 0:
+            error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
+            if error == 0:
                 REQUEST["binary"] = malwarefile
-           else:
+            else:
                 logme(MODUL,"Mission Malwarefile %s" % row["filename"] ,("P1","LOG"),ECFG)
 
         # Collect additional Data
@@ -684,7 +684,7 @@ def kippo():
     HONEYPOT["ip"] = readonecfg(MODUL,"ip", ECFG["cfgfile"])
 
     if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
-       HONEYPOT["ip"] = ECFG["ip"]
+        HONEYPOT["ip"] = ECFG["ip"]
 
     # open database
 
@@ -801,13 +801,13 @@ def cowrie():
     HONEYPOT["ip"] = readonecfg(MODUL,"ip", ECFG["cfgfile"])
 
     if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
-       HONEYPOT["ip"] = ECFG["ip"]
+        HONEYPOT["ip"] = ECFG["ip"]
 
     # logfile file exists ?
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
         logme(MODUL,"[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !",("P3","LOG"),ECFG)
-    
+
     # count limit
 
     imin = int(countme(MODUL,'firstopenedwithoutclose',-1,ECFG))
@@ -823,7 +823,7 @@ def cowrie():
 
     esm = ewsauth(ECFG["username"],ECFG["token"])
     jesm = ""
-    
+
     # dict to gather session information
     cowriesessions=OrderedDict()
     sessionstosend=[]
@@ -841,7 +841,7 @@ def cowrie():
             # parse json
             try:
                 content = json.loads(line)
-            except ValueError as e:
+            except ValueError:
                 logme(MODUL,"Invalid json entry found in line "+str(currentline)+", skipping entry.",("P3"),ECFG)
                 pass # invalid json
             else:
@@ -897,10 +897,10 @@ def cowrie():
                                 cowriesessions.pop(content["session"])
                                 if len(cowriesessions) == 0:
                                     firstOpenedWithoutClose = currentline
-                              
+
     # loop through list of sessions to send
     for key in sessionstosend:
-        
+
         x,y = viewcounter(MODUL,x,y)
 
         # map ssh ports for t-pot
@@ -1112,13 +1112,13 @@ def dionaea():
         c.execute("SELECT download_md5_hash from downloads where connection = ?;",(str(row["connection"]),))
         check = c.fetchone()
         if check is not None and ECFG["send_malware"] == True:
-           error,malwarefile = malware(HONEYPOT["malwaredir"],check[0],ECFG["del_malware_after_send"],check[0])
-           if error == 0:
-               REQUEST["binary"] = malwarefile
-           else:
-               logme(MODUL, "Malwarefile: %s" % malwarefile, ("P1", "LOG"), ECFG)
-           if check[0]:
-               ADATA["payload_md5"] = check[0]
+            error,malwarefile = malware(HONEYPOT["malwaredir"],check[0],ECFG["del_malware_after_send"],check[0])
+            if error == 0:
+                REQUEST["binary"] = malwarefile
+            else:
+                logme(MODUL, "Malwarefile: %s" % malwarefile, ("P1", "LOG"), ECFG)
+            if check[0]:
+                ADATA["payload_md5"] = check[0]
 
 
 
@@ -1172,12 +1172,12 @@ def honeytrap():
     # Calc MD5sum for Payloadfiles
 
     if HONEYPOT["newversion"].lower() == "true":
-       logme(MODUL,"Calculate MD5sum for Payload Files",("P2"),ECFG)
+        logme(MODUL,"Calculate MD5sum for Payload Files",("P2"),ECFG)
 
-       for i in os.listdir(HONEYPOT["payloaddir"]):
-           if not "_md5_" in i:
-            filein = HONEYPOT["payloaddir"] + os.sep + i
-            os.rename(filein,filein + "_md5_" +  hashlib.md5(open(filein, 'rb').read()).hexdigest())
+        for i in os.listdir(HONEYPOT["payloaddir"]):
+            if not "_md5_" in i:
+                filein = HONEYPOT["payloaddir"] + os.sep + i
+                os.rename(filein,filein + "_md5_" +  hashlib.md5(open(filein, 'rb').read()).hexdigest())
 
     # count limit
     imin = int(countme(MODUL,'fileline',-1,ECFG))
@@ -1245,14 +1245,14 @@ def honeytrap():
             if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] == True:
                 sfile = "from_port_%s-%s_*_%s-%s-%s_md5_%s" % (re.sub("^.*:","",dest),protocol,date[0:4], date[4:6], date[6:8],md5)
                 for mfile in os.listdir(HONEYPOT["payloaddir"]):
-                   if fnmatch.fnmatch(mfile, sfile):
-                       error , payloadfile = malware(HONEYPOT["payloaddir"],mfile,False, md5)
-                       if error == 0:
-                           REQUEST["binary"] = payloadfile
-                       else:
-                           logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1","LOG"),ECFG)
-                       if md5:
-                           ADATA["payload_md5"] = md5
+                    if fnmatch.fnmatch(mfile, sfile):
+                        error , payloadfile = malware(HONEYPOT["payloaddir"],mfile,False, md5)
+                    if error == 0:
+                        REQUEST["binary"] = payloadfile
+                    else:
+                        logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1","LOG"),ECFG)
+                    if md5:
+                        ADATA["payload_md5"] = md5
 
             # generate template and send
 
@@ -1866,7 +1866,6 @@ def rdpy():
             break
 
         line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -1974,7 +1973,6 @@ def vnclowpot():
             break
 
         line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -2073,7 +2071,6 @@ def mailoney():
             break
 
         line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -2180,7 +2177,6 @@ def heralding():
             break
 
         line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -2284,7 +2280,6 @@ def ciscoasa():
             break
 
         line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -2392,7 +2387,6 @@ def tanner():
             break
 
         line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -2483,10 +2477,7 @@ def glutton():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0
-    x = 0
-    y = 1
-    J = 0
+    I = 0 ; x = 0 ; y = 1 ; J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -2501,7 +2492,6 @@ def glutton():
             break
 
         line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -2509,7 +2499,7 @@ def glutton():
             linecontent=json.loads(line, object_pairs_hook=OrderedDict)
             dtime = (datetime.fromtimestamp(float(linecontent['ts']))).strftime('%Y-%m-%d %H:%M:%S')
 
-            # skip non attack info
+            """ skip non attack info """
             if "src_ip" not in linecontent:
                 countme(MODUL,'fileline',-2,ECFG)
                 J += 1
@@ -2519,8 +2509,7 @@ def glutton():
                 J += 1
                 continue
 
-
-            # Prepare and collect Alert Data
+            """ Prepare and collect Alert Data """
             DATA = {
                 "aid": HONEYPOT["nodeid"],
                 "timestamp": "%s" % (dtime),
@@ -2538,7 +2527,7 @@ def glutton():
                 "description": "Glutton Honeypot",
             }
 
-            # Collect additional Data
+            """ Collect additional Data """
 
             ADATA = {
                 "hostname": ECFG["hostname"],
@@ -2608,7 +2597,6 @@ if __name__ == "__main__":
         if ECFG["a.ewsonly"] is False:
             sender()
 
-
         for i in ("glastopfv3", "glastopfv2", "kippo", "dionaea", "honeytrap", "rdpdetect", "emobility", "conpot", "cowrie","elasticpot",
                   "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton"):
 
@@ -2621,7 +2609,7 @@ if __name__ == "__main__":
                     continue
 
             if readonecfg(i.upper(),i,ECFG["cfgfile"]).lower() == "true":
-               eval(i+'()')
+                eval(i+'()')
 
         if int(ECFG["a.loop"]) == 0:
             logme(MODUL,"EWSrun finish.",("P1"),ECFG)
