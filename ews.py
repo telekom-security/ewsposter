@@ -2438,7 +2438,7 @@ def tanner():
                     headercontent = ""
                     if linecontent['headers'][i]:
                         headercontent=linecontent['headers'][i].encode("utf-8")
-                    reassembledReq += str(i.title())+ ": " + str(headercontent, "utf-8") + "\n"
+                    reassembledReq += str(i.title())+ ": " + str(headercontent) + "\n"
 
             REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore'))
 
