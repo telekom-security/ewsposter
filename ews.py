@@ -339,7 +339,8 @@ def buildjson(jesm,DATA,REQUEST,ADATA):
     if DATA["sport"] == "":
         DATA["sport"] = "0"
 
-    REQUEST['raw'] = REQUEST['raw'].decode("utf-8")
+    if 'raw' in REQUEST and REQUEST['raw'] is not "":
+        REQUEST['raw'] = REQUEST['raw'].decode("utf-8")
 
     myjson = {}
     myjson['timestamp'] = ("%sT%s.000000" % (DATA["timestamp"][0:10],DATA["timestamp"][11:19]))
