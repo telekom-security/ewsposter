@@ -159,6 +159,9 @@ def getOwnExternalIP(ECFG):
     return False
 
 def getHostname():
+    if os.environ.get('MY_HOSTNAME') is not None:
+        return  os.environ.get('MY_HOSTNAME')
+
     if socket.gethostname() is not None:
         return socket.gethostname()
     else:
