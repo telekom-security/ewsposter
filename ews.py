@@ -341,7 +341,7 @@ def buildjson(jesm,DATA,REQUEST,ADATA):
 
     REQUEST['raw'] = REQUEST['raw'].decode("utf-8")
 
-    myjson ={}
+    myjson = {}
     myjson['timestamp'] = ("%sT%s.000000" % (DATA["timestamp"][0:10],DATA["timestamp"][11:19]))
     myjson['event_type'] = "alert"
     myjson['src_ip'] = DATA["sadr"]
@@ -355,7 +355,7 @@ def buildjson(jesm,DATA,REQUEST,ADATA):
     if ADATA:
         myjson["additionaldata"] = ADATA
 
-    return json.dumps(myjson)+"\n"
+    return jesm + json.dumps(myjson)+"\n"
 
 def writejson(jesm):
     if len(jesm) > 0 and ECFG["json"] is True:

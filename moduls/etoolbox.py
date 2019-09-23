@@ -159,12 +159,12 @@ def getOwnExternalIP(ECFG):
     return False
 
 def getHostname():
-    if socket.gethostname() is None:
+    if socket.gethostname() is not None:
         return socket.gethostname()
     else:
         rand="".join(random.choice(string.ascii_lowercase) for i in range(16))
         return "host-"+rand
-        
+
 def getOwnInternalIP():
     # try MY_INTIP from env
     try:
