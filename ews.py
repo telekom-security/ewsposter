@@ -2428,15 +2428,14 @@ def tanner():
             else:
                 httpversion="HTTP/1.0"
             if len(linecontent['headers']) > 0:
-                reassembledReq=linecontent['method'] + " "  + linecontent['path'] +" "+ httpversion + "\n"
+                reassembledReq="{} {} {}\n".format(linecontent['method'], linecontent['path'], httpversion)
                 for i in linecontent['headers']:
                     headercontent = ""
                     if linecontent['headers'][i]:
-                        headercontent=linecontent['headers'][i].encode("utf-8")
-                    reassembledReq += str(i.title())+ ": " + str(headercontent) + "\n"
+                        headercontent=linecontent['headers'][i]
+                    reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
 
-            REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore'))
-
+            REQUEST["raw"] = base64.encodebytes(reassembledReq.encode())
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
