@@ -1543,7 +1543,7 @@ def conpot():
                                 "tipv"      : "ipv4",
                                 "tadr"      : "%s" % content['dst_ip'],
                                 "tprot"     : "tcp",
-                                "tport"     : "undefined",
+                                "tport"     : "-1",
                             }
 
                     REQUEST = {
