@@ -1651,7 +1651,6 @@ def elasticpot():
                 except:
                     pubIP=externalIP
 
-
                 # Prepair and collect Alert Data
                 DATA = {
                             "aid"       : HONEYPOT["nodeid"],
@@ -1669,7 +1668,7 @@ def elasticpot():
                 REQUEST = {
                             "description" : "ElasticSearch Honeypot : Elasticpot",
                             "url"         : urllib.parse.quote(content["honeypot"]["query"].encode('ascii', 'ignore')),
-                            "raw"         : "%s" % content["honeypot"]["raw"]
+                            "raw"         : content["honeypot"]["raw"].encode('utf-8')
 
                         }
 
