@@ -14,3 +14,6 @@ json/
 honeypots/
 configs/
 malware.md5
+ews.cfg_all
+
+ews.cfg_single

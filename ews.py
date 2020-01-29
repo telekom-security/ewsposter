@@ -271,7 +271,8 @@ def malware(DIR,FILE,KILL, md5):
 
     if os.path.isfile(DIR + os.sep + FILE) is True:
         if os.path.getsize(DIR + os.sep + FILE) <= 5 * 1024 * 1024:
-            malwarefile = base64.encodebytes(b'open(DIR + os.sep + FILE).read()).strip()')
+            payload=open(DIR + os.sep + FILE, "rb").read()
+            malwarefile = base64.b64encode(payload)
             if KILL is True:
                 os.remove(DIR + os.sep + FILE)
             return 0, malwarefile
@@ -339,8 +340,8 @@ def buildjson(jesm,DATA,REQUEST,ADATA):
     if DATA["sport"] == "":
         DATA["sport"] = "0"
 
-    if 'raw' in REQUEST and REQUEST['raw'] is not "":
-        REQUEST['raw'] = REQUEST['raw'].decode("utf-8")
+    if 'raw' in REQUEST and REQUEST['raw'] != "":
+        REQUEST['raw'] = REQUEST['raw']
 
     myjson = {}
     myjson['timestamp'] = ("%sT%s.000000" % (DATA["timestamp"][0:10],DATA["timestamp"][11:19]))
@@ -483,12 +484,12 @@ def glastopfv3():
                 }
 
         if "request_raw" in  list(row.keys()) and len(row["request_raw"]) > 0:
-            REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore'))
+            REQUEST["raw"] = base64.b64encode(row["request_raw"].encode('utf-8')).decode()
 
         if "filename" in  list(row.keys()) and row["filename"] != None and ECFG["send_malware"] == True:
             error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
             if error == 0:
-                REQUEST["binary"] = malwarefile
+                REQUEST["binary"] = malwarefile.decode('utf-8')
             else:
                 logme(MODUL,"Mission Malwarefile %s" % row["filename"] ,("P1","LOG"),ECFG)
 
@@ -632,7 +633,7 @@ def glastopfv2():
         if row["filename"] != None and ECFG["send_malware"] == True:
             error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
             if error == 0:
-                REQUEST["binary"] = malwarefile
+                REQUEST["binary"] = malwarefile.decode('utf-8')
             else:
                 logme(MODUL,"Mission Malwarefile %s" % row["filename"] ,("P1","LOG"),ECFG)
 
@@ -1115,7 +1116,7 @@ def dionaea():
         if check is not None and ECFG["send_malware"] == True:
             error,malwarefile = malware(HONEYPOT["malwaredir"],check[0],ECFG["del_malware_after_send"],check[0])
             if error == 0:
-                REQUEST["binary"] = malwarefile
+                REQUEST["binary"] = malwarefile.decode('utf-8')
             else:
                 logme(MODUL, "Malwarefile: %s" % malwarefile, ("P1", "LOG"), ECFG)
             if check[0]:
@@ -1242,18 +1243,17 @@ def honeytrap():
             }
 
             # Search for Payload
-
             if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] == True:
                 sfile = "from_port_%s-%s_*_%s-%s-%s_md5_%s" % (re.sub("^.*:","",dest),protocol,date[0:4], date[4:6], date[6:8],md5)
                 for mfile in os.listdir(HONEYPOT["payloaddir"]):
                     if fnmatch.fnmatch(mfile, sfile):
                         error , payloadfile = malware(HONEYPOT["payloaddir"],mfile,False, md5)
-                    if error == 0:
-                        REQUEST["binary"] = payloadfile
-                    else:
-                        logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1","LOG"),ECFG)
-                    if md5:
-                        ADATA["payload_md5"] = md5
+                        if error == 0:
+                            REQUEST["binary"] = payloadfile.decode('utf-8')
+                        else:
+                            logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1","LOG"),ECFG)
+                        if md5:
+                            ADATA["payload_md5"] = md5
 
             # generate template and send
 
@@ -1668,7 +1668,7 @@ def elasticpot():
                 REQUEST = {
                             "description" : "ElasticSearch Honeypot : Elasticpot",
                             "url"         : urllib.parse.quote(content["honeypot"]["query"].encode('ascii', 'ignore')),
-                            "raw"         : content["honeypot"]["raw"].encode('utf-8')
+                            "raw"         : content["honeypot"]["raw"]
 
                         }
 
@@ -1681,7 +1681,6 @@ def elasticpot():
                         "internalIP": internalIP
 
                 }
-
 
                 # generate template and send
                 esm = buildews(esm,DATA,REQUEST,ADATA)
@@ -2434,7 +2433,7 @@ def tanner():
                         headercontent=linecontent['headers'][i]
                     reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
 
-            REQUEST["raw"] = base64.encodebytes(reassembledReq.encode())
+            REQUEST["raw"] = base64.b64encode(reassembledReq.encode('utf-8')).decode()
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
@@ -2535,8 +2534,8 @@ def glutton():
             }
 
             if "payload_hex" in linecontent:
-                ADATA["binary"] = codecs.encode(codecs.decode(linecontent['payload_hex'], 'hex'), 'base64').decode()
-                
+                ADATA["binary"] = base64.b64encode(codecs.decode(linecontent['payload_hex'], 'hex')).decode()
+
             """
             if re.search("[+]", linecontent['msg']):
                 print "found [] in " + str(linecontent)
