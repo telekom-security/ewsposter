@@ -484,7 +484,7 @@ def glastopfv3():
                 }
 
         if "request_raw" in  list(row.keys()) and len(row["request_raw"]) > 0:
-            REQUEST["raw"] = base64.b64encode(row["request_raw"].encode('utf-8')).decode()
+            REQUEST["raw"] = base64.b64encode(row["request_raw"].encode('ascii')).decode()
 
         if "filename" in  list(row.keys()) and row["filename"] != None and ECFG["send_malware"] == True:
             error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
@@ -2433,7 +2433,7 @@ def tanner():
                         headercontent=linecontent['headers'][i]
                     reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
 
-            REQUEST["raw"] = base64.b64encode(reassembledReq.encode('utf-8')).decode()
+            REQUEST["raw"] = base64.b64encode(reassembledReq.encode('ascii')).decode()
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
