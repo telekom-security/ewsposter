@@ -484,7 +484,8 @@ def glastopfv3():
                 }
 
         if "request_raw" in  list(row.keys()) and len(row["request_raw"]) > 0:
-            REQUEST["raw"] = base64.b64encode(row["request_raw"].encode('ascii')).decode()
+            #REQUEST["raw"] = base64.b64encode(row["request_raw"].encode('ascii')).decode()
+             REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore')).decode()
 
         if "filename" in  list(row.keys()) and row["filename"] != None and ECFG["send_malware"] == True:
             error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
@@ -2406,7 +2407,7 @@ def tanner():
                 "tprot": "tcp",
                 "tport": "80",
             }
-            
+
             REQUEST = {
                 "description": "Tanner Honeypot",
                 "url": urllib.parse.quote(linecontent["path"].encode('ascii', 'ignore'))
@@ -2433,7 +2434,9 @@ def tanner():
                         headercontent=linecontent['headers'][i]
                     reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
 
-            REQUEST["raw"] = base64.b64encode(reassembledReq.encode('ascii')).decode()
+            #REQUEST["raw"] = base64.b64encode(reassembledReq.encode('ascii')).decode()
+            REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore')).decode()
+
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
@@ -2520,7 +2523,7 @@ def glutton():
                 "tprot": "tcp",
                 "tport": str(linecontent['dest_port']),
             }
-            
+
             REQUEST = {
                 "description": "Glutton Honeypot",
             }
@@ -2541,7 +2544,9 @@ def glutton():
                 print "found [] in " + str(linecontent)
 
 
-            REQUEST["raw"] = base64.encodestring(reassembledReq.encode('ascii', 'ignore'))
+            #REQUEST["raw"] = base64.encodestring(reassembledReq.encode('ascii', 'ignore'))
+            REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore')).decode()
+
             """
 
             # generate template and send
