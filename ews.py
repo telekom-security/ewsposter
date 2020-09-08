@@ -1885,15 +1885,16 @@ def heralding():
 
 
 def ciscoasa():
+
     MODUL = "CISCOASA"
     logme(MODUL, "Starting CISCO-ASA Modul.", ("P1"), ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
     ITEMS = ("ciscoasa", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
         logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
@@ -1905,10 +1906,7 @@ def ciscoasa():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0
-    x = 0
-    y = 1
-    J = 0
+    I = 0; x = 0; y = 1; J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -1926,50 +1924,52 @@ def ciscoasa():
 
         if len(line) == 0:
             break
+
         else:
-            
-            if not line[0] =="{" or not line[-1]=="}":
-                countme(MODUL,'fileline',-2,ECFG)
-                J+=1
+            if not line[0] == "{" or not line[-1] == "}":
+                countme(MODUL, 'fileline', -2, ECFG)
+                J += 1
                 continue
 
             try:
-                linecontent=ast.literal_eval(line)
+                linecontent = ast.literal_eval(line)
+
             except:
                 countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
                 continue
 
-            time = linecontent['timestamp'].split("T")[0]+" "+linecontent['timestamp'].split("T")[1].split(".")[0]
+            time = linecontent['timestamp'].split("T")[0] + " " + linecontent['timestamp'].split("T")[1].split(".")[0]
 
             """ Prepare and collect Alert Data """
 
             DATA = {
-                "aid": HONEYPOT["nodeid"],
-                "timestamp": "%s" % (time),
-                "sadr": linecontent['src_ip'],
-                "sipv": "ipv" + ip4or6(linecontent['src_ip']),
-                "sprot": "tcp",
-                "sport": "0",
-                "tipv": "ipv" + ip4or6(externalIP),
-                "tadr": externalIP,
-                "tprot": "tcp",
-                "tport": "8443",
-            }
-            REQUEST = {
-                "description": "Cisco-ASA Honeypot"
-            }
+                     "aid": HONEYPOT["nodeid"],
+                     "timestamp": "%s" % (time),
+                     "sadr": linecontent['src_ip'],
+                     "sipv": "ipv" + ip4or6(linecontent['src_ip']),
+                     "sprot": "tcp",
+                     "sport": "0",
+                     "tipv": "ipv" + ip4or6(externalIP),
+                     "tadr": externalIP,
+                     "tprot": "tcp",
+                     "tport": "8443",
+                   }
 
-            # Collect additional Data
+            REQUEST = {
+                        "description": "Cisco-ASA Honeypot"
+                      }
+
+            """ Collect additional Data """
 
             ADATA = {
-                "payload": str(linecontent['payload_printable']),
-                "hostname": ECFG["hostname"],
-                "externalIP": externalIP,
-                "internalIP": internalIP
-            }
+                      "payload": str(linecontent['payload_printable']),
+                      "hostname": ECFG["hostname"],
+                      "externalIP": externalIP,
+                      "internalIP": internalIP
+                    }
 
-            # generate template and send
+            """ generate template and send """
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -1980,8 +1980,9 @@ def ciscoasa():
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
+
     if int(esm.xpath('count(//Alert)')) > 0:
         sendews(esm)
 
@@ -1990,6 +1991,7 @@ def ciscoasa():
     if y > 1:
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
+
 
 def tanner():
     MODUL = "TANNER"
