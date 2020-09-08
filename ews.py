@@ -893,84 +893,84 @@ def dionaea():
 def honeytrap():
 
     MODUL  = "HONEYTRAP"
-    logme(MODUL,"Starting Honeytrap Modul.",("P1"),ECFG)
+    logme(MODUL ,"Starting Honeytrap Modul." ,("P1") ,ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
-    ITEMS  = ("honeytrap","nodeid","attackerfile","payloaddir","newversion")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
+    ITEMS  = ("honeytrap", "nodeid", "attackerfile", "payloaddir", "newversion")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # Attacking file exists ?
+    """ Attacking file exists """
 
     if os.path.isfile(HONEYPOT["attackerfile"]) is False:
-        logme(MODUL,"[ERROR] Missing Attacker File " + HONEYPOT["attackerfile"] + ". Abort !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing Attacker File " + HONEYPOT["attackerfile"] + ". Abort !", ("P3", "LOG"), ECFG)
 
-    # Payloaddir exist ?
+    """ Payloaddir exist """
 
     if os.path.isdir(HONEYPOT["payloaddir"]) is False:
-        logme(MODUL,"[ERROR] Missing Payload Dir " + HONEYPOT["payloaddir"] + ". Abort !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing Payload Dir " + HONEYPOT["payloaddir"] + ". Abort !", ("P3", "LOG"), ECFG)
 
-    # New Version are use ?
+    """ New Version are use """
 
     if HONEYPOT["newversion"].lower() == "true" and not os.path.isdir(HONEYPOT["payloaddir"]):
-        logme(MODUL,"[ERROR] Missing Payload Directory " + HONEYPOT["payloaddir"] + ". Abort !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing Payload Directory " + HONEYPOT["payloaddir"] + ". Abort !", ("P3", "LOG"), ECFG)
 
-    # Calc MD5sum for Payloadfiles
+    """ Calc MD5sum for Payloadfiles """
 
     if HONEYPOT["newversion"].lower() == "true":
-        logme(MODUL,"Calculate MD5sum for Payload Files",("P2"),ECFG)
+        logme(MODUL, "Calculate MD5sum for Payload Files", ("P2"), ECFG)
 
         for i in os.listdir(HONEYPOT["payloaddir"]):
             if not "_md5_" in i:
                 filein = HONEYPOT["payloaddir"] + os.sep + i
-                os.rename(filein,filein + "_md5_" +  hashlib.md5(open(filein, 'rb').read()).hexdigest())
+                os.rename(filein, filein + "_md5_" +  hashlib.md5(open(filein, 'rb').read()).hexdigest())
 
-    # count limit
-    imin = int(countme(MODUL,'fileline',-1,ECFG))
+    """ count limit """
+    imin = int(countme(MODUL, 'fileline', -1, ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL,"Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!",("P1"),ECFG)
+        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
     I = 0 ; x = 0 ; y = 1
 
-    esm = ewsauth(ECFG["username"],ECFG["token"])
+    esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
     while True:
 
-        x,y = viewcounter(MODUL,x,y)
+        x, y = viewcounter(MODUL, x, y)
 
         I += 1
 
         if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
             break
 
-        line = getline(HONEYPOT["attackerfile"],(imin + I)).rstrip()
+        line = getline(HONEYPOT["attackerfile"], (imin + I)).rstrip()
 
         if len(line) == 0:
             break
         else:
-            line = re.sub(r'  ',r' ',re.sub(r'[\[\]\-\>]',r'',line))
+            line = re.sub(r'  ', r' ', re.sub(r'[\[\]\-\>]', r'', line))
 
             if HONEYPOT["newversion"].lower() == "false":
-                date , time , _ , source, dest, _ = line.split(" ",5)
+                date, time, _, source, dest, _ = line.split(" ",5)
                 protocol = "" ; md5 = ""
             else:
-                date , time , _ , protocol, source, dest, md5, _ = line.split(" ",7)
+                date, time, _, protocol, source, dest, md5, _ = line.split(" ",7)
 
-            #  Prepair and collect Alert Data
+            """  Prepair and collect Alert Data """
 
             DATA =    {
                         "aid"       : HONEYPOT["nodeid"],
                         "timestamp" : "%s-%s-%s %s" % (date[0:4], date[4:6], date[6:8], time[0:8]),
-                        "sadr"      : re.sub(":.*$","",source),
-                        "sipv"      : "ipv" + ip4or6(re.sub(":.*$","",source)),
+                        "sadr"      : re.sub(":.*$", "", source),
+                        "sipv"      : "ipv" + ip4or6(re.sub(":.*$", "", source)),
                         "sprot"     : protocol,
-                        "sport"     : re.sub("^.*:","",source),
-                        "tipv"      : "ipv" + ip4or6(re.sub(":.*$","",dest)),
-                        "tadr"      : re.sub(":.*$","",dest),
+                        "sport"     : re.sub("^.*:", "", source),
+                        "tipv"      : "ipv" + ip4or6(re.sub(":.*$", "", dest)),
+                        "tadr"      : re.sub(":.*$", "", dest),
                         "tprot"     : protocol,
-                        "tport"     : re.sub("^.*:","",dest),
+                        "tport"     : re.sub("^.*:", "", dest),
                       }
 
 
@@ -978,7 +978,7 @@ def honeytrap():
                         "description" : "NetworkHoneypot Honeytrap v1.1"
                       }
 
-            # Collect additional Data
+            """ Collect additional Data """
 
             ADATA = {
                 "hostname": ECFG["hostname"],
@@ -986,31 +986,31 @@ def honeytrap():
                 "internalIP": internalIP
             }
 
-            # Search for Payload
+            """ Search for Payload """
             if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] == True:
                 sfile = "from_port_%s-%s_*_%s-%s-%s_md5_%s" % (re.sub("^.*:","",dest),protocol,date[0:4], date[4:6], date[6:8],md5)
                 for mfile in os.listdir(HONEYPOT["payloaddir"]):
                     if fnmatch.fnmatch(mfile, sfile):
-                        error , payloadfile = malware(HONEYPOT["payloaddir"],mfile,False, md5)
+                        error ,payloadfile = malware(HONEYPOT["payloaddir"], mfile, False, md5)
                         if error == 0:
                             REQUEST["binary"] = payloadfile.decode('utf-8')
                         else:
-                            logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1","LOG"),ECFG)
+                            logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1", "LOG"), ECFG)
                         if md5:
                             ADATA["payload_md5"] = md5
 
-            # generate template and send
+            """ generate template and send """
 
-            esm = buildews(esm,DATA,REQUEST,ADATA)
-            jesm = buildjson(jesm,DATA,REQUEST,ADATA)
+            esm = buildews(esm, DATA, REQUEST, ADATA)
+            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-            countme(MODUL,'fileline',-2,ECFG)
-            countme(MODUL,'daycounter', -2,ECFG)
+            countme(MODUL, 'fileline', -2, ECFG)
+            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
-                verbosemode(MODUL,DATA,REQUEST,ADATA)
+                verbosemode(MODUL, DATA, REQUEST, ADATA)
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
 
     if int(esm.xpath('count(//Alert)')) > 0:
@@ -1019,7 +1019,7 @@ def honeytrap():
     writejson(jesm)
 
     if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-2),("P2"),ECFG)
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
