@@ -1026,45 +1026,45 @@ def honeytrap():
 def emobility():
 
     MODUL  = "EMOBILITY"
-    logme(MODUL,"Starting eMobility Modul.",("P1"),ECFG)
+    logme(MODUL, "Starting eMobility Modul.", ("P1"), ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
-    ITEMS  = ("eMobility","nodeid","logfile")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
+    ITEMS  = ("eMobility", "nodeid", "logfile")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL,"[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
 
-    # count limit
+    """ count limit """
 
-    imin = int(countme(MODUL,'fileline',-1,ECFG))
+    imin = int(countme(MODUL, 'fileline', -1, ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL,"Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!",("P1"),ECFG)
+        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
     I = 0 ; x = 0 ; y = 1
 
-    esm = ewsauth(ECFG["username"],ECFG["token"])
+    esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
     while True:
 
-        x,y = viewcounter(MODUL,x,y)
+        x, y = viewcounter(MODUL, x, y)
 
         I += 1
 
         if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
             break
 
-        line = getline(HONEYPOT["logfile"],(imin + I)).rstrip()
+        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
 
         if len(line) == 0:
             break
         else:
-            # Prepair and collect Alert Data
+            """ Prepair and collect Alert Data """
 
             line = re.sub(r'  ',r' ',re.sub(r'[\[\]\-\>]',r'',line))
 
@@ -1088,8 +1088,7 @@ def emobility():
                         "url"         : urllib.parse.quote(url.encode('ascii', 'ignore'))
                       }
 
-
-            # Collect additional Data
+            """ collect additional Data """
 
             ADATA =   {
                 "hostname": ECFG["hostname"],
@@ -1097,18 +1096,18 @@ def emobility():
                 "internalIP": internalIP
                       }
 
-            # generate template and send
+            """ generate template and send """
 
-            esm = buildews(esm,DATA,REQUEST,ADATA)
-            jesm = buildjson(jesm,DATA,REQUEST,ADATA)
+            esm = buildews(esm, DATA, REQUEST, ADATA)
+            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-            countme(MODUL,'fileline',-2,ECFG)
-            countme(MODUL,'daycounter', -2,ECFG)
+            countme(MODUL, 'fileline', -2, ECFG)
+            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
-                verbosemode(MODUL,DATA,REQUEST,ADATA)
+                verbosemode(MODUL, DATA, REQUEST, ADATA)
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
 
     if int(esm.xpath('count(//Alert)')) > 0:
@@ -1117,7 +1116,7 @@ def emobility():
     writejson(jesm)
 
     if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-2),("P2"),ECFG)
+        logme(MODUL,"%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
