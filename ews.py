@@ -126,7 +126,7 @@ def viewcounter(MODUL,x,y):
 
     if y  == 100:
         x += 100
-        # Inform every 100 send records
+        """ Inform every 100 send records """
         logme(MODUL,str(x) +" log entries processed ...",("P2"),ECFG)
         y = 1
     else:
@@ -244,6 +244,7 @@ def writeews(EWSALERT):
 
     return True
 
+
 def md5malware(malware_md5):
     #create file if its not present
     with open(ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
@@ -287,7 +288,7 @@ def hpfeedsend(esm, eformat):
     if not hpc:
         return False
 
-    # remove auth header
+    """ remove auth header """
     etree.strip_elements(esm, "Authentication")
 
     for i in range(0, len(esm)):
@@ -298,18 +299,11 @@ def hpfeedsend(esm, eformat):
             bf = BadgerFish(dict_type=OrderedDict)
             hpc.publish(ECFG["channels"], json.dumps(bf.data(esm[i])))
 
-    # should be removed if no issues can be found. 03-13-19 av
-    # emsg = hpc.wait()
-    # if emsg:
-    #     logme("hpfeedsend","HPFeeds Error (%s)" % format(emsg) ,("P1","VERBOSE"),ECFG)
-    #     hpc=False
-    #     return False
-
     return True
 
 def testhpfeedsbroker():
     if ECFG["hpfeed"] is True:
-        # workaround if hpfeeds broker is offline as otherwise hpfeeds lib will loop connection attempt
+        """ workaround if hpfeeds broker is offline as otherwise hpfeeds lib will loop connection attempt """
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(2)
         result = sock.connect_ex((ECFG["host"], int(ECFG["port"])))
@@ -359,6 +353,7 @@ def buildjson(jesm,DATA,REQUEST,ADATA):
 
     return jesm + json.dumps(myjson)+"\n"
 
+
 def writejson(jesm):
     if len(jesm) > 0 and ECFG["json"] is True:
         with open(ECFG["jsondir"],'a+') as f:
@@ -393,32 +388,34 @@ def glastopfv3():
     MODUL  = "GLASTOPFV3"
     logme(MODUL,"Starting Glastopf V3.x Modul.",("P1"),ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
     ITEMS  = ("glastopfv3","nodeid","sqlitedb","malwaredir")
     HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
 
     HONEYPOT["ip"] = externalIP
 
-    # Malwaredir exist ? Issue in Glastopf ! RFI Directory first create when the first RFI was downloaded
+    """ Malwaredir exist ? Issue in Glastopf ! RFI Directory first create when the first RFI was downloaded """
 
-    #if os.path.isdir(HONEYPOT["malwaredir"]) == False:
-    #    logme(MODUL,"[ERROR] Missing Malware Dir " + HONEYPOT["malwaredir"] + ". Abort !",("P3","LOG"),ECFG)
-    #    return
+    """
+    if os.path.isdir(HONEYPOT["malwaredir"]) == False:
+        logme(MODUL,"[ERROR] Missing Malware Dir " + HONEYPOT["malwaredir"] + ". Abort !",("P3","LOG"),ECFG)
+        return
+    """
 
-    # is sqlitedb exist ?
+    """ is sqlitedb exist ? """
 
     if os.path.isfile(HONEYPOT["sqlitedb"]) is False:
         logme(MODUL,"[INFO] Missing sqlitedb file " + HONEYPOT["sqlitedb"] + ". Skipping !",("P3","LOG"),ECFG)
         return
 
-    # open database
+    """ open database """
 
     con = sqlite3.connect(HONEYPOT["sqlitedb"],30)
     con.row_factory = sqlite3.Row
     c = con.cursor()
 
-    # calculate send limit
+    """ calculate send limit """
 
     try:
         c.execute("SELECT max(id) from events")
@@ -434,12 +431,12 @@ def glastopfv3():
 
     imin, imax = calcminmax(MODUL,int(countme(MODUL,'sqliteid',-1,ECFG)),int(maxid),ECFG)
 
-    # read alerts from database
+    """ read alerts from database """
 
     c.execute("SELECT * from events where id > ? and id <= ?;",(imin,imax))
     rows = c.fetchall()
 
-    # counter inits
+    """ counter inits """
 
     x = 0 ; y = 1
 
@@ -450,13 +447,13 @@ def glastopfv3():
 
         x,y = viewcounter(MODUL,x,y)
 
-        # filter empty requests and nagios checks
+        """ filter empty requests and nagios checks """
 
         if  row["request_url"] == os.sep or row["request_url"] == "/index.do?hash=DEADBEEF&activate=1":
             countme(MODUL,'sqliteid',row["id"],ECFG)
             continue
 
-        # Prepair and collect Alert Data
+        """ Prepair and collect Alert Data """
 
         DATA = {
                     "aid"       : HONEYPOT["nodeid"],
@@ -485,7 +482,6 @@ def glastopfv3():
                 }
 
         if "request_raw" in  list(row.keys()) and len(row["request_raw"]) > 0:
-            #REQUEST["raw"] = base64.b64encode(row["request_raw"].encode('ascii')).decode()
              REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore')).decode()
 
         if "filename" in  list(row.keys()) and row["filename"] != None and ECFG["send_malware"] == True:
@@ -495,7 +491,7 @@ def glastopfv3():
             else:
                 logme(MODUL,"Mission Malwarefile %s" % row["filename"] ,("P1","LOG"),ECFG)
 
-        # Collect additional Data
+        """ Collect additional Data """
 
         if "request_method" in  list(row.keys()):
             ADATA["httpmethod"] = row["request_method"]
@@ -509,11 +505,6 @@ def glastopfv3():
             if 'Host' in json.loads(row["request_header"]):
                 ADATA["host"] = str(json.loads(row["request_header"])["Host"])
 
-        if "request_body" in  list(row.keys()):
-            if len(row["request_body"]) > 0:
-                ADATA["requestbody"] = row["request_body"]
-
-        esm = buildews(esm,DATA,REQUEST,ADATA)
         if "request_body" in  list(row.keys()):
             if len(row["request_body"]) > 0:
                 ADATA["requestbody"] = row["request_body"]
@@ -544,10 +535,10 @@ def cowrie():
     MODUL  = "COWRIE"
     logme(MODUL,"Starting Cowrie Modul.",("P1"),ECFG)
 
-    # session related variables
+    """ session related variables """
     lastSubmittedLine, firstOpenedWithoutClose = 0, 0
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
     ITEMS  = ("cowrie","nodeid","logfile")
     HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
@@ -557,12 +548,12 @@ def cowrie():
     if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
         HONEYPOT["ip"] = ECFG["ip"]
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
         logme(MODUL,"[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !",("P3","LOG"),ECFG)
 
-    # count limit
+    """ count limit """
 
     imin = int(countme(MODUL,'firstopenedwithoutclose',-1,ECFG))
     if imin>0:
@@ -578,9 +569,10 @@ def cowrie():
     esm = ewsauth(ECFG["username"],ECFG["token"])
     jesm = ""
 
-    # dict to gather session information
+    """ dict to gather session information """
     cowriesessions=OrderedDict()
     sessionstosend=[]
+
     while True:
         if int(ECFG["sendlimit"]) > 0 and J >= int(ECFG["sendlimit"]):
             break
@@ -592,26 +584,27 @@ def cowrie():
         if len(line) == 0:
             break
         else:
-            # parse json
+            """ parse json """
             try:
                 content = json.loads(line)
             except ValueError:
                 logme(MODUL,"Invalid json entry found in line "+str(currentline)+", skipping entry.",("P3"),ECFG)
-                pass # invalid json
             else:
-                # if new session is started, store session-related info
+                """ if new session is started, store session-related info """
                 if (content['eventid'] == "cowrie.session.connect"):
-                    # create empty session content: structure will be the same as kippo, add dst port and commands
-                    # | id  | username | password | success | logintimestamp | session | sessionstarttime| sessionendtime | ip | cowrieip | version| src_port|dst_port|dst_ip|commands | successful login
+                    """
+                         create empty session content: structure will be the same as kippo, add dst port and commands
+                         | id  | username | password | success | logintimestamp | session | sessionstarttime| sessionendtime | ip | cowrieip | version| src_port|dst_port|dst_ip|commands | successful login
+                    """
                     cowriesessions[content["session"]]=[currentline,'','','','',content["session"],content["timestamp"],'',content["src_ip"],content["sensor"],'',content["src_port"],content["dst_port"],content["dst_ip"],"", False]
                     firstOpenedWithoutClose = list(cowriesessions.values())[0][0]
 
-                # store correponding ssh client version
+                """ store correponding ssh client version """
                 if (content['eventid'] == "cowrie.client.version"):
                     if content["session"] in cowriesessions:
                         cowriesessions[content["session"]][10]=content["version"]
 
-                # create successful login 
+                """ create successful login """
                 if (content['eventid'] == "cowrie.login.success"):
                     if content["session"] in cowriesessions:
                         cowriesessions[content["session"]][3]="Success"
@@ -620,7 +613,7 @@ def cowrie():
                         cowriesessions[content["session"]][4]=content["timestamp"]
                         cowriesessions[content["session"]][15]=True
 
-                # create failed login
+                """ create failed login """
                 if (content['eventid'] == "cowrie.login.failed"):
                     if content["session"] in cowriesessions:
                         cowriesessions[content["session"]][3]="Fail"
@@ -632,13 +625,13 @@ def cowrie():
                             lastSubmittedLine = currentline
                             J+=1
 
-                # store terminal input / commands
+                """ store terminal input / commands """
                 if (content['eventid'] == "cowrie.command.input"):
                     if content["session"] in cowriesessions:
                         cowriesessions[content["session"]][14]=cowriesessions[content["session"]][14] + "\n" +content["input"]
                         cowriesessions[content["session"]][15]=True
 
-                # store session close
+                """ store session close """
                 if (content['eventid'] == "cowrie.session.closed"):
                     if content["session"] in cowriesessions:
                         if (cowriesessions[content["session"]][5]==content["session"]):
@@ -652,12 +645,12 @@ def cowrie():
                                 if len(cowriesessions) == 0:
                                     firstOpenedWithoutClose = currentline
 
-    # loop through list of sessions to send
+    """ loop through list of sessions to send """
     for key in sessionstosend:
 
         x,y = viewcounter(MODUL,x,y)
 
-        # map ssh ports for t-pot
+        """ map ssh ports for t-pot """
         if key[12]==2223:
             service="Telnet"
             serviceport="23"
@@ -688,14 +681,14 @@ def cowrie():
                     "description" : service + " Honeypot Cowrie",
                   }
 
-        # Collect additional Data
+        """ Collect additional Data """
         login = str(key[3])
         if (key[7] !=""):
             endtime = "%s-%s-%s %s" % (key[7][0:4], key[7][5:7], key[7][8:10], key[7][11:19])
         else: 
             endtime = ""
 
-        # fix unicode in json log
+        """ fix unicode in json log """
         cusername, cpassword, cinput="","",""
         try:
             cusername=str(key[1])
@@ -729,7 +722,7 @@ def cowrie():
                  "internalIP": internalIP
                 }
 
-        # generate template and send
+        """ generate template and send """
 
         esm = buildews(esm,DATA,REQUEST,ADATA)
         jesm = buildjson(jesm,DATA,REQUEST,ADATA)
@@ -743,7 +736,7 @@ def cowrie():
             verbosemode(MODUL,DATA,REQUEST,ADATA)
 
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
 
     if int(esm.xpath('count(//Alert)')) > 0:
