@@ -387,6 +387,7 @@ def verbosemode(MODUL,DATA,REQUEST,ADATA):
 
     return
 
+
 def glastopfv3():
 
     MODUL  = "GLASTOPFV3"
@@ -496,8 +497,6 @@ def glastopfv3():
 
         # Collect additional Data
 
-
-
         if "request_method" in  list(row.keys()):
             ADATA["httpmethod"] = row["request_method"]
 
@@ -539,119 +538,6 @@ def glastopfv3():
         logme(MODUL,"%s EWS alert records send ..." % (x+y-1),("P2"),ECFG)
     return
 
-def kippo():
-
-    MODUL  = "KIPPO"
-    logme(MODUL,"Starting Kippo Modul.",("P1"),ECFG)
-
-    # collect honeypot config dic
-
-    ITEMS  = ("kippo","nodeid","mysqlhost","mysqldb","mysqluser","mysqlpw")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
-
-    HONEYPOT["ip"] = readonecfg(MODUL,"ip", ECFG["cfgfile"])
-
-    if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
-        HONEYPOT["ip"] = ECFG["ip"]
-
-    # open database
-
-    try:
-        con = MySQLdb.connect(host=HONEYPOT["mysqlhost"], user=HONEYPOT["mysqluser"], passwd=HONEYPOT["mysqlpw"],
-                              db=HONEYPOT["mysqldb"], cursorclass=MySQLdb.cursors.DictCursor)
-
-    except MySQLdb.Error as e:
-        logme(MODUL,"[ERROR] %s" %(str(e)),("P3","LOG"),ECFG)
-
-    c = con.cursor()
-
-    # calculate send limit
-
-    c.execute("SELECT max(id) from auth")
-
-    maxid = c.fetchone()["max(id)"]
-
-    if maxid is None:
-        logme(MODUL,"[INFO] No entry's in Kippo Database. Skip!",("P2","LOG"),ECFG)
-        return
-
-    imin, imax = calcminmax(MODUL,int(countme(MODUL,'sqliteid',-1,ECFG)),int(maxid),ECFG)
-
-    # read alerts from database
-
-    c.execute("SELECT auth.id, auth.username, auth.password, auth.success, auth.timestamp, auth.session, sessions.starttime, sessions.endtime, sessions.ip, sensors.ip as kippoip, clients.version from auth, sessions, sensors, clients WHERE (sessions.id=auth.session) AND (sessions.sensor = sensors.id) AND (sessions.client = clients.id) AND auth.id > %s and auth.id <= %s ORDER BY auth.id;" % (imin,imax))
-
-    rows = c.fetchall()
-
-    # counter inits
-
-    x = 0 ; y = 1
-
-    esm = ewsauth(ECFG["username"],ECFG["token"])
-    jesm = ""
-
-    for row in rows:
-
-        x,y = viewcounter(MODUL,x,y)
-
-        # Prepair and collect Alert Data
-
-        DATA =    {
-                    "aid"       : HONEYPOT["nodeid"],
-                    "timestamp" : str(row["timestamp"]),
-                    "sadr"      : str(row["ip"]),
-                    "sipv"      : "ipv" + ip4or6(str(row["ip"])),
-                    "sprot"     : "tcp",
-                    "sport"     : "",
-                    "tipv"      : "ipv" + ip4or6(HONEYPOT["ip"]),
-                    "tadr"      : HONEYPOT["ip"],
-                    "tprot"     : "tcp",
-                    "tport"     : "22",
-                  }
-
-        REQUEST = {
-                    "description" : "SSH Honeypot Kippo",
-                  }
-
-        # Collect additional Data
-
-        if str(row["success"]) == "0":
-            login = "Fail"
-        else:
-            login = "Success"
-
-        ADATA = {
-                    "sqliteid"    : str(row["id"]),
-                    "starttime"   : str(row["starttime"]),
-                    "endtime"     : str(row["endtime"]),
-                    "version"     : str(row["version"]),
-                    "login"       : login,
-                    "username"    : str(row["username"]),
-                    "password"    : str(row["password"]),
-                    "hostname": ECFG["hostname"],
-                    "externalIP": externalIP,
-                    "internalIP": internalIP
-                }
-
-        esm = buildews(esm,DATA,REQUEST,ADATA)
-        jesm = buildjson(jesm,DATA,REQUEST,ADATA)
-
-        countme(MODUL,'mysqlid',row["id"],ECFG)
-        countme(MODUL,'daycounter', -2,ECFG)
-
-        if ECFG["a.verbose"] is True:
-            verbosemode(MODUL,DATA,REQUEST,ADATA)
-
-    con.close()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-1),("P2"),ECFG)
-    return
 
 def cowrie():
 
@@ -724,7 +610,7 @@ def cowrie():
                 if (content['eventid'] == "cowrie.client.version"):
                     if content["session"] in cowriesessions:
                         cowriesessions[content["session"]][10]=content["version"]
-                
+
                 # create successful login 
                 if (content['eventid'] == "cowrie.login.success"):
                     if content["session"] in cowriesessions:
@@ -870,6 +756,7 @@ def cowrie():
         logme(MODUL,"%s EWS alert records send ..." % (x+y-1),("P2"),ECFG)
     return
 
+
 def dionaea():
     MODUL  = "DIONAEA"
     logme(MODUL,"Starting Dionaea Modul.",("P1"),ECFG)
@@ -1012,6 +899,7 @@ def dionaea():
         logme(MODUL,"%s EWS alert records send ..." % (x+y-1),("P2"),ECFG)
     return
 
+
 def honeytrap():
 
     MODUL  = "HONEYTRAP"
@@ -1144,6 +1032,7 @@ def honeytrap():
         logme(MODUL,"%s EWS alert records send ..." % (x+y-2),("P2"),ECFG)
     return
 
+
 def rdpdetect():
 
     MODUL  = "RDPDETECT"
@@ -1241,6 +1130,7 @@ def rdpdetect():
         logme(MODUL,"%s EWS alert records send ..." % (x+y-2),("P2"),ECFG)
     return
 
+
 def emobility():
 
     MODUL  = "EMOBILITY"
@@ -1337,6 +1227,7 @@ def emobility():
     if y  > 1:
         logme(MODUL,"%s EWS alert records send ..." % (x+y-2),("P2"),ECFG)
     return
+
 
 def conpot():
     MODUL  = "CONPOT"
@@ -1455,6 +1346,7 @@ def conpot():
             logme(MODUL,"%s EWS alert records send ..." % (x+y-2-J),("P2"),ECFG)
     return
 
+
 def elasticpot():
     MODUL  = "ELASTICPOT"
     logme(MODUL,"Starting Elasticpot Modul.",("P1"),ECFG)
@@ -1482,7 +1374,6 @@ def elasticpot():
     jesm = ""
 
     while True:
-    
         x,y = viewcounter(MODUL,x,y)
 
         I += 1
@@ -2465,7 +2356,7 @@ if __name__ == "__main__":
         if ECFG["a.ewsonly"] is False:
             sender()
 
-        for i in ("glastopfv3", "kippo", "dionaea", "honeytrap", "rdpdetect", "emobility", "conpot", "cowrie","elasticpot",
+        for i in ("glastopfv3", "dionaea", "honeytrap", "rdpdetect", "emobility", "conpot", "cowrie","elasticpot",
                   "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton"):
 
             if ECFG["a.modul"]:
