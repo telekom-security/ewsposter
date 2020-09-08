@@ -35,15 +35,15 @@ import socket
 from xmljson import BadgerFish
 
 name = "EWS Poster"
-version = "v1.9.7a"
+version = "v1.9.8"
 
 
 def init():
     global externalIP
     global internalIP
     global hpc
-    externalIP=ECFG["ip"]
-    internalIP=getOwnInternalIP()
+    externalIP = ECFG["ip"]
+    internalIP = getOwnInternalIP()
     logging.basicConfig()
     hpc = False
 
@@ -69,20 +69,20 @@ def ewswebservice(ems):
     try:
         if not "https" in proxydic:
             webservice = requests.post(host,
-                                       data=ems,
-                                       headers=headers,
-                                       allow_redirects=True,
-                                       timeout=60,
-                                       verify= not ECFG["a.ignorecert"]
+                                       data = ems,
+                                       headers = headers,
+                                       allow_redirects = True,
+                                       timeout = 60,
+                                       verify = not ECFG["a.ignorecert"]
                                       )
         else:
             webservice = requests.post(host,
-                                       data=ems,
-                                       headers=headers,
-                                       allow_redirects=True,
-                                       proxies=proxydic,
-                                       timeout=60,
-                                       verify= not ECFG["a.ignorecert"]
+                                       data = ems,
+                                       headers = headers,
+                                       allow_redirects = True,
+                                       proxies = proxydic,
+                                       timeout = 60,
+                                       verify = not ECFG["a.ignorecert"]
                                       )
 
 
@@ -91,70 +91,70 @@ def ewswebservice(ems):
         xmlresult = re.search('<StatusCode>(.*)</StatusCode>', webservice.text).groups()[0]
 
         if xmlresult != "OK":
-            logme(MODUL,"XML Result != ok ( %s) (%s)" % (xmlresult,webservice.text) ,("LOG","VERBOSE"),ECFG)
+            logme(MODUL, "XML Result != ok ( %s) (%s)" % (xmlresult,webservice.text), ("LOG", "VERBOSE"), ECFG)
             return False
 
         if ECFG["a.verbose"] is True:
-            logme(MODUL,"---- Webservice Report ----" ,("VERBOSE"),ECFG)
-            logme(MODUL,"HOST          : %s" % (host) ,("VERBOSE"),ECFG)
-            logme(MODUL,"XML Result    : %s" % (xmlresult) ,("VERBOSE"),ECFG)
-            logme(MODUL,"Statuscode    : %s" % (webservice.status_code) ,("VERBOSE"),ECFG)
-            logme(MODUL,"Header        : %s" % (webservice.headers) ,("VERBOSE"),ECFG)
-            logme(MODUL,"Body          : %s" % (webservice.text) ,("VERBOSE"),ECFG)
-            logme(MODUL,"",("VERBOSE"),ECFG)
+            logme(MODUL, "---- Webservice Report ----" , ("VERBOSE"), ECFG)
+            logme(MODUL, "HOST          : %s" % (host) , ("VERBOSE"), ECFG)
+            logme(MODUL, "XML Result    : %s" % (xmlresult) , ("VERBOSE"), ECFG)
+            logme(MODUL, "Statuscode    : %s" % (webservice.status_code) , ("VERBOSE"), ECFG)
+            logme(MODUL, "Header        : %s" % (webservice.headers) ,("VERBOSE"), ECFG)
+            logme(MODUL, "Body          : %s" % (webservice.text) , ("VERBOSE"), ECFG)
+            logme(MODUL, "", ("VERBOSE"), ECFG)
 
         return True
 
     except requests.exceptions.Timeout as e:
-        logme(MODUL,"Timeout to remote host %s (%s)" % (host , str(e)) ,("LOG","VERBOSE"),ECFG)
+        logme(MODUL, "Timeout to remote host %s (%s)" % (host , str(e)) ,("LOG","VERBOSE"), ECFG)
         return False
 
     except requests.exceptions.ConnectionError as e:
-        logme(MODUL,"Remote host %s didn't answer! (%s)" % (host , str(e)) ,("LOG","VERBOSE"),ECFG)
+        logme(MODUL, "Remote host %s didn't answer! (%s)" % (host , str(e)) , ("LOG","VERBOSE"), ECFG)
         return False
 
     except requests.exceptions.HTTPError as e:
-        logme(MODUL,"HTTP Errorcode != 200 (%s)" % (str(e)) ,("LOG","VERBOSE"),ECFG)
+        logme(MODUL, "HTTP Errorcode != 200 (%s)" % (str(e)) , ("LOG", "VERBOSE"), ECFG)
         return False
 
     except OpenSSL.SSL.WantWriteError as e:
-        logme(MODUL,"OpenSSL Write Buffer too small",("LOG","VERBOSE"),ECFG)
+        logme(MODUL, "OpenSSL Write Buffer too small", ("LOG", "VERBOSE"), ECFG)
         return False
 
 
-def viewcounter(MODUL,x,y):
+def viewcounter(MODUL, x, y):
 
     if y  == 100:
         x += 100
         """ Inform every 100 send records """
-        logme(MODUL,str(x) +" log entries processed ...",("P2"),ECFG)
+        logme(MODUL, str(x) +" log entries processed ...", ("P2"), ECFG)
         y = 1
     else:
         y += 1
 
-    return x,y
+    return x, y
 
 
 def sender():
     MODUL = "sender"
 
-    def clean_dir(DIR,MODUL):
+    def clean_dir(DIR, MODUL):
         FILEIN = filelist(DIR)
 
         for files in FILEIN:
             if not ".ews" in files:
                 os.remove(DIR + os.sep + files)
-                logme(MODUL, "Cleaning spooler dir: %s delete file: %s" % (DIR, files),("LOG"),ECFG)
+                logme(MODUL, "Cleaning spooler dir: %s delete file: %s" % (DIR, files), ("LOG"), ECFG)
         return()
 
-    def check_job(DIR,MODUL):
+    def check_job(DIR, MODUL):
         FILEIN = filelist(DIR)
 
         if len(FILEIN) < 1:
-            logme(MODUL, "Sender : No Jobs to send in %s" % (DIR),("P1"),ECFG)
+            logme(MODUL, "Sender : No Jobs to send in %s" % (DIR), ("P1"), ECFG)
             return False
         else:
-            logme(MODUL, "Sender : There are %s jobs to send in %s" %(str(len(FILEIN)),DIR),("P1"),ECFG)
+            logme(MODUL, "Sender : There are %s jobs to send in %s" %(str(len(FILEIN)), DIR), ("P1"), ECFG)
             return True
 
     def send_job(DIR):
@@ -178,19 +178,19 @@ def sender():
                 os.rename(DIR + os.sep + files, DIR + os.sep + newname)
         return
 
-    def del_job(DIR,MODUL):
+    def del_job(DIR, MODUL):
         FILEIN = filelist(DIR)
 
         for files in FILEIN:
             fpart = files.split('.')
             if len(fpart) == 3 and int(fpart[1]) > 4:
-                logme(MODUL, "Cleaning spooler dir: %s delete file: %s reached max transmit counter !" % (DIR, files),("LOG"),ECFG)
+                logme(MODUL, "Cleaning spooler dir: %s delete file: %s reached max transmit counter !" % (DIR, files), ("LOG"), ECFG)
                 os.remove(DIR + os.sep + files)
 
     def filelist(DIR):
 
         if os.path.isdir(DIR) is not True:
-            logme(MODUL,"Error missing dir " + DIR + " Abort !",("P1","EXIT"),ECFG)
+            logme(MODUL, "Error missing dir " + DIR + " Abort !", ("P1", "EXIT"), ECFG)
         else:
             return os.listdir(DIR)
 
@@ -205,9 +205,9 @@ def sender():
     return
 
 
-def buildews(esm,DATA,REQUEST,ADATA):
+def buildews(esm, DATA, REQUEST, ADATA):
 
-    ewsalert(esm,DATA,REQUEST,ADATA)
+    ewsalert(esm, DATA, REQUEST, ADATA)
 
     if int(esm.xpath('count(//Alert)')) >= 100:
         sendews(esm)
@@ -219,14 +219,14 @@ def buildews(esm,DATA,REQUEST,ADATA):
 def sendews(esm):
 
     if ECFG["a.ewsonly"] is True:
-        writeews(etree.tostring(esm, pretty_print=True))
+        writeews(etree.tostring(esm, pretty_print = True))
         return
 
     if ECFG["a.debug"] is True:
-        writeews(etree.tostring(esm, pretty_print=True))
+        writeews(etree.tostring(esm, pretty_print = True))
 
     if ECFG["ews"] is True and ewswebservice(etree.tostring(esm)) is not True:
-        writeews(etree.tostring(esm, pretty_print=True))
+        writeews(etree.tostring(esm, pretty_print = True))
 
     if ECFG["hpfeed"] is True:
         if ECFG["hpfformat"].lower() == "json":
@@ -246,9 +246,10 @@ def writeews(EWSALERT):
 
 
 def md5malware(malware_md5):
-    #create file if its not present
+    """ create file if its not present """
     with open(ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
-        # empty file
+
+        """ empty file """
         if os.stat(ECFG["homedir"] + os.sep + "malware.md5").st_size == 0:
             malwarefile.write(malware_md5+"\n")
             malwarefile.close()
@@ -257,15 +258,16 @@ def md5malware(malware_md5):
         if malware_md5 in open(ECFG["homedir"] + os.sep + "malware.md5", "r").read():
             malwarefile.close()
             return False
+
         else:
             malwarefile.write(malware_md5+"\n")
             malwarefile.close()
             return True
 
 
-def malware(DIR,FILE,KILL, md5):
+def malware(DIR, FILE, KILL, md5):
     if not os.path.isdir(DIR):
-        return 1,DIR + " DOES NOT EXIST!"
+        return 1, DIR + " DOES NOT EXIST!"
 
     if md5 and not md5malware(md5):
         return 1, "Malware MD5 %s already submitted." % md5
@@ -293,10 +295,10 @@ def hpfeedsend(esm, eformat):
 
     for i in range(0, len(esm)):
         if eformat == "xml":
-            hpc.publish(ECFG["channels"], etree.tostring(esm[i], pretty_print=False))
+            hpc.publish(ECFG["channels"], etree.tostring(esm[i], pretty_print = False))
 
         if eformat == "json":
-            bf = BadgerFish(dict_type=OrderedDict)
+            bf = BadgerFish(dict_type = OrderedDict)
             hpc.publish(ECFG["channels"], json.dumps(bf.data(esm[i])))
 
     return True
@@ -310,26 +312,27 @@ def testhpfeedsbroker():
         sock.close()
 
         if result != 0:
-            # broker unavailable
+            """ broker unavailable """
             logme(MODUL, "HPFEEDS broker is configured to {0}:{1} but is currently unavailable. Disabling hpfeeds submission for this round!".format(ECFG["host"], ECFG["port"]), ("P1"), ECFG)
             return False
 
         try:
             if ECFG["tlscert"].lower() != "false":
-                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], certfile=ECFG["tlscert"], reconnect=False)
-                logme("hpfeedsend", "Connecting to %s via TLS" % format(hpc.brokername+"/"+ECFG["host"]+":"+str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
+                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], certfile = ECFG["tlscert"], reconnect = False)
+                logme("hpfeedsend", "Connecting to %s via TLS" % format(hpc.brokername + "/" + ECFG["host"] + ":" + str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
             else:
-                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], reconnect=False)
-                logme("hpfeedsend", "Connecting to %s" % format(hpc.brokername+"/"+ECFG["host"]+":"+str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
+                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], reconnect = False)
+                logme("hpfeedsend", "Connecting to %s" % format(hpc.brokername + "/" + ECFG["host"] + ":" + str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
 
             return hpc
+
         except hpfeeds.FeedException as e:
             logme("hpfeedsend", "HPFeeds Error (%s)" % format(e), ("P1", "VERBOSE"), ECFG)
             return False
     return False
 
 
-def buildjson(jesm,DATA,REQUEST,ADATA):
+def buildjson(jesm, DATA, REQUEST, ADATA):
 
     if DATA["sport"] == "":
         DATA["sport"] = "0"
@@ -338,7 +341,7 @@ def buildjson(jesm,DATA,REQUEST,ADATA):
         REQUEST['raw'] = REQUEST['raw']
 
     myjson = {}
-    myjson['timestamp'] = ("%sT%s.000000" % (DATA["timestamp"][0:10],DATA["timestamp"][11:19]))
+    myjson['timestamp'] = ("%sT%s.000000" % (DATA["timestamp"][0:10], DATA["timestamp"][11:19]))
     myjson['event_type'] = "alert"
     myjson['src_ip'] = DATA["sadr"]
     myjson['src_port'] = DATA['sport']
@@ -361,24 +364,24 @@ def writejson(jesm):
             f.close()
 
 
-def verbosemode(MODUL,DATA,REQUEST,ADATA):
-    logme(MODUL,"---- " + MODUL + " ----" ,("VERBOSE"),ECFG)
-    logme(MODUL,"Nodeid          : %s" % DATA["aid"],("VERBOSE"),ECFG)
-    logme(MODUL,"Timestamp       : %s" % DATA["timestamp"],("VERBOSE"),ECFG)
-    logme(MODUL,"" ,("VERBOSE"),ECFG)
-    logme(MODUL,"Source IP       : %s" % DATA["sadr"],("VERBOSE"),ECFG)
-    logme(MODUL,"Source IPv      : %s" % DATA["sipv"],("VERBOSE"),ECFG)
-    logme(MODUL,"Source Port     : %s" % DATA["sport"],("VERBOSE"),ECFG)
-    logme(MODUL,"Source Protocol : %s" % DATA["sprot"],("VERBOSE"),ECFG)
-    logme(MODUL,"Target IP       : %s" % DATA["tadr"],("VERBOSE"),ECFG)
-    logme(MODUL,"Target IPv      : %s" % DATA["tipv"],("VERBOSE"),ECFG)
-    logme(MODUL,"Target Port     : %s" % DATA["tport"],("VERBOSE"),ECFG)
-    logme(MODUL,"Target Protocol : %s" % DATA["tprot"],("VERBOSE"),ECFG)
+def verbosemode(MODUL, DATA, REQUEST, ADATA):
+    logme(MODUL, "---- " + MODUL + " ----", ("VERBOSE"), ECFG)
+    logme(MODUL, "Nodeid          : %s" % DATA["aid"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Timestamp       : %s" % DATA["timestamp"], ("VERBOSE"), ECFG)
+    logme(MODUL, "", ("VERBOSE"), ECFG)
+    logme(MODUL, "Source IP       : %s" % DATA["sadr"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Source IPv      : %s" % DATA["sipv"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Source Port     : %s" % DATA["sport"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Source Protocol : %s" % DATA["sprot"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Target IP       : %s" % DATA["tadr"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Target IPv      : %s" % DATA["tipv"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Target Port     : %s" % DATA["tport"], ("VERBOSE"), ECFG)
+    logme(MODUL, "Target Protocol : %s" % DATA["tprot"], ("VERBOSE"), ECFG)
 
     for key,value in list(ADATA.items()):
-        logme(MODUL,"%s       : %s" %(key,value) ,("VERBOSE"),ECFG)
+        logme(MODUL,"%s       : %s" %(key,value) , ("VERBOSE"), ECFG)
 
-    logme(MODUL,"" ,("VERBOSE"),ECFG)
+    logme(MODUL, "", ("VERBOSE"), ECFG)
 
     return
 
