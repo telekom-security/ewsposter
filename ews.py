@@ -2233,18 +2233,18 @@ if __name__ == "__main__":
     lock = locksocket(name)
 
     if lock is True:
-        logme(MODUL,"Create lock socket successfull.",("P1"),ECFG)
+        logme(MODUL, "Create lock socket successfull.", ("P1"), ECFG)
     else:
-        logme(MODUL,"Another Instance is running !",("P1"),ECFG)
-        logme(MODUL,"EWSrun finish.",("P1","EXIT"),ECFG)
+        logme(MODUL, "Another Instance is running !", ("P1"), ECFG)
+        logme(MODUL, "EWSrun finish.",("P1","EXIT"), ECFG)
 
     while True:
 
         global hpc
-        hpc=testhpfeedsbroker()
+        hpc = testhpfeedsbroker()
 
         if ECFG["a.daycounter"] is True:
-            daycounterreset(lock,ECFG)
+            daycounterreset(lock, ECFG)
 
         if ECFG["a.ewsonly"] is False:
             sender()
@@ -2254,19 +2254,19 @@ if __name__ == "__main__":
 
             if ECFG["a.modul"]:
                 if ECFG["a.modul"] == i:
-                    if readonecfg(i.upper(),i,ECFG["cfgfile"]).lower() == "true":
+                    if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
                         eval(i+'()')
                         break
                 else:
                     continue
 
-            if readonecfg(i.upper(),i,ECFG["cfgfile"]).lower() == "true":
+            if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
                 eval(i+'()')
 
         if int(ECFG["a.loop"]) == 0:
-            logme(MODUL,"EWSrun finish.",("P1"),ECFG)
+            logme(MODUL, "EWSrun finish.", ("P1"), ECFG)
             break
         else:
-            logme(MODUL,"Sleeping for %s seconds ...." % ECFG["a.loop"] ,("P1"),ECFG)
+            logme(MODUL, "Sleeping for %s seconds ...." % ECFG["a.loop"] , ("P1"), ECFG)
             time.sleep(int(ECFG["a.loop"]))
 
