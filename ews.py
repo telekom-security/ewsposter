@@ -1241,24 +1241,24 @@ def conpot():
 
 def elasticpot():
     MODUL  = "ELASTICPOT"
-    logme(MODUL,"Starting Elasticpot Modul.",("P1"),ECFG)
+    logme(MODUL, "Starting Elasticpot Modul.", ("P1"), ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
-    ITEMS  = ("elasticpot","nodeid","logfile")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
+    ITEMS  = ("elasticpot", "nodeid", "logfile")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL,"[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
 
-    # count limit
+    """ count limit """
 
-    imin = int(countme(MODUL,'fileline',-1,ECFG))
+    imin = int(countme(MODUL, 'fileline', -1, ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL,"Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!",("P1"),ECFG)
+        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
     I = 0 ; x = 0 ; y = 1 ; J = 0
 
@@ -1266,44 +1266,42 @@ def elasticpot():
     jesm = ""
 
     while True:
-        x,y = viewcounter(MODUL,x,y)
+        x, y = viewcounter(MODUL, x, y)
 
         I += 1
 
         if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
             break
 
-        line = getline(HONEYPOT["logfile"],(imin + I)).rstrip()
-        currentline=imin+I 
+        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
+        currentline = imin + I
 
         if len(line) == 0:
             break
         else:
-            # parse json
+            """ parse json """
             try:
                 content = json.loads(line)
             except ValueError as e:
-                logme(MODUL,"Invalid json entry found in line "+str(currentline)+", skipping entry.",("P3"),ECFG)
-                countme(MODUL,'fileline',-2,ECFG)
-                J+=1
-                pass # invalid json
+                logme(MODUL, "Invalid json entry found in line "+str(currentline)+", skipping entry.", ("P3"), ECFG)
+                countme(MODUL, 'fileline', -2, ECFG)
+                J += 1
             else:
-
-                # filter empty requests and nagios checks
+                """ filter empty requests and nagios checks """
 
                 if  content["honeypot"]["query"] == os.sep or content["honeypot"]["query"] == "/index.do?hash=DEADBEEF&activate=1":
-                    countme(MODUL,'fileline',-2,ECFG)
+                    countme(MODUL, 'fileline', -2, ECFG)
                     continue
                 try:
                     if checkForPublicIP(content["dest_ip"]):
                         pubIP=content["dest_ip"]
                 except:
-                    pubIP=externalIP
+                    pubIP = externalIP
 
-                # Prepair and collect Alert Data
+                """ Prepair and collect Alert Data """
                 DATA = {
                             "aid"       : HONEYPOT["nodeid"],
-                            "timestamp" : "%s" % re.sub("T"," ",content["timestamp"]),
+                            "timestamp" : "%s" % re.sub("T", " ", content["timestamp"]),
                             "sadr"      : "%s" % content["src_ip"],
                             "sipv"      : "ipv" + ip4or6(content["src_ip"]),
                             "sprot"     : "tcp",
@@ -1318,30 +1316,28 @@ def elasticpot():
                             "description" : "ElasticSearch Honeypot : Elasticpot",
                             "url"         : urllib.parse.quote(content["honeypot"]["query"].encode('ascii', 'ignore')),
                             "raw"         : content["honeypot"]["raw"]
+                          }
 
-                        }
-
-                # Collect additional Data
+                """ Collect additional Data """
 
                 ADATA = {
                         "postdata"       : "%s" % content["honeypot"]["postdata"],
                         "hostname": ECFG["hostname"],
                         "externalIP": externalIP,
                         "internalIP": internalIP
+                        }
 
-                }
+                """ generate template and send """
+                esm = buildews(esm, DATA, REQUEST, ADATA)
+                jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-                # generate template and send
-                esm = buildews(esm,DATA,REQUEST,ADATA)
-                jesm = buildjson(jesm,DATA,REQUEST,ADATA)
-
-                countme(MODUL,'fileline',-2,ECFG)
-                countme(MODUL,'daycounter', -2,ECFG)
+                countme(MODUL, 'fileline', -2, ECFG)
+                countme(MODUL, 'daycounter', -2, ECFG)
 
                 if ECFG["a.verbose"] is True:
-                    verbosemode(MODUL,DATA,REQUEST,ADATA)
+                    verbosemode(MODUL, DATA, REQUEST, ADATA)
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
 
     if int(esm.xpath('count(//Alert)')) > 0:
@@ -1350,8 +1346,9 @@ def elasticpot():
     writejson(jesm)
 
     if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-2-J),("P2"),ECFG)
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
+
 
 def suricata():
     MODUL  = "SURICATA"
