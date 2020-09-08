@@ -2105,6 +2105,7 @@ def tanner():
     return
 
 def glutton():
+
     MODUL = "GLUTTON"
     logme(MODUL, "Starting Glutton Modul.", ("P1"), ECFG)
 
@@ -2144,44 +2145,44 @@ def glutton():
         if len(line) == 0:
             break
         else:
-            linecontent=json.loads(line, object_pairs_hook=OrderedDict)
+            linecontent=json.loads(line, object_pairs_hook = OrderedDict)
             dtime = (datetime.fromtimestamp(float(linecontent['ts']))).strftime('%Y-%m-%d %H:%M:%S')
 
             """ skip non attack info """
             if "src_ip" not in linecontent:
-                countme(MODUL,'fileline',-2,ECFG)
+                countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
                 continue
             if "error" in linecontent["level"]:
-                countme(MODUL,'fileline',-2,ECFG)
+                countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
                 continue
 
             """ Prepare and collect Alert Data """
             DATA = {
-                "aid": HONEYPOT["nodeid"],
-                "timestamp": "%s" % (dtime),
-                "sadr": linecontent['src_ip'],
-                "sipv": "ipv" + ip4or6(str(linecontent['src_ip'])),
-                "sprot": "tcp",
-                "sport": str(linecontent['src_port']),
-                "tipv": "ipv" + ip4or6(externalIP),
-                "tadr": externalIP,
-                "tprot": "tcp",
-                "tport": str(linecontent['dest_port']),
-            }
+                     "aid": HONEYPOT["nodeid"],
+                     "timestamp": "%s" % (dtime),
+                     "sadr": linecontent['src_ip'],
+                     "sipv": "ipv" + ip4or6(str(linecontent['src_ip'])),
+                     "sprot": "tcp",
+                     "sport": str(linecontent['src_port']),
+                     "tipv": "ipv" + ip4or6(externalIP),
+                     "tadr": externalIP,
+                     "tprot": "tcp",
+                     "tport": str(linecontent['dest_port']),
+                   }
 
             REQUEST = {
-                "description": "Glutton Honeypot",
-            }
+                        "description": "Glutton Honeypot",
+                      }
 
             """ Collect additional Data """
 
             ADATA = {
-                "hostname": ECFG["hostname"],
-                "externalIP": externalIP,
-                "internalIP": internalIP
-            }
+                      "hostname": ECFG["hostname"],
+                      "externalIP": externalIP,
+                      "internalIP": internalIP
+                    }
 
             if "payload_hex" in linecontent:
                 ADATA["binary"] = base64.b64encode(codecs.decode(linecontent['payload_hex'], 'hex')).decode()
@@ -2196,7 +2197,7 @@ def glutton():
 
             """
 
-            # generate template and send
+            """ generate template and send """
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2209,6 +2210,7 @@ def glutton():
 
     # Cleaning linecache
     clearcache()
+
     if int(esm.xpath('count(//Alert)')) > 0:
         sendews(esm)
 
@@ -2218,8 +2220,8 @@ def glutton():
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
 
-###############################################################################
- 
+""" --- [ MAIN ] ------------------------------------------------------------------ """
+
 if __name__ == "__main__":
 
     MODUL = "MAIN"
