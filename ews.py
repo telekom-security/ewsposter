@@ -47,6 +47,7 @@ def init():
     logging.basicConfig()
     hpc = False
 
+
 def ewswebservice(ems):
 
     MODUL = "ewswebservice"
@@ -135,7 +136,6 @@ def viewcounter(MODUL,x,y):
 
 
 def sender():
-
     MODUL = "sender"
 
     def clean_dir(DIR,MODUL):
@@ -715,7 +715,6 @@ def cowrie():
             logme(MODUL, "Unicode in input " + key[14] + " - removing unicode.", ("P3"), ECFG)
             cinput=str(key[14]).encode('ascii', 'ignore')
 
-
         ADATA = {
                  "sessionid"   : str(key[5]),
                  "starttime"   : "%s-%s-%s %s" % (key[6][0:4], key[6][5:7], key[6][8:10], key[6][11:19]),
@@ -1008,104 +1007,6 @@ def honeytrap():
                             logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1","LOG"),ECFG)
                         if md5:
                             ADATA["payload_md5"] = md5
-
-            # generate template and send
-
-            esm = buildews(esm,DATA,REQUEST,ADATA)
-            jesm = buildjson(jesm,DATA,REQUEST,ADATA)
-
-            countme(MODUL,'fileline',-2,ECFG)
-            countme(MODUL,'daycounter', -2,ECFG)
-
-            if ECFG["a.verbose"] is True:
-                verbosemode(MODUL,DATA,REQUEST,ADATA)
-
-    # Cleaning linecache
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-2),("P2"),ECFG)
-    return
-
-
-def rdpdetect():
-
-    MODUL  = "RDPDETECT"
-    logme(MODUL,"Starting RDPDetect Modul.",("P1"),ECFG)
-
-    # collect honeypot config dic
-
-    ITEMS  = ("rdpdetect","nodeid","iptableslog","targetip")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
-
-    # iptables file exists ?
-
-    if os.path.isfile(HONEYPOT["iptableslog"]) is False:
-        logme(MODUL,"[ERROR] Missing Iptables LogFile " + HONEYPOT["iptableslog"] + ". Abort !",("P3","LOG"),ECFG)
-
-    # count limit
-
-    imin = int(countme(MODUL,'fileline',-1,ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL,"Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!",("P1"),ECFG)
-
-    I = 0 ; x = 0 ; y = 1
-
-    esm = ewsauth(ECFG["username"],ECFG["token"])
-    jesm = ""
-
-    while True:
-
-        x,y = viewcounter(MODUL,x,y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["iptableslog"],(imin + I)).rstrip()
-
-        if len(line) == 0:
-            break
-        else:
-            line = re.sub(r'  ',r' ',re.sub(r'[\[\]\-\>]',r'',line))
-
-            if HONEYPOT["targetip"] == re.search('SRC=(.*?) ', line).groups()[0]:
-                continue
-
-            # Prepair and collect Alert Data
-
-            DATA =    {
-                        "aid"       : HONEYPOT["nodeid"],
-                        "timestamp" : "%s-%s-%s %s:%s:%s" % (line[0:4], line[4:6], line[6:8], line[9:11], line[12:14], line[15:17]),
-                        "sadr"      : re.search('SRC=(.*?) ', line).groups()[0],
-                        "sipv"      : "ipv" + ip4or6(re.search('SRC=(.*?) ', line).groups()[0]),
-                        "sprot"     : re.search('PROTO=(.*?) ', line).groups()[0].lower(),
-                        "sport"     : re.search('SPT=(.*?) ', line).groups()[0],
-                        "tipv"      : "ipv" + ip4or6(ECFG["ip"]),
-                        "tadr"      : ECFG["ip"],
-                        "tprot"     : re.search('PROTO=(.*?) ', line).groups()[0].lower(),
-                        "tport"     : re.search('DPT=(.*?) ', line).groups()[0],
-                      }
-
-            REQUEST = {
-                        "description" : "RDPDetect"
-                      }
-
-
-            # Collect additional Data
-
-            ADATA =   {
-                "hostname": ECFG["hostname"],
-                "externalIP": externalIP,
-                "internalIP": internalIP
-            }
 
             # generate template and send
 
@@ -2356,7 +2257,7 @@ if __name__ == "__main__":
         if ECFG["a.ewsonly"] is False:
             sender()
 
-        for i in ("glastopfv3", "dionaea", "honeytrap", "rdpdetect", "emobility", "conpot", "cowrie","elasticpot",
+        for i in ("glastopfv3", "dionaea", "honeytrap", "emobility", "conpot", "cowrie","elasticpot",
                   "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton"):
 
             if ECFG["a.modul"]:
