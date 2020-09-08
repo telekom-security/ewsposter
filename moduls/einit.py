@@ -18,8 +18,9 @@ def ecfg(name,version):
     parser.add_argument("-v","--verbose", help="set output verbosity",action="store_true")
     parser.add_argument("-d","--debug", help="set output debug",action="store_true")
     parser.add_argument("-l","--loop", help="Go in endless loop. Set {xx} for seconds to wait for next loop", type=int, default=0, action="store")
-    parser.add_argument("-m","--modul", help="only send alerts for this modul", choices=['glastopfv3','glastopfv2','kippo','dionaea','honeytrap','rdpdetect','emobility', 'conpot', 'cowrie',
-                                                                                         'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding', 'ciscoasa', 'tanner', 'glutton'],action="store")
+    parser.add_argument("-m","--modul", help="only send alerts for this modul", choices=['glastopfv3', 'kippo', 'dionaea', 'honeytrap', 'rdpdetect', 'emobility', 'conpot', 'cowrie',
+                                                                                         'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding', 'ciscoasa', 'tanner',
+                                                                                         'glutton'], action="store")
     parser.add_argument("-s","--silent", help="silent mode without output",action="store_true")
     parser.add_argument("-i","--ignorecert", help="ignore certificate warnings",action="store_true")
     parser.add_argument("-S","--sendonly", help="only send unsend alerts",action="store_true")
@@ -87,7 +88,6 @@ def ecfg(name,version):
 
     if args.modul and args.modul in [
         'glastopfv3',
-        'glastopfv2',
         'kippo',
         'dionaea',
         'honeytrap',
