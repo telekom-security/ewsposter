@@ -1675,34 +1675,32 @@ def vnclowpot():
 
 
 def mailoney():
+
     MODUL = "MAILONEY"
     logme(MODUL, "Starting MAILONEY Modul.", ("P1"), ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
     ITEMS = ("mailoney", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
         logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
 
-    # count limit
+    """ count limit """
 
     imin = int(countme(MODUL, 'fileline', -1, ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0;
-    x = 0;
-    y = 1;
-    J = 0
+    I = 0; x = 0; y = 1; J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
-    trigger=['HELO', 'EHLO']
+    trigger = ['HELO', 'EHLO']
 
     while True:
 
@@ -1720,8 +1718,8 @@ def mailoney():
         else:
             try:
                 if not any(s in line.split(" ")[1] for s in trigger):
-                    countme(MODUL,'fileline',-2,ECFG)
-                    J+=1
+                    countme(MODUL, 'fileline', -2, ECFG)
+                    J += 1
                     continue
             except:
                 countme(MODUL, 'fileline', -2, ECFG)
@@ -1732,34 +1730,34 @@ def mailoney():
             sourceip = line.split("][")[1].split(":")[0]
             sport= line.split("][")[1].split(":")[1].split("]")[0]
 
-            # Prepare and collect Alert Data
+            """ Prepare and collect Alert Data """
 
             DATA = {
-                "aid": HONEYPOT["nodeid"],
-                "timestamp": "%s" % (time),
-                "sadr": sourceip,
-                "sipv": "ipv" + ip4or6(sourceip),
-                "sprot": "tcp",
-                "sport": sport,
-                "tipv": "ipv" + ip4or6(externalIP),
-                "tadr": externalIP,
-                "tprot": "tcp",
-                "tport": "25",
-            }
+                     "aid": HONEYPOT["nodeid"],
+                     "timestamp": "%s" % (time),
+                     "sadr": sourceip,
+                     "sipv": "ipv" + ip4or6(sourceip),
+                     "sprot": "tcp",
+                     "sport": sport,
+                     "tipv": "ipv" + ip4or6(externalIP),
+                     "tadr": externalIP,
+                     "tprot": "tcp",
+                     "tport": "25",
+                   }
 
             REQUEST = {
-                "description": "Mail Honeypot mailoney"
-            }
+                        "description": "Mail Honeypot mailoney"
+                      }
 
-            # Collect additional Data
+            """ Collect additional Data """
 
             ADATA = {
-                "hostname": ECFG["hostname"],
-                "externalIP": externalIP,
-                "internalIP": internalIP
-            }
+                      "hostname": ECFG["hostname"],
+                      "externalIP": externalIP,
+                      "internalIP": internalIP
+                    }
 
-            # generate template and send
+            """ generate template and send """
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -1770,8 +1768,9 @@ def mailoney():
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
+
     if int(esm.xpath('count(//Alert)')) > 0:
         sendews(esm)
 
@@ -1780,6 +1779,7 @@ def mailoney():
     if y > 1:
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
+
 
 def heralding():
     MODUL = "HERALDING"
