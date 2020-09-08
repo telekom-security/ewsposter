@@ -1352,24 +1352,24 @@ def elasticpot():
 
 def suricata():
     MODUL  = "SURICATA"
-    logme(MODUL,"Starting Suricata Modul.",("P1"),ECFG)
+    logme(MODUL, "Starting Suricata Modul.", ("P1"), ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
-    ITEMS  = ("suricata","nodeid","logfile")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
+    ITEMS  = ("suricata", "nodeid", "logfile")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL,"[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
 
-    # count limit
+    """ count limit """
 
-    imin = int(countme(MODUL,'fileline',-1,ECFG))
+    imin = int(countme(MODUL, 'fileline', -1, ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL,"Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!",("P1"),ECFG)
+        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
     I = 0 ; x = 0 ; y = 1 ; J = 0
 
@@ -1378,41 +1378,40 @@ def suricata():
 
     while True:
 
-        x,y = viewcounter(MODUL,x,y)
+        x, y = viewcounter(MODUL, x, y)
 
         I += 1
 
         if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
             break
 
-        line = getline(HONEYPOT["logfile"],(imin + I)).rstrip()
-        currentline=imin+I 
+        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
+        currentline = imin + I
 
         if len(line) == 0:
             break
         else:
-            # parse json
+            """ parse json """
             try:
                 content = json.loads(line)
             except ValueError as e:
-                logme(MODUL,"Invalid json entry found in line "+str(currentline)+", skipping entry.",("P3"),ECFG)
-                countme(MODUL,'fileline',-2,ECFG)
-                J+=1
-                pass # invalid json
+                logme(MODUL, "Invalid json entry found in line "+str(currentline)+", skipping entry.", ("P3"), ECFG)
+                countme(MODUL, 'fileline', -2, ECFG)
+                J += 1
             else:
                 if 'alert' in content and "src_port" in content:
                     if 'cve_id' in content['alert']:
-                        # use t-pots external address if src_ip is rfc1819 / private
+                        """ use t-pots external address if src_ip is rfc1819 / private """
                         if (ipaddress.ip_address(content["dest_ip"]).is_private):
                             externalip=content["t-pot_ip_ext"]
                         else:
                             externalip=content["dest_ip"]
 
-                        # Prepare and collect Alert Data
+                        """ Prepare and collect Alert Data """
 
                         DATA = {
                                     "aid"       : HONEYPOT["nodeid"],
-                                    "timestamp" : "%s" % re.sub("T"," ",content["timestamp"][:-12]),
+                                    "timestamp" : "%s" % re.sub("T", " ", content["timestamp"][:-12]),
                                     "sadr"      : "%s" % content["src_ip"],
                                     "sipv"      : "ipv" + ip4or6(content["src_ip"]),
                                     "sprot"     : content["proto"].lower(),
@@ -1422,32 +1421,32 @@ def suricata():
                                     "tprot"     : content["proto"].lower(),
                                     "tport"     : "%d" % content["dest_port"],
                                 }
-                        httpextras = ""
+
                         if "http" in content:
                             httpextras = urllib.parse.quote(str(content["http"]).encode('ascii', 'ignore'))
-
+                        else:
+                            httpextras = ""
 
                         REQUEST = {
                                     "description" : "Suricata CVE Attack",
                                     "request" : httpextras
-                                }
+                                  }
 
-                        # Collect additional Data
+                        """ Collect additional Data """
 
                         ADATA = {
-                                "cve_id": "%s" % content["alert"]["cve_id"],
-                                "hostname": ECFG["hostname"],
-                                "externalIP": externalIP,
-                                "internalIP": internalIP
+                                  "cve_id": "%s" % content["alert"]["cve_id"],
+                                  "hostname": ECFG["hostname"],
+                                  "externalIP": externalIP,
+                                  "internalIP": internalIP
                                 }
 
+                        """ generate template and send """
+                        esm = buildews(esm, DATA, REQUEST, ADATA)
+                        jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-                        # generate template and send
-                        esm = buildews(esm,DATA,REQUEST,ADATA)
-                        jesm = buildjson(jesm,DATA,REQUEST,ADATA)
-
-                        countme(MODUL,'fileline',-2,ECFG)
-                        countme(MODUL,'daycounter', -2,ECFG)
+                        countme(MODUL, 'fileline', -2, ECFG)
+                        countme(MODUL, 'daycounter', -2, ECFG)
 
                         if ECFG["a.verbose"] is True:
                             verbosemode(MODUL,DATA,REQUEST,ADATA)
@@ -1455,21 +1454,20 @@ def suricata():
                     else:
                         countme(MODUL, 'fileline', -2, ECFG)
                         J += 1
-                        pass  # no cve-data
                 else:
                     countme(MODUL, 'fileline', -2, ECFG)
                     J += 1
-                    pass # no cve-data
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
+
     if int(esm.xpath('count(//Alert)')) > 0:
         sendews(esm)
 
     writejson(jesm)
 
     if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-2-J),("P2"),ECFG)
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
 
 def rdpy():
