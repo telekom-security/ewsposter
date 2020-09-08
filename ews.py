@@ -753,29 +753,29 @@ def dionaea():
     MODUL  = "DIONAEA"
     logme(MODUL,"Starting Dionaea Modul.",("P1"),ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
     ITEMS  = ("dionaea","nodeid","sqlitedb","malwaredir")
     HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
 
-    # Malwaredir exist ?
+    """ Malwaredir exist """
 
     if os.path.isdir(HONEYPOT["malwaredir"]) is False:
         logme(MODUL,"[ERROR] Missing Malware Dir " + HONEYPOT["malwaredir"] + ". Abort !",("P3","LOG"),ECFG)
 
-     # is sqlitedb exist ?
+    """ is sqlitedb exist ? """
 
     if os.path.isfile(HONEYPOT["sqlitedb"]) is False:
         logme(MODUL,"[ERROR] Missing sqlitedb file " + HONEYPOT["sqlitedb"] + ". Abort !",("P3","LOG"),ECFG)
         return
 
-    # open database
+    """ open database """
 
     con = sqlite3.connect(HONEYPOT["sqlitedb"],30)
     con.row_factory = sqlite3.Row
     c = con.cursor()
 
-    # calculate send limit
+    """ calculate send limit """
 
     try:
         c.execute("SELECT max(connection) from connections;")
@@ -792,12 +792,12 @@ def dionaea():
 
     imin, imax = calcminmax(MODUL,int(countme(MODUL,'sqliteid',-1,ECFG)),int(maxid),ECFG)
 
-    # read alerts from database
+    """ read alerts from database """
 
     c.execute("SELECT * from connections where connection > ? and connection <= ?;",(imin,imax,))
     rows = c.fetchall()
 
-    # counter inits
+    """ counter inits """
 
     x = 0 ; y = 1
 
@@ -808,13 +808,13 @@ def dionaea():
 
         x,y = viewcounter(MODUL,x,y)
 
-        # filter empty remote_host
+        """ filter empty remote_host """
 
         if row["remote_host"] == "":
             countme(MODUL,'sqliteid',row["connection"],ECFG)
             continue
 
-        # fix docker problems with dionaea IPs
+        """ fix docker problems with dionaea IPs """
         if '::ffff:' in row["remote_host"]:
             remoteHost= row["remote_host"].split('::ffff:')[1]
         else:
@@ -825,7 +825,7 @@ def dionaea():
         else:
             localHost = row["local_host"]
 
-        # prepare and collect Alert Data
+        """ prepare and collect Alert Data """
 
         DATA =   {
                     "aid"       : HONEYPOT["nodeid"],
@@ -844,7 +844,7 @@ def dionaea():
                     "description" : "Network Honeyport Dionaea v0.1.0",
                   }
 
-        # Collect additional Data
+        """ Collect additional Data """
 
         ADATA = {
                  "sqliteid"    : str(row["connection"]),
@@ -854,7 +854,7 @@ def dionaea():
 
         }
 
-        # Check for malware bin's
+        """ Check for malware bin's """
 
         c.execute("SELECT download_md5_hash from downloads where connection = ?;",(str(row["connection"]),))
         check = c.fetchone()
@@ -867,9 +867,7 @@ def dionaea():
             if check[0]:
                 ADATA["payload_md5"] = check[0]
 
-
-
-        # generate template and send
+        """ generate template and send """
 
         esm = buildews(esm,DATA,REQUEST,ADATA)
         jesm = buildjson(jesm,DATA,REQUEST,ADATA)
