@@ -39,24 +39,6 @@ nodeid = <your unique analyzer id>
 sqlitedb = /opt/honeypot/glastopf/data/db/glastopf.db
 malwaredir = /opt/honeypot/glastopf/data/files
 
-[GLASTOPFV2]
-glastopfv2 = false
-nodeid =  <your unique analyzer id>
-mysqlhost = localhost
-mysqldb = <your mysql db for kippo>
-mysqluser = <your user for this db>
-mysqlpw = <your password>
-malwaredir = /opt/ewsposter/malware
-
-[KIPPO]
-kippo = false
-nodeid =  <your unique analyzer id>
-mysqlhost = localhost
-mysqldb = <your mysql db for glastopf>
-mysqluser = <your user for this db>
-mysqlpw = <your password>
-malwaredir = /opt/honeypot/kippo/downloads
-
 [COWRIE]
 cowrie = false
 nodeid = <your unique analyzer id>
@@ -74,12 +56,6 @@ nodeid =  <your unique analyzer id>
 newversion = true
 payloaddir = /opt/honeypot/honeytrap/attacks
 attackerfile = /opt/honeypot/honeytrap/log/attacker.log
-
-[RDPDETECT]
-rdpdetect = false
-nodeid = <your unique analyzer id>
-iptableslog = /opt/honeypot/db/iptables.log
-targetip = <ip of the RDP dummy system>
 
 [EMOBILITY]
 eMobility = false
