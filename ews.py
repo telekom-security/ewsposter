@@ -1994,30 +1994,28 @@ def ciscoasa():
 
 
 def tanner():
+
     MODUL = "TANNER"
     logme(MODUL, "Starting Tanner Modul.", ("P1"), ECFG)
 
-    # collect honeypot config dic
+    """ collect honeypot config dic """
 
     ITEMS = ("tanner", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    # logfile file exists ?
+    """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
         logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
 
-    # count limit
+    """ count limit """
 
     imin = int(countme(MODUL, 'fileline', -1, ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0
-    x = 0
-    y = 1
-    J = 0
+    I = 0; x = 0; y = 1; J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -2036,50 +2034,53 @@ def tanner():
         if len(line) == 0:
             break
         else:
-            linecontent=json.loads(line, object_pairs_hook=OrderedDict)
-            time = linecontent['timestamp'].split("T")[0]+" "+linecontent['timestamp'].split("T")[1].split(".")[0]
-            # Prepare and collect Alert Data
+            linecontent=json.loads(line, object_pairs_hook = OrderedDict)
+            time = linecontent['timestamp'].split("T")[0] + " " + linecontent['timestamp'].split("T")[1].split(".")[0]
+
+            """ Prepare and collect Alert Data """
 
             DATA = {
-                "aid": HONEYPOT["nodeid"],
-                "timestamp": "%s" % (time),
-                "sadr": linecontent['peer']['ip'],
-                "sipv": "ipv" + ip4or6(str(linecontent['peer']['port'])),
-                "sprot": "tcp",
-                "sport": str(linecontent['peer']['port']),
-                "tipv": "ipv" + ip4or6(externalIP),
-                "tadr": externalIP,
-                "tprot": "tcp",
-                "tport": "80",
-            }
+                     "aid": HONEYPOT["nodeid"],
+                     "timestamp": "%s" % (time),
+                     "sadr": linecontent['peer']['ip'],
+                     "sipv": "ipv" + ip4or6(str(linecontent['peer']['port'])),
+                     "sprot": "tcp",
+                     "sport": str(linecontent['peer']['port']),
+                     "tipv": "ipv" + ip4or6(externalIP),
+                     "tadr": externalIP,
+                     "tprot": "tcp",
+                     "tport": "80",
+                   }
 
             REQUEST = {
-                "description": "Tanner Honeypot",
-                "url": urllib.parse.quote(linecontent["path"].encode('ascii', 'ignore'))
-            }
+                        "description": "Tanner Honeypot",
+                        "url": urllib.parse.quote(linecontent["path"].encode('ascii', 'ignore'))
+                      }
 
-            # Collect additional Data
+            """ Collect additional Data """
 
             ADATA = {
-                "hostname": ECFG["hostname"],
-                "externalIP": externalIP,
-                "internalIP": internalIP
-            }
+                      "hostname": ECFG["hostname"],
+                      "externalIP": externalIP,
+                      "internalIP": internalIP
+                    }
 
             reassembledReq = ""
+
             if 'host' in linecontent['headers']:
                 httpversion="HTTP/1.1"
             else:
                 httpversion="HTTP/1.0"
+
             if len(linecontent['headers']) > 0:
                 reassembledReq="{} {} {}\n".format(linecontent['method'], linecontent['path'], httpversion)
+
                 for i in linecontent['headers']:
                     headercontent = ""
                     if linecontent['headers'][i]:
                         headercontent=linecontent['headers'][i]
                     reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
 
-            #REQUEST["raw"] = base64.b64encode(reassembledReq.encode('ascii')).decode()
             REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore')).decode()
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -2091,8 +2092,9 @@ def tanner():
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
 
-    # Cleaning linecache
+    """ Cleaning linecache """
     clearcache()
+
     if int(esm.xpath('count(//Alert)')) > 0:
         sendews(esm)
 
