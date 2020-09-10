@@ -12,18 +12,16 @@ from lxml import etree
 from copy import deepcopy
 import glob
 import ast
-
 from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg, daycounterreset
 from moduls.elog import logme
 from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, getOwnExternalIP, getOwnInternalIP, resolveHost
-
 import sqlite3
 import MySQLdb.cursors
 import requests
 import random
 import base64
-import urllib.request, urllib.parse, urllib.error
+from urllib import parse
 import hpfeeds
 import fnmatch
 import json
@@ -52,82 +50,78 @@ def ewswebservice(ems):
 
     MODUL = "ewswebservice"
 
-    headers = { 'User-Agent'     : name + " " + version,
-                'Content-type'   : 'text/xml',
-                'SOAPAction'     : '',
-                'charset'        : 'UTF-8',
-                'Connection'     : 'close'
-              }
+    headers = {'User-Agent': name + " " + version,
+               'Content-type': 'text/xml',
+               'SOAPAction': '',
+               'charset': 'UTF-8',
+               'Connection': 'close'}
 
-    host = random.choice([ ECFG["rhost_first"] , ECFG["rhost_second"] ])
+    host = random.choice([ECFG["rhost_first"], ECFG["rhost_second"]])
 
     if ECFG["proxy"] != "NULL" and ECFG["proxy"] != "FALSE":
-        proxydic = { "https" : ECFG["proxy"] }
+        proxydic = {"https": ECFG["proxy"]}
     else:
         proxydic = {}
 
     try:
-        if not "https" in proxydic:
+        if "https" not in proxydic:
             webservice = requests.post(host,
-                                       data = ems,
-                                       headers = headers,
-                                       allow_redirects = True,
-                                       timeout = 60,
-                                       verify = not ECFG["a.ignorecert"]
-                                      )
+                                       data=ems,
+                                       headers=headers,
+                                       allow_redirects=True,
+                                       timeout=60,
+                                       verify=not ECFG["a.ignorecert"])
         else:
             webservice = requests.post(host,
-                                       data = ems,
-                                       headers = headers,
-                                       allow_redirects = True,
-                                       proxies = proxydic,
-                                       timeout = 60,
-                                       verify = not ECFG["a.ignorecert"]
-                                      )
-
+                                       data=ems,
+                                       headers=headers,
+                                       allow_redirects=True,
+                                       proxies=proxydic,
+                                       timeout=60,
+                                       verify=not ECFG["a.ignorecert"])
 
         webservice.raise_for_status()
 
         xmlresult = re.search('<StatusCode>(.*)</StatusCode>', webservice.text).groups()[0]
 
         if xmlresult != "OK":
-            logme(MODUL, "XML Result != ok ( %s) (%s)" % (xmlresult,webservice.text), ("LOG", "VERBOSE"), ECFG)
+            logme(MODUL, "XML Result != ok ( %s) (%s)" % (xmlresult, webservice.text), ("LOG", "VERBOSE"), ECFG)
             return False
 
         if ECFG["a.verbose"] is True:
-            logme(MODUL, "---- Webservice Report ----" , ("VERBOSE"), ECFG)
-            logme(MODUL, "HOST          : %s" % (host) , ("VERBOSE"), ECFG)
-            logme(MODUL, "XML Result    : %s" % (xmlresult) , ("VERBOSE"), ECFG)
-            logme(MODUL, "Statuscode    : %s" % (webservice.status_code) , ("VERBOSE"), ECFG)
-            logme(MODUL, "Header        : %s" % (webservice.headers) ,("VERBOSE"), ECFG)
-            logme(MODUL, "Body          : %s" % (webservice.text) , ("VERBOSE"), ECFG)
+            logme(MODUL, "---- Webservice Report ----", ("VERBOSE"), ECFG)
+            logme(MODUL, "HOST          : %s" % (host), ("VERBOSE"), ECFG)
+            logme(MODUL, "XML Result    : %s" % (xmlresult), ("VERBOSE"), ECFG)
+            logme(MODUL, "Statuscode    : %s" % (webservice.status_code), ("VERBOSE"), ECFG)
+            logme(MODUL, "Header        : %s" % (webservice.headers), ("VERBOSE"), ECFG)
+            logme(MODUL, "Body          : %s" % (webservice.text), ("VERBOSE"), ECFG)
             logme(MODUL, "", ("VERBOSE"), ECFG)
 
         return True
 
     except requests.exceptions.Timeout as e:
-        logme(MODUL, "Timeout to remote host %s (%s)" % (host , str(e)) ,("LOG","VERBOSE"), ECFG)
+        logme(MODUL, "Timeout to remote host %s (%s)" % (host, str(e)), ("LOG", "VERBOSE"), ECFG)
         return False
 
     except requests.exceptions.ConnectionError as e:
-        logme(MODUL, "Remote host %s didn't answer! (%s)" % (host , str(e)) , ("LOG","VERBOSE"), ECFG)
+        logme(MODUL, "Remote host %s didn't answer! (%s)" % (host, str(e)), ("LOG", "VERBOSE"), ECFG)
         return False
 
     except requests.exceptions.HTTPError as e:
-        logme(MODUL, "HTTP Errorcode != 200 (%s)" % (str(e)) , ("LOG", "VERBOSE"), ECFG)
+        logme(MODUL, "HTTP Errorcode != 200 (%s)" % (str(e)), ("LOG", "VERBOSE"), ECFG)
         return False
 
     except OpenSSL.SSL.WantWriteError as e:
-        logme(MODUL, "OpenSSL Write Buffer too small", ("LOG", "VERBOSE"), ECFG)
+        logme(MODUL, "OpenSSL Write Buffer too small (%s)" % (str(e)), ("LOG", "VERBOSE"), ECFG)
         return False
 
 
 def viewcounter(MODUL, x, y):
 
-    if y  == 100:
+    if y == 100:
         x += 100
         """ Inform every 100 send records """
-        logme(MODUL, str(x) +" log entries processed ...", ("P2"), ECFG)
+        logme(MODUL, str(x) + " log entries processed ...", ("P2"), ECFG)
         y = 1
     else:
         y += 1
@@ -142,7 +136,7 @@ def sender():
         FILEIN = filelist(DIR)
 
         for files in FILEIN:
-            if not ".ews" in files:
+            if ".ews" not in files:
                 os.remove(DIR + os.sep + files)
                 logme(MODUL, "Cleaning spooler dir: %s delete file: %s" % (DIR, files), ("LOG"), ECFG)
         return()
@@ -154,14 +148,14 @@ def sender():
             logme(MODUL, "Sender : No Jobs to send in %s" % (DIR), ("P1"), ECFG)
             return False
         else:
-            logme(MODUL, "Sender : There are %s jobs to send in %s" %(str(len(FILEIN)), DIR), ("P1"), ECFG)
+            logme(MODUL, "Sender : There are %s jobs to send in %s" % (str(len(FILEIN)), DIR), ("P1"), ECFG)
             return True
 
     def send_job(DIR):
         FILEIN = filelist(DIR)
 
         for files in FILEIN:
-            with open(DIR +  os.sep + files,'r') as alert:
+            with open(DIR + os.sep + files, 'r') as alert:
                 EWSALERT = alert.read()
                 alert.close()
 
@@ -194,10 +188,10 @@ def sender():
         else:
             return os.listdir(DIR)
 
-    clean_dir(ECFG["spooldir"],MODUL)
-    del_job(ECFG["spooldir"],MODUL)
+    clean_dir(ECFG["spooldir"], MODUL)
+    del_job(ECFG["spooldir"], MODUL)
 
-    if check_job(ECFG["spooldir"],MODUL) is False:
+    if check_job(ECFG["spooldir"], MODUL) is False:
         return
 
     send_job(ECFG["spooldir"])
@@ -211,7 +205,7 @@ def buildews(esm, DATA, REQUEST, ADATA):
 
     if int(esm.xpath('count(//Alert)')) >= 100:
         sendews(esm)
-        esm = ewsauth(ECFG["username"],ECFG["token"])
+        esm = ewsauth(ECFG["username"], ECFG["token"])
 
     return esm
 
@@ -219,14 +213,14 @@ def buildews(esm, DATA, REQUEST, ADATA):
 def sendews(esm):
 
     if ECFG["a.ewsonly"] is True:
-        writeews(etree.tostring(esm, pretty_print = True))
+        writeews(etree.tostring(esm, pretty_print=True))
         return
 
     if ECFG["a.debug"] is True:
-        writeews(etree.tostring(esm, pretty_print = True))
+        writeews(etree.tostring(esm, pretty_print=True))
 
     if ECFG["ews"] is True and ewswebservice(etree.tostring(esm)) is not True:
-        writeews(etree.tostring(esm, pretty_print = True))
+        writeews(etree.tostring(esm, pretty_print=True))
 
     if ECFG["hpfeed"] is True:
         if ECFG["hpfformat"].lower() == "json":
@@ -238,7 +232,7 @@ def sendews(esm):
 
 
 def writeews(EWSALERT):
-    with open(ECFG["spooldir"] + os.sep + timestamp() + ".ews",'wb') as f:
+    with open(ECFG["spooldir"] + os.sep + timestamp() + ".ews", 'wb') as f:
         f.write(EWSALERT)
         f.close()
 
@@ -251,7 +245,7 @@ def md5malware(malware_md5):
 
         """ empty file """
         if os.stat(ECFG["homedir"] + os.sep + "malware.md5").st_size == 0:
-            malwarefile.write(malware_md5+"\n")
+            malwarefile.write(malware_md5 + "\n")
             malwarefile.close()
             return True
 
@@ -260,7 +254,7 @@ def md5malware(malware_md5):
             return False
 
         else:
-            malwarefile.write(malware_md5+"\n")
+            malwarefile.write(malware_md5 + "\n")
             malwarefile.close()
             return True
 
@@ -274,13 +268,13 @@ def malware(DIR, FILE, KILL, md5):
 
     if os.path.isfile(DIR + os.sep + FILE) is True:
         if os.path.getsize(DIR + os.sep + FILE) <= 5 * 1024 * 1024:
-            payload=open(DIR + os.sep + FILE, "rb").read()
+            payload = open(DIR + os.sep + FILE, "rb").read()
             malwarefile = base64.b64encode(payload)
             if KILL is True:
                 os.remove(DIR + os.sep + FILE)
             return 0, malwarefile
         else:
-            return 1,"FILE " + DIR + os.sep + FILE + " is bigger than 5 MB!"
+            return 1, "FILE " + DIR + os.sep + FILE + " is bigger than 5 MB!"
     else:
         return 1, "FILE " + DIR + os.sep + FILE + " DOES NOT EXIST!"
 
@@ -295,13 +289,14 @@ def hpfeedsend(esm, eformat):
 
     for i in range(0, len(esm)):
         if eformat == "xml":
-            hpc.publish(ECFG["channels"], etree.tostring(esm[i], pretty_print = False))
+            hpc.publish(ECFG["channels"], etree.tostring(esm[i], pretty_print=False))
 
         if eformat == "json":
-            bf = BadgerFish(dict_type = OrderedDict)
+            bf = BadgerFish(dict_type=OrderedDict)
             hpc.publish(ECFG["channels"], json.dumps(bf.data(esm[i])))
 
     return True
+
 
 def testhpfeedsbroker():
     if ECFG["hpfeed"] is True:
@@ -318,10 +313,10 @@ def testhpfeedsbroker():
 
         try:
             if ECFG["tlscert"].lower() != "false":
-                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], certfile = ECFG["tlscert"], reconnect = False)
+                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], certfile=ECFG["tlscert"], reconnect=False)
                 logme("hpfeedsend", "Connecting to %s via TLS" % format(hpc.brokername + "/" + ECFG["host"] + ":" + str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
             else:
-                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], reconnect = False)
+                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], reconnect=False)
                 logme("hpfeedsend", "Connecting to %s" % format(hpc.brokername + "/" + ECFG["host"] + ":" + str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
 
             return hpc
@@ -354,12 +349,12 @@ def buildjson(jesm, DATA, REQUEST, ADATA):
     if ADATA:
         myjson["additionaldata"] = ADATA
 
-    return jesm + json.dumps(myjson)+"\n"
+    return jesm + json.dumps(myjson) + "\n"
 
 
 def writejson(jesm):
     if len(jesm) > 0 and ECFG["json"] is True:
-        with open(ECFG["jsondir"],'a+') as f:
+        with open(ECFG["jsondir"], 'a+') as f:
             f.write(jesm)
             f.close()
 
@@ -378,8 +373,8 @@ def verbosemode(MODUL, DATA, REQUEST, ADATA):
     logme(MODUL, "Target Port     : %s" % DATA["tport"], ("VERBOSE"), ECFG)
     logme(MODUL, "Target Protocol : %s" % DATA["tprot"], ("VERBOSE"), ECFG)
 
-    for key,value in list(ADATA.items()):
-        logme(MODUL,"%s       : %s" %(key,value) , ("VERBOSE"), ECFG)
+    for key, value in list(ADATA.items()):
+        logme(MODUL, "%s       : %s" % (key, value), ("VERBOSE"), ECFG)
 
     logme(MODUL, "", ("VERBOSE"), ECFG)
 
@@ -388,13 +383,13 @@ def verbosemode(MODUL, DATA, REQUEST, ADATA):
 
 def glastopfv3():
 
-    MODUL  = "GLASTOPFV3"
-    logme(MODUL,"Starting Glastopf V3.x Modul.",("P1"),ECFG)
+    MODUL = "GLASTOPFV3"
+    logme(MODUL, "Starting Glastopf V3.x Modul.", ("P1"), ECFG)
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("glastopfv3","nodeid","sqlitedb","malwaredir")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
+    ITEMS = ("glastopfv3", "nodeid", "sqlitedb", "malwaredir")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
     HONEYPOT["ip"] = externalIP
 
@@ -409,12 +404,12 @@ def glastopfv3():
     """ is sqlitedb exist ? """
 
     if os.path.isfile(HONEYPOT["sqlitedb"]) is False:
-        logme(MODUL,"[INFO] Missing sqlitedb file " + HONEYPOT["sqlitedb"] + ". Skipping !",("P3","LOG"),ECFG)
+        logme(MODUL, "[INFO] Missing sqlitedb file " + HONEYPOT["sqlitedb"] + ". Skipping !", ("P3", "LOG"), ECFG)
         return
 
     """ open database """
 
-    con = sqlite3.connect(HONEYPOT["sqlitedb"],30)
+    con = sqlite3.connect(HONEYPOT["sqlitedb"], 30)
     con.row_factory = sqlite3.Row
     c = con.cursor()
 
@@ -422,104 +417,98 @@ def glastopfv3():
 
     try:
         c.execute("SELECT max(id) from events")
-    except:
-        logme(MODUL,"[INFO] Sqlitedb %s is corrupt or does not contain events. Skipping ! " % HONEYPOT["sqlitedb"] ,("P3","LOG"),ECFG)
+    except sqlite3.DatabaseError:
+        logme(MODUL, "[INFO] Sqlitedb %s is corrupt or does not contain events. Skipping ! " % HONEYPOT["sqlitedb"], ("P3", "LOG"), ECFG)
         return
 
     maxid = c.fetchone()["max(id)"]
 
     if maxid is None:
-        logme(MODUL,"[INFO] No entry's in Glastopf Database. Skip !",("P2","LOG"),ECFG)
+        logme(MODUL, "[INFO] No entry's in Glastopf Database. Skip !", ("P2", "LOG"), ECFG)
         return
 
-    imin, imax = calcminmax(MODUL,int(countme(MODUL,'sqliteid',-1,ECFG)),int(maxid),ECFG)
+    imin, imax = calcminmax(MODUL, int(countme(MODUL, 'sqliteid', -1, ECFG)), int(maxid), ECFG)
 
     """ read alerts from database """
 
-    c.execute("SELECT * from events where id > ? and id <= ?;",(imin,imax))
+    c.execute("SELECT * from events where id > ? and id <= ?;", (imin, imax))
     rows = c.fetchall()
 
     """ counter inits """
 
-    x = 0 ; y = 1
+    x = 0
+    y = 1
 
-    esm = ewsauth(ECFG["username"],ECFG["token"])
+    esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
     for row in rows:
 
-        x,y = viewcounter(MODUL,x,y)
+        x, y = viewcounter(MODUL, x, y)
 
         """ filter empty requests and nagios checks """
 
-        if  row["request_url"] == os.sep or row["request_url"] == "/index.do?hash=DEADBEEF&activate=1":
-            countme(MODUL,'sqliteid',row["id"],ECFG)
+        if row["request_url"] == os.sep or row["request_url"] == "/index.do?hash=DEADBEEF&activate=1":
+            countme(MODUL, 'sqliteid', row["id"], ECFG)
             continue
 
         """ Prepair and collect Alert Data """
 
-        DATA = {
-                    "aid"       : HONEYPOT["nodeid"],
-                    "timestamp" : row["time"],
-                    "sadr"      : re.sub(":.*$","",row["source"]),
-                    "sipv"      : "ipv" + ip4or6(re.sub(":.*$","",row["source"])),
-                    "sprot"     : "tcp",
-                    "sport"     : "",
-                    "tipv"      : "ipv" + ip4or6(HONEYPOT["ip"]),
-                    "tadr"      : HONEYPOT["ip"],
-                    "tprot"     : "tcp",
-                    "tport"     : "80",
-                  }
+        DATA = {"aid": HONEYPOT["nodeid"],
+                "timestamp": row["time"],
+                "sadr": re.sub(":.*$", "", row["source"]),
+                "sipv": "ipv" + ip4or6(re.sub(":.*$", "", row["source"])),
+                "sprot": "tcp",
+                "sport": "",
+                "tipv": "ipv" + ip4or6(HONEYPOT["ip"]),
+                "tadr": HONEYPOT["ip"],
+                "tprot": "tcp",
+                "tport": "80"}
 
-        REQUEST = {
-                    "description" : "WebHoneypot : Glastopf v3.1",
-                    "url"         : urllib.parse.quote(row["request_url"].encode('ascii', 'ignore'))
-                  }
+        REQUEST = {"description": "WebHoneypot : Glastopf v3.1",
+                   "url": parse.quote(row["request_url"].encode('ascii', 'ignore'))}
 
-        ADATA = {
-                    "sqliteid"    : row ["id"],
-                    "hostname": ECFG["hostname"],
-                    "externalIP": externalIP,
-                    "internalIP": internalIP
+        ADATA = {"sqliteid": row["id"],
+                 "hostname": ECFG["hostname"],
+                 "externalIP": externalIP,
+                 "internalIP": internalIP}
 
-                }
-
-        if "request_raw" in  list(row.keys()) and len(row["request_raw"]) > 0:
+        if "request_raw" in list(row.keys()) and len(row["request_raw"]) > 0:
              REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore')).decode()
 
-        if "filename" in  list(row.keys()) and row["filename"] != None and ECFG["send_malware"] == True:
-            error,malwarefile = malware(HONEYPOT["malwaredir"],row["filename"],ECFG["del_malware_after_send"], False)
+        if "filename" in list(row.keys()) and row["filename"] != None and ECFG["send_malware"] is True:
+            error, malwarefile = malware(HONEYPOT["malwaredir"], row["filename"], ECFG["del_malware_after_send"], False)
             if error == 0:
                 REQUEST["binary"] = malwarefile.decode('utf-8')
             else:
-                logme(MODUL,"Mission Malwarefile %s" % row["filename"] ,("P1","LOG"),ECFG)
+                logme(MODUL, "Mission Malwarefile %s" % row["filename"], ("P1", "LOG"), ECFG)
 
         """ Collect additional Data """
 
-        if "request_method" in  list(row.keys()):
+        if "request_method" in list(row.keys()):
             ADATA["httpmethod"] = row["request_method"]
 
-        if "request_raw" in  list(row.keys()):
-            m = re.search( r'Host: (\b.+\b)', row["request_raw"] , re.M)
+        if "request_raw" in list(row.keys()):
+            m = re.search(r'Host: (\b.+\b)', row["request_raw"], re.M)
             if m:
                 ADATA["host"] = str(m.group(1))
 
-        if "request_header" in  list(row.keys()):
+        if "request_header" in list(row.keys()):
             if 'Host' in json.loads(row["request_header"]):
                 ADATA["host"] = str(json.loads(row["request_header"])["Host"])
 
-        if "request_body" in  list(row.keys()):
+        if "request_body" in list(row.keys()):
             if len(row["request_body"]) > 0:
                 ADATA["requestbody"] = row["request_body"]
 
-        esm = buildews(esm,DATA,REQUEST,ADATA)
-        jesm = buildjson(jesm,DATA,REQUEST,ADATA)
+        esm = buildews(esm, DATA, REQUEST, ADATA)
+        jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-        countme(MODUL,'sqliteid',row["id"],ECFG)
-        countme(MODUL,'daycounter', -2,ECFG)
+        countme(MODUL, 'sqliteid', row["id"], ECFG)
+        countme(MODUL, 'daycounter', -2, ECFG)
 
         if ECFG["a.verbose"] is True:
-            verbosemode(MODUL,DATA,REQUEST,ADATA)
+            verbosemode(MODUL, DATA, REQUEST, ADATA)
 
     con.close()
 
@@ -528,25 +517,25 @@ def glastopfv3():
 
     writejson(jesm)
 
-    if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-1),("P2"),ECFG)
+    if y > 1:
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 1), ("P2"), ECFG)
     return
 
 
 def cowrie():
 
-    MODUL  = "COWRIE"
-    logme(MODUL,"Starting Cowrie Modul.",("P1"),ECFG)
+    MODUL = "COWRIE"
+    logme(MODUL, "Starting Cowrie Modul.", ("P1"), ECFG)
 
     """ session related variables """
     lastSubmittedLine, firstOpenedWithoutClose = 0, 0
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("cowrie","nodeid","logfile")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
+    ITEMS = ("cowrie", "nodeid", "logfile")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    HONEYPOT["ip"] = readonecfg(MODUL,"ip", ECFG["cfgfile"])
+    HONEYPOT["ip"] = readonecfg(MODUL, "ip", ECFG["cfgfile"])
 
     if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
         HONEYPOT["ip"] = ECFG["ip"]
@@ -554,35 +543,39 @@ def cowrie():
     """ logfile file exists ? """
 
     if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL,"[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
 
     """ count limit """
 
-    imin = int(countme(MODUL,'firstopenedwithoutclose',-1,ECFG))
-    if imin>0:
-        imin=imin-1
+    imin = int(countme(MODUL, 'firstopenedwithoutclose', -1, ECFG))
+
+    if imin > 0:
+        imin = imin - 1
     firstOpenedWithoutClose = imin
-    lastSubmittedLine=int(countme(MODUL,'lastsubmittedline',-1,ECFG))
+    lastSubmittedLine = int(countme(MODUL, 'lastsubmittedline', -1, ECFG))
 
     if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL,"Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!",("P1"),ECFG)
+        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0 ; x = 0 ; y = 1; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
-    esm = ewsauth(ECFG["username"],ECFG["token"])
+    esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
     """ dict to gather session information """
-    cowriesessions=OrderedDict()
-    sessionstosend=[]
+    cowriesessions = OrderedDict()
+    sessionstosend = []
 
     while True:
         if int(ECFG["sendlimit"]) > 0 and J >= int(ECFG["sendlimit"]):
             break
         I += 1
 
-        line = getline(HONEYPOT["logfile"],(imin +I)).rstrip()
-        currentline=imin + I
+        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
+        currentline = imin + I
 
         if len(line) == 0:
             break
@@ -591,7 +584,7 @@ def cowrie():
             try:
                 content = json.loads(line)
             except ValueError:
-                logme(MODUL,"Invalid json entry found in line "+str(currentline)+", skipping entry.",("P3"),ECFG)
+                logme(MODUL, "Invalid json entry found in line " + str(currentline) + ", skipping entry.", ("P3"), ECFG)
             else:
                 """ if new session is started, store session-related info """
                 if (content['eventid'] == "cowrie.session.connect"):
@@ -599,51 +592,51 @@ def cowrie():
                          create empty session content: structure will be the same as kippo, add dst port and commands
                          | id  | username | password | success | logintimestamp | session | sessionstarttime| sessionendtime | ip | cowrieip | version| src_port|dst_port|dst_ip|commands | successful login
                     """
-                    cowriesessions[content["session"]]=[currentline,'','','','',content["session"],content["timestamp"],'',content["src_ip"],content["sensor"],'',content["src_port"],content["dst_port"],content["dst_ip"],"", False]
+                    cowriesessions[content["session"]] = [currentline, '', '', '', '', content["session"], content["timestamp"], '', content["src_ip"], content["sensor"], '', content["src_port"], content["dst_port"], content["dst_ip"], "", False]
                     firstOpenedWithoutClose = list(cowriesessions.values())[0][0]
 
                 """ store correponding ssh client version """
                 if (content['eventid'] == "cowrie.client.version"):
                     if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][10]=content["version"]
+                        cowriesessions[content["session"]][10] = content["version"]
 
                 """ create successful login """
                 if (content['eventid'] == "cowrie.login.success"):
                     if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][3]="Success"
-                        cowriesessions[content["session"]][1]=content["username"]
-                        cowriesessions[content["session"]][2]=content["password"]
-                        cowriesessions[content["session"]][4]=content["timestamp"]
-                        cowriesessions[content["session"]][15]=True
+                        cowriesessions[content["session"]][3] = "Success"
+                        cowriesessions[content["session"]][1] = content["username"]
+                        cowriesessions[content["session"]][2] = content["password"]
+                        cowriesessions[content["session"]][4] = content["timestamp"]
+                        cowriesessions[content["session"]][15] = True
 
                 """ create failed login """
                 if (content['eventid'] == "cowrie.login.failed"):
                     if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][3]="Fail"
-                        cowriesessions[content["session"]][1]=content["username"]
-                        cowriesessions[content["session"]][2]=content["password"]
-                        cowriesessions[content["session"]][4]=content["timestamp"]
+                        cowriesessions[content["session"]][3] = "Fail"
+                        cowriesessions[content["session"]][1] = content["username"]
+                        cowriesessions[content["session"]][2] = content["password"]
+                        cowriesessions[content["session"]][4] = content["timestamp"]
                         if currentline > lastSubmittedLine:
                             sessionstosend.append(deepcopy(cowriesessions[content["session"]]))
                             lastSubmittedLine = currentline
-                            J+=1
+                            J += 1
 
                 """ store terminal input / commands """
                 if (content['eventid'] == "cowrie.command.input"):
                     if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][14]=cowriesessions[content["session"]][14] + "\n" +content["input"]
-                        cowriesessions[content["session"]][15]=True
+                        cowriesessions[content["session"]][14] = cowriesessions[content["session"]][14] + "\n" + content["input"]
+                        cowriesessions[content["session"]][15] = True
 
                 """ store session close """
                 if (content['eventid'] == "cowrie.session.closed"):
                     if content["session"] in cowriesessions:
-                        if (cowriesessions[content["session"]][5]==content["session"]):
-                            cowriesessions[content["session"]][7]=content["timestamp"]
+                        if (cowriesessions[content["session"]][5] == content["session"]):
+                            cowriesessions[content["session"]][7] == content["timestamp"]
                             if currentline > lastSubmittedLine:
-                                if cowriesessions[content["session"]][15]==True:
+                                if cowriesessions[content["session"]][15] is True:
                                     sessionstosend.append(deepcopy(cowriesessions[content["session"]]))
                                     lastSubmittedLine = currentline
-                                    J+= 1
+                                    J += 1
                                 cowriesessions.pop(content["session"])
                                 if len(cowriesessions) == 0:
                                     firstOpenedWithoutClose = currentline
@@ -651,53 +644,49 @@ def cowrie():
     """ loop through list of sessions to send """
     for key in sessionstosend:
 
-        x,y = viewcounter(MODUL,x,y)
+        x, y = viewcounter(MODUL, x, y)
 
         """ map ssh ports for t-pot """
-        if key[12]==2223:
-            service="Telnet"
-            serviceport="23"
-        elif key[12]==2222:
-            service="SSH"
-            serviceport="22"
-        elif key[12]==23:
-            service="Telnet"
-            serviceport="23"
+        if key[12] == 2223:
+            service = "Telnet"
+            serviceport = "23"
+        elif key[12] == 2222:
+            service = "SSH"
+            serviceport = "22"
+        elif key[12] == 23:
+            service = "Telnet"
+            serviceport = "23"
         else:
-            service="SSH"
-            serviceport="22"
+            service = "SSH"
+            serviceport = "22"
 
-        DATA =    {
-            "aid"       : HONEYPOT["nodeid"],
-            "timestamp" : "%s-%s-%s %s" % (key[4][0:4], key[4][5:7], key[4][8:10], key[4][11:19]),
-            "sadr"      : str(key[8]),
-            "sipv"      : "ipv" + ip4or6(str(key[8])),
-            "sprot"     : "tcp",
-            "sport"     : str(key[11]),
-            "tipv"      : "ipv" + ip4or6(HONEYPOT["ip"]),
-            "tadr"      : str(key[13]),
-            "tprot"     : "tcp",
-            "tport"     : serviceport
-            }
+        DATA = {"aid": HONEYPOT["nodeid"],
+                "timestamp": "%s-%s-%s %s" % (key[4][0:4], key[4][5:7], key[4][8:10], key[4][11:19]),
+                "sadr": str(key[8]),
+                "sipv": "ipv" + ip4or6(str(key[8])),
+                "sprot": "tcp",
+                "sport": str(key[11]),
+                "tipv": "ipv" + ip4or6(HONEYPOT["ip"]),
+                "tadr": str(key[13]),
+                "tprot": "tcp",
+                "tport": serviceport}
 
-        REQUEST = {
-                    "description" : service + " Honeypot Cowrie",
-                  }
+        REQUEST = {"description": service + " Honeypot Cowrie"}
 
         """ Collect additional Data """
         login = str(key[3])
-        if (key[7] !=""):
+        if (key[7] != ""):
             endtime = "%s-%s-%s %s" % (key[7][0:4], key[7][5:7], key[7][8:10], key[7][11:19])
-        else: 
+        else:
             endtime = ""
 
         """ fix unicode in json log """
-        cusername, cpassword, cinput="","",""
+        cusername, cpassword, cinput = "", "", ""
         try:
-            cusername=str(key[1])
+            cusername = str(key[1])
         except UnicodeEncodeError:
-            logme(MODUL, "Unicode in username  "+ key[1]+ " - removing unicode.", ("P3"), ECFG)
-            cusername=key[1].encode('ascii', 'ignore')
+            logme(MODUL, "Unicode in username  " + key[1] + " - removing unicode.", ("P3"), ECFG)
+            cusername = key[1].encode('ascii', 'ignore')
 
         try:
             cpassword = str(key[2])
@@ -709,35 +698,32 @@ def cowrie():
             cinput = str(key[14])
         except UnicodeEncodeError:
             logme(MODUL, "Unicode in input " + key[14] + " - removing unicode.", ("P3"), ECFG)
-            cinput=str(key[14]).encode('ascii', 'ignore')
+            cinput = str(key[14]).encode('ascii', 'ignore')
 
-        ADATA = {
-                 "sessionid"   : str(key[5]),
-                 "starttime"   : "%s-%s-%s %s" % (key[6][0:4], key[6][5:7], key[6][8:10], key[6][11:19]),
-                 "endtime"     : endtime,
-                 "version"     : str(key[10]),
-                 "login"       : login,
-                 "username"    : cusername,
-                 "password"    : cpassword,
-                 "input"       : cinput,
+        ADATA = {"sessionid": str(key[5]),
+                 "starttime": "%s-%s-%s %s" % (key[6][0:4], key[6][5:7], key[6][8:10], key[6][11:19]),
+                 "endtime": endtime,
+                 "version": str(key[10]),
+                 "login": login,
+                 "username": cusername,
+                 "password": cpassword,
+                 "input": cinput,
                  "hostname": ECFG["hostname"],
                  "externalIP": externalIP,
-                 "internalIP": internalIP
-                }
+                 "internalIP": internalIP}
 
         """ generate template and send """
 
-        esm = buildews(esm,DATA,REQUEST,ADATA)
-        jesm = buildjson(jesm,DATA,REQUEST,ADATA)
+        esm = buildews(esm, DATA, REQUEST, ADATA)
+        jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-        countme(MODUL,'daycounter', -2,ECFG)
+        countme(MODUL, 'daycounter', -2, ECFG)
 
-        countme(MODUL,'firstopenedwithoutclose', firstOpenedWithoutClose,ECFG)
-        countme(MODUL,'lastsubmittedline', lastSubmittedLine,ECFG)
+        countme(MODUL, 'firstopenedwithoutclose', firstOpenedWithoutClose, ECFG)
+        countme(MODUL, 'lastsubmittedline', lastSubmittedLine, ECFG)
 
         if ECFG["a.verbose"] is True:
-            verbosemode(MODUL,DATA,REQUEST,ADATA)
-
+            verbosemode(MODUL, DATA, REQUEST, ADATA)
 
     """ Cleaning linecache """
     clearcache()
@@ -747,34 +733,34 @@ def cowrie():
 
     writejson(jesm)
 
-    if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-1),("P2"),ECFG)
+    if y > 1:
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 1), ("P2"), ECFG)
     return
 
 
 def dionaea():
-    MODUL  = "DIONAEA"
-    logme(MODUL,"Starting Dionaea Modul.",("P1"),ECFG)
+    MODUL = "DIONAEA"
+    logme(MODUL, "Starting Dionaea Modul.", ("P1"), ECFG)
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("dionaea","nodeid","sqlitedb","malwaredir")
-    HONEYPOT = readcfg(MODUL,ITEMS,ECFG["cfgfile"])
+    ITEMS = ("dionaea", "nodeid", "sqlitedb", "malwaredir")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
     """ Malwaredir exist """
 
     if os.path.isdir(HONEYPOT["malwaredir"]) is False:
-        logme(MODUL,"[ERROR] Missing Malware Dir " + HONEYPOT["malwaredir"] + ". Abort !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing Malware Dir " + HONEYPOT["malwaredir"] + ". Abort !", ("P3", "LOG"), ECFG)
 
     """ is sqlitedb exist ? """
 
     if os.path.isfile(HONEYPOT["sqlitedb"]) is False:
-        logme(MODUL,"[ERROR] Missing sqlitedb file " + HONEYPOT["sqlitedb"] + ". Abort !",("P3","LOG"),ECFG)
+        logme(MODUL, "[ERROR] Missing sqlitedb file " + HONEYPOT["sqlitedb"] + ". Abort !", ("P3", "LOG"), ECFG)
         return
 
     """ open database """
 
-    con = sqlite3.connect(HONEYPOT["sqlitedb"],30)
+    con = sqlite3.connect(HONEYPOT["sqlitedb"], 30)
     con.row_factory = sqlite3.Row
     c = con.cursor()
 
@@ -782,7 +768,7 @@ def dionaea():
 
     try:
         c.execute("SELECT max(connection) from connections;")
-    except:
+    except sqlite3.DatabaseError:
         logme(MODUL, "[INFO] Sqlitedb %s is corrupt or does not contain events. Skipping ! " % HONEYPOT["sqlitedb"],
               ("P3", "LOG"), ECFG)
         return
@@ -790,36 +776,37 @@ def dionaea():
     maxid = c.fetchone()["max(connection)"]
 
     if maxid is None:
-        logme(MODUL,"[INFO] No entry's in Dionaea Database. Skip !",("P2","LOG"),ECFG)
+        logme(MODUL, "[INFO] No entry's in Dionaea Database. Skip !", ("P2", "LOG"), ECFG)
         return
 
-    imin, imax = calcminmax(MODUL,int(countme(MODUL,'sqliteid',-1,ECFG)),int(maxid),ECFG)
+    imin, imax = calcminmax(MODUL, int(countme(MODUL, 'sqliteid', -1, ECFG)), int(maxid), ECFG)
 
     """ read alerts from database """
 
-    c.execute("SELECT * from connections where connection > ? and connection <= ?;",(imin,imax,))
+    c.execute("SELECT * from connections where connection > ? and connection <= ?;", (imin, imax,))
     rows = c.fetchall()
 
     """ counter inits """
 
-    x = 0 ; y = 1
+    x = 0
+    y = 1
 
-    esm = ewsauth(ECFG["username"],ECFG["token"])
+    esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
     for row in rows:
 
-        x,y = viewcounter(MODUL,x,y)
+        x, y = viewcounter(MODUL, x, y)
 
         """ filter empty remote_host """
 
         if row["remote_host"] == "":
-            countme(MODUL,'sqliteid',row["connection"],ECFG)
+            countme(MODUL, 'sqliteid', row["connection"], ECFG)
             continue
 
         """ fix docker problems with dionaea IPs """
         if '::ffff:' in row["remote_host"]:
-            remoteHost= row["remote_host"].split('::ffff:')[1]
+            remoteHost = row["remote_host"].split('::ffff:')[1]
         else:
             remoteHost = row["remote_host"]
 
@@ -830,39 +817,32 @@ def dionaea():
 
         """ prepare and collect Alert Data """
 
-        DATA =   {
-                    "aid"       : HONEYPOT["nodeid"],
-                    "timestamp" : datetime.utcfromtimestamp(int(row["connection_timestamp"])).strftime('%Y-%m-%d %H:%M:%S'),
-                    "sadr"      : str(remoteHost),
-                    "sipv"      : "ipv" + ip4or6(str(remoteHost)),
-                    "sprot"     : str(row["connection_transport"]),
-                    "sport"     : str(row["remote_port"]),
-                    "tipv"      : "ipv" + ip4or6(str(localHost)),
-                    "tadr"      : str(localHost),
-                    "tprot"     : str(row["connection_transport"]),
-                    "tport"     : str(row["local_port"]),
-                  }
+        DATA = {"aid": HONEYPOT["nodeid"],
+                "timestamp": datetime.utcfromtimestamp(int(row["connection_timestamp"])).strftime('%Y-%m-%d %H:%M:%S'),
+                "sadr": str(remoteHost),
+                "sipv": "ipv" + ip4or6(str(remoteHost)),
+                "sprot": str(row["connection_transport"]),
+                "sport": str(row["remote_port"]),
+                "tipv": "ipv" + ip4or6(str(localHost)),
+                "tadr": str(localHost),
+                "tprot": str(row["connection_transport"]),
+                "tport": str(row["local_port"])}
 
-        REQUEST = {
-                    "description" : "Network Honeyport Dionaea v0.1.0",
-                  }
+        REQUEST = {"description": "Network Honeyport Dionaea v0.1.0"}
 
         """ Collect additional Data """
 
-        ADATA = {
-                 "sqliteid"    : str(row["connection"]),
+        ADATA = {"sqliteid": str(row["connection"]),
                  "hostname": ECFG["hostname"],
                  "externalIP": externalIP,
-                 "internalIP": internalIP
-
-        }
+                 "internalIP": internalIP}
 
         """ Check for malware bin's """
 
-        c.execute("SELECT download_md5_hash from downloads where connection = ?;",(str(row["connection"]),))
+        c.execute("SELECT download_md5_hash from downloads where connection = ?;", (str(row["connection"]),))
         check = c.fetchone()
-        if check is not None and ECFG["send_malware"] == True:
-            error,malwarefile = malware(HONEYPOT["malwaredir"],check[0],ECFG["del_malware_after_send"],check[0])
+        if check is not None and ECFG["send_malware"] is True:
+            error, malwarefile = malware(HONEYPOT["malwaredir"], check[0], ECFG["del_malware_after_send"], check[0])
             if error == 0:
                 REQUEST["binary"] = malwarefile.decode('utf-8')
             else:
@@ -872,14 +852,14 @@ def dionaea():
 
         """ generate template and send """
 
-        esm = buildews(esm,DATA,REQUEST,ADATA)
-        jesm = buildjson(jesm,DATA,REQUEST,ADATA)
+        esm = buildews(esm, DATA, REQUEST, ADATA)
+        jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-        countme(MODUL,'sqliteid',row["connection"],ECFG)
-        countme(MODUL,'daycounter', -2,ECFG)
+        countme(MODUL, 'sqliteid', row["connection"], ECFG)
+        countme(MODUL, 'daycounter', -2, ECFG)
 
         if ECFG["a.verbose"] is True:
-            verbosemode(MODUL,DATA,REQUEST,ADATA)
+            verbosemode(MODUL, DATA, REQUEST, ADATA)
 
     con.close()
 
@@ -888,19 +868,19 @@ def dionaea():
 
     writejson(jesm)
 
-    if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x+y-1),("P2"),ECFG)
+    if y > 1:
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 1), ("P2"), ECFG)
     return
 
 
 def honeytrap():
 
-    MODUL  = "HONEYTRAP"
-    logme(MODUL ,"Starting Honeytrap Modul." ,("P1") ,ECFG)
+    MODUL = "HONEYTRAP"
+    logme(MODUL, "Starting Honeytrap Modul.", ("P1"), ECFG)
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("honeytrap", "nodeid", "attackerfile", "payloaddir", "newversion")
+    ITEMS = ("honeytrap", "nodeid", "attackerfile", "payloaddir", "newversion")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
     """ Attacking file exists """
@@ -924,9 +904,9 @@ def honeytrap():
         logme(MODUL, "Calculate MD5sum for Payload Files", ("P2"), ECFG)
 
         for i in os.listdir(HONEYPOT["payloaddir"]):
-            if not "_md5_" in i:
+            if "_md5_" not in i:
                 filein = HONEYPOT["payloaddir"] + os.sep + i
-                os.rename(filein, filein + "_md5_" +  hashlib.md5(open(filein, 'rb').read()).hexdigest())
+                os.rename(filein, filein + "_md5_" + hashlib.md5(open(filein, 'rb').read()).hexdigest())
 
     """ count limit """
     imin = int(countme(MODUL, 'fileline', -1, ECFG))
@@ -934,7 +914,9 @@ def honeytrap():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0 ; x = 0 ; y = 1
+    I = 0
+    x = 0
+    y = 1
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -956,49 +938,43 @@ def honeytrap():
             line = re.sub(r'  ', r' ', re.sub(r'[\[\]\-\>]', r'', line))
 
             if HONEYPOT["newversion"].lower() == "false":
-                date, time, _, source, dest, _ = line.split(" ",5)
-                protocol = "" ; md5 = ""
+                date, time, _, source, dest, _ = line.split(" ", 5)
+                protocol = ""
+                md5 = ""
             else:
-                date, time, _, protocol, source, dest, md5, _ = line.split(" ",7)
+                date, time, _, protocol, source, dest, md5, _ = line.split(" ", 7)
 
             """  Prepair and collect Alert Data """
 
-            DATA =    {
-                        "aid"       : HONEYPOT["nodeid"],
-                        "timestamp" : "%s-%s-%s %s" % (date[0:4], date[4:6], date[6:8], time[0:8]),
-                        "sadr"      : re.sub(":.*$", "", source),
-                        "sipv"      : "ipv" + ip4or6(re.sub(":.*$", "", source)),
-                        "sprot"     : protocol,
-                        "sport"     : re.sub("^.*:", "", source),
-                        "tipv"      : "ipv" + ip4or6(re.sub(":.*$", "", dest)),
-                        "tadr"      : re.sub(":.*$", "", dest),
-                        "tprot"     : protocol,
-                        "tport"     : re.sub("^.*:", "", dest),
-                      }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s-%s-%s %s" % (date[0:4], date[4:6], date[6:8], time[0:8]),
+                    "sadr": re.sub(":.*$", "", source),
+                    "sipv": "ipv" + ip4or6(re.sub(":.*$", "", source)),
+                    "sprot": protocol,
+                    "sport": re.sub("^.*:", "", source),
+                    "tipv": "ipv" + ip4or6(re.sub(":.*$", "", dest)),
+                    "tadr": re.sub(":.*$", "", dest),
+                    "tprot": protocol,
+                    "tport": re.sub("^.*:", "", dest)}
 
-
-            REQUEST = {
-                        "description" : "NetworkHoneypot Honeytrap v1.1"
-                      }
+            REQUEST = {"description": "NetworkHoneypot Honeytrap v1.1"}
 
             """ Collect additional Data """
 
-            ADATA = {
-                "hostname": ECFG["hostname"],
-                "externalIP": externalIP,
-                "internalIP": internalIP
-            }
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             """ Search for Payload """
-            if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] == True:
-                sfile = "from_port_%s-%s_*_%s-%s-%s_md5_%s" % (re.sub("^.*:","",dest),protocol,date[0:4], date[4:6], date[6:8],md5)
+            if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
+                sfile = "from_port_%s-%s_*_%s-%s-%s_md5_%s" % (re.sub("^.*:", "", dest), protocol, date[0:4], date[4:6], date[6:8], md5)
                 for mfile in os.listdir(HONEYPOT["payloaddir"]):
                     if fnmatch.fnmatch(mfile, sfile):
-                        error ,payloadfile = malware(HONEYPOT["payloaddir"], mfile, False, md5)
+                        error, payloadfile = malware(HONEYPOT["payloaddir"], mfile, False, md5)
                         if error == 0:
                             REQUEST["binary"] = payloadfile.decode('utf-8')
                         else:
-                            logme(MODUL,"Malwarefile : %s" % payloadfile ,("P1", "LOG"), ECFG)
+                            logme(MODUL, "Malwarefile : %s" % payloadfile, ("P1", "LOG"), ECFG)
                         if md5:
                             ADATA["payload_md5"] = md5
 
@@ -1021,19 +997,19 @@ def honeytrap():
 
     writejson(jesm)
 
-    if y  > 1:
+    if y > 1:
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
 def emobility():
 
-    MODUL  = "EMOBILITY"
+    MODUL = "EMOBILITY"
     logme(MODUL, "Starting eMobility Modul.", ("P1"), ECFG)
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("eMobility", "nodeid", "logfile")
+    ITEMS = ("eMobility", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
     """ logfile file exists ? """
@@ -1048,7 +1024,9 @@ def emobility():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0 ; x = 0 ; y = 1
+    I = 0  
+    x = 0 
+    y = 1
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -1069,35 +1047,29 @@ def emobility():
         else:
             """ Prepair and collect Alert Data """
 
-            line = re.sub(r'  ',r' ',re.sub(r'[\[\]\-\>]',r'',line))
+            line = re.sub(r'  ', r' ', re.sub(r'[\[\]\-\>]', r'', line))
 
-            srcipandport, dstipandport, url, dateandtime =  line.split("|",3)
+            srcipandport, dstipandport, url, dateandtime = line.split("|", 3)
 
-            DATA =    {
-                        "aid"       : HONEYPOT["nodeid"],
-                        "timestamp" : "%s-%s-%s %s" % (dateandtime[0:4], dateandtime[4:6], dateandtime[6:8], dateandtime[9:17]),
-                        "sadr"      : "%s.%s.%s.%s" % (srcipandport.split(".")[0], srcipandport.split(".")[1], srcipandport.split(".")[2], srcipandport.split(".")[3]),
-                        "sipv"      : "ipv4",
-                        "sprot"     : "tcp",
-                        "sport"     : srcipandport.split(".")[4],
-                        "tipv"      : "ipv4",
-                        "tadr"      : "%s.%s.%s.%s" % (dstipandport.split(".")[0], dstipandport.split(".")[1], dstipandport.split(".")[2], dstipandport.split(".")[3]),
-                        "tprot"     : "tcp",
-                        "tport"     : dstipandport.split(".")[4],
-                      }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s-%s-%s %s" % (dateandtime[0:4], dateandtime[4:6], dateandtime[6:8], dateandtime[9:17]),
+                    "sadr": "%s.%s.%s.%s" % (srcipandport.split(".")[0], srcipandport.split(".")[1], srcipandport.split(".")[2], srcipandport.split(".")[3]),
+                    "sipv": "ipv4",
+                    "sprot": "tcp",
+                    "sport": srcipandport.split(".")[4],
+                    "tipv": "ipv4",
+                    "tadr": "%s.%s.%s.%s" % (dstipandport.split(".")[0], dstipandport.split(".")[1], dstipandport.split(".")[2], dstipandport.split(".")[3]),
+                    "tprot": "tcp",
+                    "tport": dstipandport.split(".")[4]}
 
-            REQUEST = {
-                        "description" : "eMobility Honeypot",
-                        "url"         : urllib.parse.quote(url.encode('ascii', 'ignore'))
-                      }
+            REQUEST = {"description": "eMobility Honeypot",
+                       "url": parse.quote(url.encode('ascii', 'ignore'))}
 
             """ collect additional Data """
 
-            ADATA =   {
-                "hostname": ECFG["hostname"],
-                "externalIP": externalIP,
-                "internalIP": internalIP
-                      }
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             """ generate template and send """
 
@@ -1118,19 +1090,19 @@ def emobility():
 
     writejson(jesm)
 
-    if y  > 1:
-        logme(MODUL,"%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
+    if y > 1:
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
 def conpot():
 
-    MODUL  = "CONPOT"
+    MODUL = "CONPOT"
     logme(MODUL, "Starting Conpot Modul.", ("P1"), ECFG)
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("conpot", "nodeid", "logfile")
+    ITEMS = ("conpot", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
     """ if multiple logfiles """
@@ -1156,7 +1128,10 @@ def conpot():
         if int(ECFG["sendlimit"]) > 0:
             logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-        I = 0 ; x = 0 ; y = 1 ; J = 0
+        I = 0
+        x = 0
+        y = 1
+        J = 0
 
         esm = ewsauth(ECFG["username"], ECFG["token"])
         jesm = ""
@@ -1180,43 +1155,36 @@ def conpot():
                 try:
                     content = json.loads(line)
 
-                except ValueError as e:
+                except ValueError:
                     logme(MODUL, "Invalid json entry found in line " + str(currentline) + ", skipping entry.", ("P3"), ECFG)
                     countme(MODUL, 'fileline', -2, ECFG)
                     J += 1
 
                 else:
-                    DATA =    {
-                                "aid"       : HONEYPOT["nodeid"],
-                                "timestamp" : "%s-%s-%s %s" % (content['timestamp'][0:4], content['timestamp'][5:7], content['timestamp'][8:10], content['timestamp'][11:19]),
-                                "sadr"      : "%s" % content['src_ip'],
-                                "sipv"      : "ipv4",
-                                "sprot"     : "tcp",
-                                "sport"     : "%d" % content['src_port'],
-                                "tipv"      : "ipv4",
-                                "tadr"      : "%s" % content['dst_ip'],
-                                "tprot"     : "tcp",
-                                "tport"     : "-1",
-                              }
+                    DATA = {"aid": HONEYPOT["nodeid"],
+                            "timestamp": "%s-%s-%s %s" % (content['timestamp'][0:4], content['timestamp'][5:7], content['timestamp'][8:10], content['timestamp'][11:19]),
+                            "sadr": "%s" % content['src_ip'],
+                            "sipv": "ipv4",
+                            "sprot": "tcp",
+                            "sport": "%d" % content['src_port'],
+                            "tipv": "ipv4",
+                            "tadr": "%s" % content['dst_ip'],
+                            "tprot": "tcp",
+                            "tport": "-1"}
 
-                    REQUEST = {
-                                "description" : "Conpot Honeypot",
-                              }
-
+                    REQUEST = {"description": "Conpot Honeypot"}
 
                     """ Collect additional Data """
 
-                    ADATA =   {
-                                "conpot_event_type"    :   "%s" % content['event_type'],
-                                "conpot_data_type"     :   "%s" % content['data_type'],
-                                "conpot_sensor_id"     :   "%s" % content['sensorid'],
-                                "conpot_request"       :   "%s" % content['request'],
-                                "conpot_id"            :   "%s" % content['id'],
-                                "conpot_response"      :   "%s" % content['response'],
-                                "hostname": ECFG["hostname"],
-                                "externalIP": externalIP,
-                                "internalIP": internalIP
-                              }
+                    ADATA = {"conpot_event_type": "%s" % content['event_type'],
+                             "conpot_data_type": "%s" % content['data_type'],
+                             "conpot_sensor_id": "%s" % content['sensorid'],
+                             "conpot_request": "%s" % content['request'],
+                             "conpot_id": "%s" % content['id'],
+                             "conpot_response": "%s" % content['response'],
+                             "hostname": ECFG["hostname"],
+                             "externalIP": externalIP,
+                             "internalIP": internalIP}
 
                     """ generate template and send """
 
@@ -1237,18 +1205,18 @@ def conpot():
 
         writejson(jesm)
 
-        if y  > 1:
+        if y > 1:
             logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
 
 
 def elasticpot():
-    MODUL  = "ELASTICPOT"
+    MODUL = "ELASTICPOT"
     logme(MODUL, "Starting Elasticpot Modul.", ("P1"), ECFG)
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("elasticpot", "nodeid", "logfile")
+    ITEMS = ("elasticpot", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
     """ logfile file exists ? """
@@ -1263,9 +1231,12 @@ def elasticpot():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0 ; x = 0 ; y = 1 ; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
-    esm = ewsauth(ECFG["username"],ECFG["token"])
+    esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
     while True:
@@ -1285,50 +1256,44 @@ def elasticpot():
             """ parse json """
             try:
                 content = json.loads(line)
-            except ValueError as e:
-                logme(MODUL, "Invalid json entry found in line "+str(currentline)+", skipping entry.", ("P3"), ECFG)
+            except ValueError:
+                logme(MODUL, "Invalid json entry found in line " + str(currentline) + ", skipping entry.", ("P3"), ECFG)
                 countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
             else:
                 """ filter empty requests and nagios checks """
 
-                if  content["honeypot"]["query"] == os.sep or content["honeypot"]["query"] == "/index.do?hash=DEADBEEF&activate=1":
+                if content["honeypot"]["query"] == os.sep or content["honeypot"]["query"] == "/index.do?hash=DEADBEEF&activate=1":
                     countme(MODUL, 'fileline', -2, ECFG)
                     continue
                 try:
                     if checkForPublicIP(content["dest_ip"]):
-                        pubIP=content["dest_ip"]
+                        pubIP = content["dest_ip"]
                 except:
                     pubIP = externalIP
 
                 """ Prepair and collect Alert Data """
-                DATA = {
-                            "aid"       : HONEYPOT["nodeid"],
-                            "timestamp" : "%s" % re.sub("T", " ", content["timestamp"]),
-                            "sadr"      : "%s" % content["src_ip"],
-                            "sipv"      : "ipv" + ip4or6(content["src_ip"]),
-                            "sprot"     : "tcp",
-                            "sport"     : "%s" % content["src_port"],
-                            "tipv"      : "ipv" + ip4or6(ECFG["ip"]),
-                            "tadr"      : "%s" % pubIP,
-                            "tprot"     : "tcp",
-                            "tport"     : "%s" % content["dest_port"],
-                        }
+                DATA = {"aid": HONEYPOT["nodeid"],
+                        "timestamp": "%s" % re.sub("T", " ", content["timestamp"]),
+                        "sadr": "%s" % content["src_ip"],
+                        "sipv": "ipv" + ip4or6(content["src_ip"]),
+                        "sprot": "tcp",
+                        "sport": "%s" % content["src_port"],
+                        "tipv": "ipv" + ip4or6(ECFG["ip"]),
+                        "tadr": "%s" % pubIP,
+                        "tprot": "tcp",
+                        "tport": "%s" % content["dest_port"]}
 
-                REQUEST = {
-                            "description" : "ElasticSearch Honeypot : Elasticpot",
-                            "url"         : urllib.parse.quote(content["honeypot"]["query"].encode('ascii', 'ignore')),
-                            "raw"         : content["honeypot"]["raw"]
-                          }
+                REQUEST = {"description": "ElasticSearch Honeypot : Elasticpot",
+                           "url": parse.quote(content["honeypot"]["query"].encode('ascii', 'ignore')),
+                           "raw": content["honeypot"]["raw"]}
 
                 """ Collect additional Data """
 
-                ADATA = {
-                        "postdata"       : "%s" % content["honeypot"]["postdata"],
-                        "hostname": ECFG["hostname"],
-                        "externalIP": externalIP,
-                        "internalIP": internalIP
-                        }
+                ADATA = {"postdata": "%s" % content["honeypot"]["postdata"],
+                         "hostname": ECFG["hostname"],
+                         "externalIP": externalIP,
+                         "internalIP": internalIP}
 
                 """ generate template and send """
                 esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -1348,18 +1313,18 @@ def elasticpot():
 
     writejson(jesm)
 
-    if y  > 1:
+    if y > 1:
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
 
 
 def suricata():
-    MODUL  = "SURICATA"
+    MODUL = "SURICATA"
     logme(MODUL, "Starting Suricata Modul.", ("P1"), ECFG)
 
     """ collect honeypot config dic """
 
-    ITEMS  = ("suricata", "nodeid", "logfile")
+    ITEMS = ("suricata", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
     """ logfile file exists ? """
@@ -1374,9 +1339,12 @@ def suricata():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0 ; x = 0 ; y = 1 ; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
-    esm = ewsauth(ECFG["username"],ECFG["token"])
+    esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
     while True:
@@ -1397,8 +1365,8 @@ def suricata():
             """ parse json """
             try:
                 content = json.loads(line)
-            except ValueError as e:
-                logme(MODUL, "Invalid json entry found in line "+str(currentline)+", skipping entry.", ("P3"), ECFG)
+            except ValueError:
+                logme(MODUL, "Invalid json entry found in line " + str(currentline) + ", skipping entry.", ("P3"), ECFG)
                 countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
             else:
@@ -1406,43 +1374,37 @@ def suricata():
                     if 'cve_id' in content['alert']:
                         """ use t-pots external address if src_ip is rfc1819 / private """
                         if (ipaddress.ip_address(content["dest_ip"]).is_private):
-                            externalip=content["t-pot_ip_ext"]
+                            externalip = content["t-pot_ip_ext"]
                         else:
-                            externalip=content["dest_ip"]
+                            externalip = content["dest_ip"]
 
                         """ Prepare and collect Alert Data """
 
-                        DATA = {
-                                    "aid"       : HONEYPOT["nodeid"],
-                                    "timestamp" : "%s" % re.sub("T", " ", content["timestamp"][:-12]),
-                                    "sadr"      : "%s" % content["src_ip"],
-                                    "sipv"      : "ipv" + ip4or6(content["src_ip"]),
-                                    "sprot"     : content["proto"].lower(),
-                                    "sport"     : "%d" % content["src_port"],
-                                    "tipv"      : "ipv" + ip4or6(externalip),
-                                    "tadr"      : "%s" % externalip,
-                                    "tprot"     : content["proto"].lower(),
-                                    "tport"     : "%d" % content["dest_port"],
-                                }
+                        DATA = {"aid": HONEYPOT["nodeid"],
+                                "timestamp": "%s" % re.sub("T", " ", content["timestamp"][:-12]),
+                                "sadr": "%s" % content["src_ip"],
+                                "sipv": "ipv" + ip4or6(content["src_ip"]),
+                                "sprot": content["proto"].lower(),
+                                "sport": "%d" % content["src_port"],
+                                "tipv": "ipv" + ip4or6(externalip),
+                                "tadr": "%s" % externalip,
+                                "tprot": content["proto"].lower(),
+                                "tport": "%d" % content["dest_port"]}
 
                         if "http" in content:
-                            httpextras = urllib.parse.quote(str(content["http"]).encode('ascii', 'ignore'))
+                            httpextras = parse.quote(str(content["http"]).encode('ascii', 'ignore'))
                         else:
                             httpextras = ""
 
-                        REQUEST = {
-                                    "description" : "Suricata CVE Attack",
-                                    "request" : httpextras
-                                  }
+                        REQUEST = {"description": "Suricata CVE Attack",
+                                   "request": httpextras}
 
                         """ Collect additional Data """
 
-                        ADATA = {
-                                  "cve_id": "%s" % content["alert"]["cve_id"],
-                                  "hostname": ECFG["hostname"],
-                                  "externalIP": externalIP,
-                                  "internalIP": internalIP
-                                }
+                        ADATA = {"cve_id": "%s" % content["alert"]["cve_id"],
+                                 "hostname": ECFG["hostname"],
+                                 "externalIP": externalIP,
+                                 "internalIP": internalIP}
 
                         """ generate template and send """
                         esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -1452,7 +1414,7 @@ def suricata():
                         countme(MODUL, 'daycounter', -2, ECFG)
 
                         if ECFG["a.verbose"] is True:
-                            verbosemode(MODUL,DATA,REQUEST,ADATA)
+                            verbosemode(MODUL, DATA, REQUEST, ADATA)
 
                     else:
                         countme(MODUL, 'fileline', -2, ECFG)
@@ -1469,7 +1431,7 @@ def suricata():
 
     writejson(jesm)
 
-    if y  > 1:
+    if y > 1:
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
 
@@ -1495,7 +1457,10 @@ def rdpy():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0; x = 0; y = 1; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -1531,30 +1496,24 @@ def rdpy():
 
             """ Prepare and collect Alert Data """
 
-            DATA = {
-                     "aid": HONEYPOT["nodeid"],
-                     "timestamp": "%s %s" % (date,time),
-                     "sadr": sourceip,
-                     "sipv": "ipv" + ip4or6(sourceip),
-                     "sprot": "tcp",
-                     "sport": sport,
-                     "tipv": "ipv" + ip4or6(externalIP),
-                     "tadr": externalIP,
-                     "tprot": "tcp",
-                     "tport": "3389"
-            }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s %s" % (date, time),
+                    "sadr": sourceip,
+                    "sipv": "ipv" + ip4or6(sourceip),
+                    "sprot": "tcp",
+                    "sport": sport,
+                    "tipv": "ipv" + ip4or6(externalIP),
+                    "tadr": externalIP,
+                    "tprot": "tcp",
+                    "tport": "3389"}
 
-            REQUEST = {
-                        "description": "RDP Honeypot RDPY"
-                      }
+            REQUEST = {"description": "RDP Honeypot RDPY"}
 
             """ Collect additional Data """
 
-            ADATA = {
-                      "hostname": ECFG["hostname"],
-                      "externalIP": externalIP,
-                      "internalIP": internalIP
-                    }
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             """ generate template and send """
 
@@ -1602,7 +1561,10 @@ def vnclowpot():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0; x = 0; y = 1; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -1621,37 +1583,31 @@ def vnclowpot():
         if len(line) == 0:
             break
         else:
-            date = line[0:10].replace("/","-")
+            date = line[0:10].replace("/", "-")
             time = line[11:19]
             sourceip = line.split(" ")[2].split(":")[0]
             sport = line.split(" ")[2].split(":")[1]
 
             """ Prepare and collect Alert Data """
 
-            DATA = {
-                     "aid": HONEYPOT["nodeid"],
-                     "timestamp": "%s %s" % (date,time),
-                     "sadr": sourceip,
-                     "sipv": "ipv" + ip4or6(sourceip),
-                     "sprot": "tcp",
-                     "sport": sport,
-                     "tipv": "ipv" + ip4or6(externalIP),
-                     "tadr": externalIP,
-                     "tprot": "tcp",
-                     "tport": "5900",
-                   }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s %s" % (date, time),
+                    "sadr": sourceip,
+                    "sipv": "ipv" + ip4or6(sourceip),
+                    "sprot": "tcp",
+                    "sport": sport,
+                    "tipv": "ipv" + ip4or6(externalIP),
+                    "tadr": externalIP,
+                    "tprot": "tcp",
+                    "tport": "5900"}
 
-            REQUEST = {
-                        "description": "vnc Honeypot vnclowpot"
-                      }
+            REQUEST = {"description": "vnc Honeypot vnclowpot"}
 
             """ Collect additional Data """
 
-            ADATA = {
-                      "hostname": ECFG["hostname"],
-                      "externalIP": externalIP,
-                      "internalIP": internalIP
-                    }
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             """ generate template and send """
 
@@ -1699,7 +1655,10 @@ def mailoney():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0; x = 0; y = 1; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -1731,34 +1690,28 @@ def mailoney():
 
             time = datetime.utcfromtimestamp(float(line.split("][")[0].split(".")[0][1:]))
             sourceip = line.split("][")[1].split(":")[0]
-            sport= line.split("][")[1].split(":")[1].split("]")[0]
+            sport = line.split("][")[1].split(":")[1].split("]")[0]
 
             """ Prepare and collect Alert Data """
 
-            DATA = {
-                     "aid": HONEYPOT["nodeid"],
-                     "timestamp": "%s" % (time),
-                     "sadr": sourceip,
-                     "sipv": "ipv" + ip4or6(sourceip),
-                     "sprot": "tcp",
-                     "sport": sport,
-                     "tipv": "ipv" + ip4or6(externalIP),
-                     "tadr": externalIP,
-                     "tprot": "tcp",
-                     "tport": "25",
-                   }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s" % (time),
+                    "sadr": sourceip,
+                    "sipv": "ipv" + ip4or6(sourceip),
+                    "sprot": "tcp",
+                    "sport": sport,
+                    "tipv": "ipv" + ip4or6(externalIP),
+                    "tadr": externalIP,
+                    "tprot": "tcp",
+                    "tport": "25"}
 
-            REQUEST = {
-                        "description": "Mail Honeypot mailoney"
-                      }
+            REQUEST = {"description": "Mail Honeypot mailoney"}
 
             """ Collect additional Data """
 
-            ADATA = {
-                      "hostname": ECFG["hostname"],
-                      "externalIP": externalIP,
-                      "internalIP": internalIP
-                    }
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             """ generate template and send """
 
@@ -1806,7 +1759,10 @@ def heralding():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0; x = 0; y = 1; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -1835,33 +1791,27 @@ def heralding():
 
             """ Prepare and collect Alert Data """
 
-            DATA = {
-                     "aid": HONEYPOT["nodeid"],
-                     "timestamp": "%s" % (time),
-                     "sadr": linecontent[3],
-                     "sipv": "ipv" + ip4or6(linecontent[3]),
-                     "sprot": "tcp",
-                     "sport": linecontent[4],
-                     "tipv": "ipv" + ip4or6(linecontent[5]),
-                     "tadr": linecontent[5],
-                     "tprot": "tcp",
-                     "tport": linecontent[6],
-                   }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s" % (time),
+                    "sadr": linecontent[3],
+                    "sipv": "ipv" + ip4or6(linecontent[3]),
+                    "sprot": "tcp",
+                    "sport": linecontent[4],
+                    "tipv": "ipv" + ip4or6(linecontent[5]),
+                    "tadr": linecontent[5],
+                    "tprot": "tcp",
+                    "tport": linecontent[6]}
 
-            REQUEST = {
-                        "description": "Heralding Honeypot"
-                      }
+            REQUEST = {"description": "Heralding Honeypot"}
 
             """ Collect additional Data """
 
-            ADATA = {
-                      "protocol": linecontent[7],
-                      "username": linecontent[8],
-                      "password": linecontent[9],
-                      "hostname": ECFG["hostname"],
-                      "externalIP": externalIP,
-                      "internalIP": internalIP
-                    }
+            ADATA = {"protocol": linecontent[7],
+                     "username": linecontent[8],
+                     "password": linecontent[9],
+                     "hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             """ generate template and send """
 
@@ -1909,7 +1859,10 @@ def ciscoasa():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0; x = 0; y = 1; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -1946,31 +1899,25 @@ def ciscoasa():
 
             """ Prepare and collect Alert Data """
 
-            DATA = {
-                     "aid": HONEYPOT["nodeid"],
-                     "timestamp": "%s" % (time),
-                     "sadr": linecontent['src_ip'],
-                     "sipv": "ipv" + ip4or6(linecontent['src_ip']),
-                     "sprot": "tcp",
-                     "sport": "0",
-                     "tipv": "ipv" + ip4or6(externalIP),
-                     "tadr": externalIP,
-                     "tprot": "tcp",
-                     "tport": "8443",
-                   }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s" % (time),
+                    "sadr": linecontent['src_ip'],
+                    "sipv": "ipv" + ip4or6(linecontent['src_ip']),
+                    "sprot": "tcp",
+                    "sport": "0",
+                    "tipv": "ipv" + ip4or6(externalIP),
+                    "tadr": externalIP,
+                    "tprot": "tcp",
+                    "tport": "8443"}
 
-            REQUEST = {
-                        "description": "Cisco-ASA Honeypot"
-                      }
+            REQUEST = {"description": "Cisco-ASA Honeypot"}
 
             """ Collect additional Data """
 
-            ADATA = {
-                      "payload": str(linecontent['payload_printable']),
-                      "hostname": ECFG["hostname"],
-                      "externalIP": externalIP,
-                      "internalIP": internalIP
-                    }
+            ADATA = {"payload": str(linecontent['payload_printable']),
+                     "hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             """ generate template and send """
 
@@ -2018,7 +1965,10 @@ def tanner():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0; x = 0; y = 1; J = 0
+    I = 0 
+    x = 0
+    y = 1
+    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -2037,51 +1987,45 @@ def tanner():
         if len(line) == 0:
             break
         else:
-            linecontent=json.loads(line, object_pairs_hook = OrderedDict)
+            linecontent = json.loads(line, object_pairs_hook=OrderedDict)
             time = linecontent['timestamp'].split("T")[0] + " " + linecontent['timestamp'].split("T")[1].split(".")[0]
 
             """ Prepare and collect Alert Data """
 
-            DATA = {
-                     "aid": HONEYPOT["nodeid"],
-                     "timestamp": "%s" % (time),
-                     "sadr": linecontent['peer']['ip'],
-                     "sipv": "ipv" + ip4or6(str(linecontent['peer']['port'])),
-                     "sprot": "tcp",
-                     "sport": str(linecontent['peer']['port']),
-                     "tipv": "ipv" + ip4or6(externalIP),
-                     "tadr": externalIP,
-                     "tprot": "tcp",
-                     "tport": "80",
-                   }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s" % (time),
+                    "sadr": linecontent['peer']['ip'],
+                    "sipv": "ipv" + ip4or6(str(linecontent['peer']['port'])),
+                    "sprot": "tcp",
+                    "sport": str(linecontent['peer']['port']),
+                    "tipv": "ipv" + ip4or6(externalIP),
+                    "tadr": externalIP,
+                    "tprot": "tcp",
+                    "tport": "80"}
 
-            REQUEST = {
-                        "description": "Tanner Honeypot",
-                        "url": urllib.parse.quote(linecontent["path"].encode('ascii', 'ignore'))
-                      }
+            REQUEST = {"description": "Tanner Honeypot",
+                       "url": parse.quote(linecontent["path"].encode('ascii', 'ignore'))}
 
             """ Collect additional Data """
 
-            ADATA = {
-                      "hostname": ECFG["hostname"],
-                      "externalIP": externalIP,
-                      "internalIP": internalIP
-                    }
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             reassembledReq = ""
 
             if 'host' in linecontent['headers']:
-                httpversion="HTTP/1.1"
+                httpversion = "HTTP/1.1"
             else:
-                httpversion="HTTP/1.0"
+                httpversion = "HTTP/1.0"
 
             if len(linecontent['headers']) > 0:
-                reassembledReq="{} {} {}\n".format(linecontent['method'], linecontent['path'], httpversion)
+                reassembledReq = "{} {} {}\n".format(linecontent['method'], linecontent['path'], httpversion)
 
                 for i in linecontent['headers']:
                     headercontent = ""
                     if linecontent['headers'][i]:
-                        headercontent=linecontent['headers'][i]
+                        headercontent = linecontent['headers'][i]
                     reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
 
             REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore')).decode()
@@ -2129,7 +2073,10 @@ def glutton():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0 ; x = 0 ; y = 1 ; J = 0
+    I = 0
+    x = 0
+    y = 1
+    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -2148,7 +2095,7 @@ def glutton():
         if len(line) == 0:
             break
         else:
-            linecontent=json.loads(line, object_pairs_hook = OrderedDict)
+            linecontent = json.loads(line, object_pairs_hook=OrderedDict)
             dtime = (datetime.fromtimestamp(float(linecontent['ts']))).strftime('%Y-%m-%d %H:%M:%S')
 
             """ skip non attack info """
@@ -2162,30 +2109,24 @@ def glutton():
                 continue
 
             """ Prepare and collect Alert Data """
-            DATA = {
-                     "aid": HONEYPOT["nodeid"],
-                     "timestamp": "%s" % (dtime),
-                     "sadr": linecontent['src_ip'],
-                     "sipv": "ipv" + ip4or6(str(linecontent['src_ip'])),
-                     "sprot": "tcp",
-                     "sport": str(linecontent['src_port']),
-                     "tipv": "ipv" + ip4or6(externalIP),
-                     "tadr": externalIP,
-                     "tprot": "tcp",
-                     "tport": str(linecontent['dest_port']),
-                   }
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": "%s" % (dtime),
+                    "sadr": linecontent['src_ip'],
+                    "sipv": "ipv" + ip4or6(str(linecontent['src_ip'])),
+                    "sprot": "tcp",
+                    "sport": str(linecontent['src_port']),
+                    "tipv": "ipv" + ip4or6(externalIP),
+                    "tadr": externalIP,
+                    "tprot": "tcp",
+                    "tport": str(linecontent['dest_port'])}
 
-            REQUEST = {
-                        "description": "Glutton Honeypot",
-                      }
+            REQUEST = {"description": "Glutton Honeypot"}
 
             """ Collect additional Data """
 
-            ADATA = {
-                      "hostname": ECFG["hostname"],
-                      "externalIP": externalIP,
-                      "internalIP": internalIP
-                    }
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             if "payload_hex" in linecontent:
                 ADATA["binary"] = base64.b64encode(codecs.decode(linecontent['payload_hex'], 'hex')).decode()
@@ -2223,6 +2164,7 @@ def glutton():
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
 
+
 """ --- [ MAIN ] ------------------------------------------------------------------ """
 
 if __name__ == "__main__":
@@ -2230,7 +2172,7 @@ if __name__ == "__main__":
     MODUL = "MAIN"
 
     global ECFG
-    ECFG = ecfg(name,version)
+    ECFG = ecfg(name, version)
     init()
 
     lock = locksocket(name)
@@ -2239,7 +2181,7 @@ if __name__ == "__main__":
         logme(MODUL, "Create lock socket successfull.", ("P1"), ECFG)
     else:
         logme(MODUL, "Another Instance is running !", ("P1"), ECFG)
-        logme(MODUL, "EWSrun finish.",("P1","EXIT"), ECFG)
+        logme(MODUL, "EWSrun finish.", ("P1", "EXIT"), ECFG)
 
     while True:
 
@@ -2252,24 +2194,24 @@ if __name__ == "__main__":
         if ECFG["a.ewsonly"] is False:
             sender()
 
-        for i in ("glastopfv3", "dionaea", "honeytrap", "emobility", "conpot", "cowrie","elasticpot",
+        for i in ("glastopfv3", "dionaea", "honeytrap", "emobility", "conpot", "cowrie", "elasticpot",
                   "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton"):
 
             if ECFG["a.modul"]:
                 if ECFG["a.modul"] == i:
                     if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
-                        eval(i+'()')
+                        eval(i + '()')
                         break
                 else:
                     continue
 
             if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
-                eval(i+'()')
+                eval(i + '()')
 
         if int(ECFG["a.loop"]) == 0:
             logme(MODUL, "EWSrun finish.", ("P1"), ECFG)
             break
         else:
-            logme(MODUL, "Sleeping for %s seconds ...." % ECFG["a.loop"] , ("P1"), ECFG)
+            logme(MODUL, "Sleeping for %s seconds ...." % ECFG["a.loop"], ("P1"), ECFG)
             time.sleep(int(ECFG["a.loop"]))
 
