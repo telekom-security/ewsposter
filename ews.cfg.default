@@ -111,3 +111,18 @@ logfile = /opt/tanner/log/tanner.log
 glutton = false
 nodeid = <your unique analyzer id>
 logfile = /opt/glutton/log/tanner.log
+
+[HONEYSAP]
+honeysap = false
+nodeid = <your unique analyzer id>
+logfile = /opt/honeysap/log/honeysap-external.log
+
+[ADBHONEY]
+adbhoney = false
+nodeid = <your unique analyzer id>
+logfile = /opt/adbhoney/log/adbhoney.json
+
+[FATT]
+fatt = false
+nodeid = <your unique analyzer id>
+logfile = /opt/fatt/log/fatt.log
