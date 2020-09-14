@@ -2324,15 +2324,101 @@ def adbhoney():
 
             REQUEST = {"description": "ADBHoney Honeypot"}
 
-            if linecontent['request'] != "":
-                REQUEST['request'] = linecontent['request']
-
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": externalIP,
                      "internalIP": internalIP}
 
+
+            esm = buildews(esm, DATA, REQUEST, ADATA)
+            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
+
+            countme(MODUL, 'fileline', -2, ECFG)
+            countme(MODUL, 'daycounter', -2, ECFG)
+
+            if ECFG["a.verbose"] is True:
+                verbosemode(MODUL, DATA, REQUEST, ADATA)
+
+    """ Cleaning linecache """
+    clearcache()
+
+    if int(esm.xpath('count(//Alert)')) > 0:
+        sendews(esm)
+
+    writejson(jesm)
+
+    if y > 1:
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
+    return
+
+
+def fatt():
+
+    MODUL = "FATT"
+    logme(MODUL, "Starting FATT Honeypot Modul.", ("P1"), ECFG)
+
+    """ collect honeypot config dic """
+
+    ITEMS = ("fatt", "nodeid", "logfile")
+    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
+
+    """ logfile file exists ? """
+
+    if os.path.isfile(HONEYPOT["logfile"]) is False:
+        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
+
+    """ count limit """
+
+    imin = int(countme(MODUL, 'fileline', -1, ECFG))
+
+    if int(ECFG["sendlimit"]) > 0:
+        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
+
+    I = 0
+    x = 0
+    y = 1
+    J = 0
+
+    esm = ewsauth(ECFG["username"], ECFG["token"])
+    jesm = ""
+
+    while True:
+
+        x, y = viewcounter(MODUL, x, y)
+
+        I += 1
+
+        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
+            break
+
+        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
+
+        if len(line) == 0:
+            break
+        else:
+            linecontent = json.loads(line, object_pairs_hook=OrderedDict)
+
+            """ Prepare and collect Alert Data """
+
+            DATA = {"aid": HONEYPOT["nodeid"],
+                    "timestamp": linecontent['timestamp'][0:10] + " " + linecontent['timestamp'][11:19],
+                    "sadr": linecontent['sourceIp'],
+                    "sipv": "ipv" + ip4or6(linecontent['sourceIp']),
+                    "sprot": "tcp",
+                    "sport": str(linecontent['sourcePort']),
+                    "tipv": "ipv" + ip4or6(externalIP),
+                    "tadr": externalIP,
+                    "tprot": "tcp",
+                    "tport": str(linecontent['destinationPort'])}
+
+            REQUEST = {"description": "FATT Honeypot"}
+
+            """ Collect additional Data """
+
+            ADATA = {"hostname": ECFG["hostname"],
+                     "externalIP": externalIP,
+                     "internalIP": internalIP}
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2387,7 +2473,7 @@ if __name__ == "__main__":
 
         for i in ("glastopfv3", "dionaea", "honeytrap", "emobility", "conpot", "cowrie", "elasticpot",
                   "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton",
-                  "honeysap","adbhoney"):
+                  "honeysap","adbhoney", "fatt"):
 
             if ECFG["a.modul"]:
                 if ECFG["a.modul"] == i:
