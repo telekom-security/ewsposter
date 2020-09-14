@@ -22,7 +22,7 @@ def ecfg(name, version):
     parser.add_argument("-l", "--loop", help="Go in endless loop. Set {xx} for seconds to wait for next loop", type=int, default=0, action="store")
     parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
                                                                                           'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
-                                                                                          'ciscoasa', 'tanner', 'glutton', 'honeysap'], action="store")
+                                                                                          'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney'], action="store")
     parser.add_argument("-s", "--silent", help="silent mode without output", action="store_true")
     parser.add_argument("-i", "--ignorecert", help="ignore certificate warnings", action="store_true")
     parser.add_argument("-S", "--sendonly", help="only send unsend alerts", action="store_true")
@@ -102,7 +102,9 @@ def ecfg(name, version):
         'heralding',
         'ciscoasa',
         'tanner',
-        'glutton'
+        'glutton',
+        'honeysap',
+        'adbhoney'
     ]:
         ECFG["a.modul"] = args.modul
     else:
