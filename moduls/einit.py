@@ -14,16 +14,16 @@ def ecfg(name, version):
 
     MODUL = "EINIT"
     ECFG = {}
-    HONEYLIST = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
-                 'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
-                 'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt']
+    ECFG["HONEYLIST"] = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
+                         'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
+                         'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt']
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--configpath", help="Load configuration file from Path")
     parser.add_argument("-v", "--verbose", help="set output verbosity", action="store_true")
     parser.add_argument("-d", "--debug", help="set output debug", action="store_true")
     parser.add_argument("-l", "--loop", help="Go in endless loop. Set {xx} for seconds to wait for next loop", type=int, default=0, action="store")
-    parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=HONEYLIST, action="store")
+    parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=ECFG["HONEYLIST"], action="store")
     parser.add_argument("-s", "--silent", help="silent mode without output", action="store_true")
     parser.add_argument("-i", "--ignorecert", help="ignore certificate warnings", action="store_true")
     parser.add_argument("-S", "--sendonly", help="only send unsend alerts", action="store_true")
@@ -38,7 +38,7 @@ def ecfg(name, version):
     ECFG["a.verbose"] = (True if args.verbose else False)
     ECFG["a.debug"] = (True if args.debug else False)
     ECFG["a.loop"] = (args.loop if args.loop else 0)
-    ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
+    ECFG["a.modul"] = (args.modul if args.modul and args.modul in ECFG["HONEYLIST"] else "")
     ECFG["a.silent"] = (True if args.silent else False)
     ECFG["a.ignorecert"] = (True if args.ignorecert else False)
     ECFG["a.sendonly"] = (True if args.sendonly else False)

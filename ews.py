@@ -2449,20 +2449,18 @@ if __name__ == "__main__":
         if ECFG["a.ewsonly"] is False:
             sender()
 
-        for i in ("glastopfv3", "dionaea", "honeytrap", "emobility", "conpot", "cowrie", "elasticpot",
-                  "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton",
-                  "honeysap","adbhoney", "fatt"):
+        for honeypot in ECFG["HONEYLIST"]:
 
             if ECFG["a.modul"]:
-                if ECFG["a.modul"] == i:
-                    if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
-                        eval(i + '()')
+                if ECFG["a.modul"] == honeypot:
+                    if readonecfg(i.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
+                        eval(honeypot + '()')
                         break
                 else:
                     continue
 
-            if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
-                eval(i + '()')
+            if readonecfg(honeypot.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
+                eval(honeypot + '()')
 
         if int(ECFG["a.loop"]) == 0:
             logme(MODUL, "EWSrun finish.", ("P1"), ECFG)
@@ -2470,4 +2468,3 @@ if __name__ == "__main__":
         else:
             logme(MODUL, "Sleeping for %s seconds ...." % ECFG["a.loop"], ("P1"), ECFG)
             time.sleep(int(ECFG["a.loop"]))
-
