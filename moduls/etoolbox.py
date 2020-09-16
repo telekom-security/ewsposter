@@ -116,7 +116,7 @@ def getOwnExternalIP(ECFG):
         logme("Main", "[ERROR] Environment variable MY_EXTIP contains no IP address", ("P1","Log"), ECFG)
 
     # try ews.ip file
-    ewsip = ECFG["path2"] + os.sep + "ews.ip"
+    ewsip = ECFG["path"] + os.sep + "ews.ip"
 
     if os.path.isfile(ewsip):
         pubipfile = readonecfg("MAIN", "ip", ewsip)

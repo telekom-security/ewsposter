@@ -11,18 +11,19 @@ from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname
 
 
 def ecfg(name, version):
-    MODUL = "EINIT"
 
+    MODUL = "EINIT"
     ECFG = {}
+    HONEYLIST = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
+                 'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
+                 'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt']
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--configpath", help="Load configuration file from Path")
     parser.add_argument("-v", "--verbose", help="set output verbosity", action="store_true")
     parser.add_argument("-d", "--debug", help="set output debug", action="store_true")
     parser.add_argument("-l", "--loop", help="Go in endless loop. Set {xx} for seconds to wait for next loop", type=int, default=0, action="store")
-    parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
-                                                                                          'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
-                                                                                          'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt'], action="store")
+    parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=HONEYLIST, action="store")
     parser.add_argument("-s", "--silent", help="silent mode without output", action="store_true")
     parser.add_argument("-i", "--ignorecert", help="ignore certificate warnings", action="store_true")
     parser.add_argument("-S", "--sendonly", help="only send unsend alerts", action="store_true")
@@ -34,91 +35,24 @@ def ecfg(name, version):
 
     args = parser.parse_args()
 
-    if args.sendlimit:
-        ECFG["sendlimit2"] = args.sendlimit
-    else:
-        ECFG["sendlimit2"] = ""
+    ECFG["a.sendlimit"] = (args.sendlimit if args.sendlimit else "")
+    ECFG["a.loop"] = (args.loop if args.loop else 0)
+    ECFG["a.verbose"] = (True if args.verbose else False)
+    ECFG["a.debug"] = (True if args.debug else False)
+    ECFG["a.ignorecert"] = (True if args.ignorecert else False)
+    ECFG["a.silent"] = (True if args.silent else False)
+    ECFG["a.daycounter"] = (True if args.daycounter else False)
+    ECFG["a.sendonly"] = (True if args.sendonly else False)
+    ECFG["a.ewsonly"] = (True if args.ewsonly else False)
+    ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
+    ECFG["a.path"] = (args.configpath if args.configpath else "")
+    ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
 
-    if args.loop:
-        ECFG["a.loop"] = args.loop
-    else:
-        ECFG["a.loop"] = 0
+    if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
+        logme(MODUL, "ConfigDir %s did not exist. Abort !" % (ECFG["a.path"]), ("P1", "EXIT"), ECFG)
 
-    if args.verbose:
-        ECFG["a.verbose"] = True
-    else:
-        ECFG["a.verbose"] = False
-
-    if args.debug:
-        ECFG["a.debug"] = True
-    else:
-        ECFG["a.debug"] = False
-
-    if args.ignorecert:
-        ECFG["a.ignorecert"] = True
-    else:
-        ECFG["a.ignorecert"] = False
-
-    if args.silent:
-        ECFG["a.silent"] = True
-    else:
-        ECFG["a.silent"] = False
-
-    if args.daycounter:
-        ECFG["a.daycounter"] = True
-    else:
-        ECFG["a.daycounter"] = False
-
-    if args.sendonly:
-        ECFG["a.sendonly"] = True
-    else:
-        ECFG["a.sendonly"] = False
-
-    if args.ewsonly:
-        ECFG["a.ewsonly"] = True
-    else:
-        ECFG["a.ewsonly"] = False
-
-    if args.configpath:
-        ECFG["path2"] = args.configpath
-
-        if os.path.isdir(args.configpath) is not True:
-            logme(MODUL, "ConfigPath %s did not exist. Abort !" % (args.configpath), ("P1", "EXIT"), ECFG)
-    else:
-        ECFG["path2"] = ""
-
-    if args.modul and args.modul in [
-        'glastopfv3',
-        'dionaea',
-        'honeytrap',
-        'emobility',
-        'conpot',
-        'cowrie',
-        'elasticpot',
-        'suricata',
-        'rdpy',
-        'mailoney',
-        'vnclowpot',
-        'heralding',
-        'ciscoasa',
-        'tanner',
-        'glutton',
-        'honeysap',
-        'adbhoney',
-        'fatt'
-    ]:
-        ECFG["a.modul"] = args.modul
-    else:
-        ECFG["a.modul"] = ""
-
-    if args.jsonpath:
-        ECFG["a.jsondir"] = args.jsonpath
-
-        if os.path.isdir(args.jsonpath) is not True:
-            logme(MODUL, "JsonPath %s did not exist. Abort !" % (args.jsonpath), ("P1", "EXIT"), ECFG)
-
-    else:
-        ECFG["a.jsondir"] = ""
+    if ECFG["a.jsondir"] != "" and os.path.isdir(ECFG["a.jsondir"]) is False:
+        logme(MODUL, "JsonDir %s did not exist. Abort !" % (ECFG["a.jsondir"]), ("P1", "EXIT"), ECFG)
 
     """ say hello """
 
@@ -126,21 +60,20 @@ def ecfg(name, version):
 
     """ read EWSPoster Main Path """
 
-    ECFG["path"] = os.path.dirname(
-        os.path.abspath(__file__)).replace("/moduls", "")
+    ECFG["path"] = os.path.dirname(os.path.abspath(__file__)).replace("/moduls", "")
 
-    if ECFG["path2"] == "":
-        ECFG["path2"] = ECFG["path"]
+    if ECFG["a.path"] == "":
+        ECFG["a.path"] = ECFG["path"]
 
-    if os.path.isfile(ECFG["path2"] + os.sep + "ews.cfg") is False:
-        logme(MODUL, "Missing EWS Config %s. Abort !" % (ECFG["path2"] + os.sep + "ews.cfg"), ("P1", "EXIT"), ECFG)
+    if os.path.isfile(ECFG["a.path"] + os.sep + "ews.cfg") is False:
+        logme(MODUL, "Missing EWS Config %s. Abort !" % (ECFG["a.path"] + os.sep + "ews.cfg"), ("P1", "EXIT"), ECFG)
     else:
-        ECFG["cfgfile"] = ECFG["path2"] + os.sep + "ews.cfg"
+        ECFG["cfgfile"] = ECFG["a.path"] + os.sep + "ews.cfg"
 
     """ Create IDX File if not exist """
 
-    if os.path.isfile(ECFG["path"] + os.sep + "ews.idx") is False:
-        os.open(ECFG["path"] + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
+    if os.path.isfile(ECFG["a.path"] + os.sep + "ews.idx") is False:
+        os.open(ECFG["a.path"] + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
         logme(MODUL, "Create ews.idx counterfile", ("P1"), ECFG)
 
     """ Read Main Config Parameter """
@@ -164,8 +97,8 @@ def ecfg(name, version):
 
     """ sendlimit expect """
 
-    if ECFG["sendlimit2"] != "":
-        MCFG["sendlimit"] = ECFG["sendlimit2"]
+    if ECFG["a.sendlimit"] != "":
+        MCFG["sendlimit"] = ECFG["a.sendlimit"]
 
     if int(MCFG["sendlimit"]) > 500:
         logme(MODUL, "Error Sendlimit " + str(MCFG["sendlimit"]) + " to high. Max 500 ! ", ("P1", "EXIT"), ECFG)
@@ -244,7 +177,7 @@ def ecfg(name, version):
     else:
         HCFG["hpfeed"] = False
 
-    # hpfeeds format
+    """ hpfeeds format """
 
     EWSHPFFORMAT = readonecfg("HPFEED", "hpfformat", ECFG["cfgfile"])
 
@@ -290,16 +223,12 @@ def ecfg(name, version):
 
 def locksocket(name):
 
-    # create lock socket
+    """ create lock socket """
 
     global lock_socket
 
     lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-    """
-     debug dev macos
-     return True
-     end debug dev macos
-    """
+
     try:
         lock_socket.bind('\0' + name)
         return True
