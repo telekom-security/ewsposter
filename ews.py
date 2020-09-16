@@ -13,7 +13,7 @@ from copy import deepcopy
 import glob
 import ast
 from moduls.exml import ewsauth, ewsalert
-from moduls.einit import locksocket, ecfg, daycounterreset
+from moduls.einit import locksocket, ecfg
 from moduls.elog import logme
 from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, getOwnExternalIP, getOwnInternalIP, resolveHost
 import sqlite3
@@ -505,7 +505,6 @@ def glastopfv3():
         jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
         countme(MODUL, 'sqliteid', row["id"], ECFG)
-        countme(MODUL, 'daycounter', -2, ECFG)
 
         if ECFG["a.verbose"] is True:
             verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -717,8 +716,6 @@ def cowrie():
         esm = buildews(esm, DATA, REQUEST, ADATA)
         jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
-        countme(MODUL, 'daycounter', -2, ECFG)
-
         countme(MODUL, 'firstopenedwithoutclose', firstOpenedWithoutClose, ECFG)
         countme(MODUL, 'lastsubmittedline', lastSubmittedLine, ECFG)
 
@@ -856,7 +853,6 @@ def dionaea():
         jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
         countme(MODUL, 'sqliteid', row["connection"], ECFG)
-        countme(MODUL, 'daycounter', -2, ECFG)
 
         if ECFG["a.verbose"] is True:
             verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -984,7 +980,6 @@ def honeytrap():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1077,7 +1072,6 @@ def emobility():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1192,7 +1186,6 @@ def conpot():
                     jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
                     countme(MODUL, 'fileline', -2, ECFG)
-                    countme(MODUL, 'daycounter', -2, ECFG)
 
                     if ECFG["a.verbose"] is True:
                         verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1300,7 +1293,6 @@ def elasticpot():
                 jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
                 countme(MODUL, 'fileline', -2, ECFG)
-                countme(MODUL, 'daycounter', -2, ECFG)
 
                 if ECFG["a.verbose"] is True:
                     verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1411,7 +1403,6 @@ def suricata():
                         jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
                         countme(MODUL, 'fileline', -2, ECFG)
-                        countme(MODUL, 'daycounter', -2, ECFG)
 
                         if ECFG["a.verbose"] is True:
                             verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1521,7 +1512,6 @@ def rdpy():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1615,7 +1605,6 @@ def vnclowpot():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1719,7 +1708,6 @@ def mailoney():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1819,7 +1807,6 @@ def heralding():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -1925,7 +1912,6 @@ def ciscoasa():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -2034,7 +2020,6 @@ def tanner():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -2148,7 +2133,6 @@ def glutton():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -2242,7 +2226,6 @@ def honeysap():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -2335,7 +2318,6 @@ def adbhoney():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -2424,7 +2406,6 @@ def fatt():
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
             countme(MODUL, 'fileline', -2, ECFG)
-            countme(MODUL, 'daycounter', -2, ECFG)
 
             if ECFG["a.verbose"] is True:
                 verbosemode(MODUL, DATA, REQUEST, ADATA)
@@ -2464,9 +2445,6 @@ if __name__ == "__main__":
 
         global hpc
         hpc = testhpfeedsbroker()
-
-        if ECFG["a.daycounter"] is True:
-            daycounterreset(lock, ECFG)
 
         if ECFG["a.ewsonly"] is False:
             sender()

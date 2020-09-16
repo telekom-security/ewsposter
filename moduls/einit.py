@@ -28,7 +28,6 @@ def ecfg(name, version):
     parser.add_argument("-i", "--ignorecert", help="ignore certificate warnings", action="store_true")
     parser.add_argument("-S", "--sendonly", help="only send unsend alerts", action="store_true")
     parser.add_argument("-E", "--ewsonly", help="only generate ews alerts files", action="store_true")
-    parser.add_argument("-dcr", "--daycounter", help="reset and log daycounters for all honeypots", action="store_true")
     parser.add_argument("-j", "--jsonpath", help="Write JSON output file to path")
     parser.add_argument("-L", "--sendlimit", help="Set {xxx} for max alerts will send in one session", type=int, action="store")
     parser.add_argument("-V", "--version", help="show the EWS Poster Version", action="version", version=name + " " + version)
@@ -41,7 +40,6 @@ def ecfg(name, version):
     ECFG["a.debug"] = (True if args.debug else False)
     ECFG["a.ignorecert"] = (True if args.ignorecert else False)
     ECFG["a.silent"] = (True if args.silent else False)
-    ECFG["a.daycounter"] = (True if args.daycounter else False)
     ECFG["a.sendonly"] = (True if args.sendonly else False)
     ECFG["a.ewsonly"] = (True if args.ewsonly else False)
     ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
@@ -235,36 +233,6 @@ def locksocket(name):
     except socket.error:
         print("could not bind socket")
         return False
-
-
-def daycounterreset(lock, ECFG):
-
-    if lock is False:
-        logme("ARGCHK", "Lock Socket is busy ...", ("P1"), ECFG)
-        logme("ARGCHK", "Waiting 300 seconds for getting lock socket.", ("P1"), ECFG)
-        for i in range(6000):
-            if locksocket() is False:
-                time.sleep(0.1)
-            else:
-                break
-        if locksocket() is False:
-            logme("daycounterreset", "Daycounterreset fails. Socket over 300 sec busy", ("P1", "LOG"), ECFG)
-            sys.exit(0)
-
-    z = configparser.RawConfigParser()
-    z.read(ECFG["homedir"] + os.sep + "ews.idx")
-
-    for i in z.sections():
-        if z.has_option(i, "daycounter") is True:
-            logme("daycounterreset", "Daycounter " + i + " : " + z.get(i, "daycounter") + " alerts send.", ("LOG"), ECFG)
-            z.set(i, "daycounter", 0)
-
-    with open(ECFG["homedir"] + os.sep + "ews.idx", 'wb') as countfile:
-        z.write(countfile)
-        countfile.close
-
-    logme("daycounterreset", "Daycounters successfull reset.", ("P1"), ECFG)
-    sys.exit(0)
 
 
 if __name__ == "__main__":
