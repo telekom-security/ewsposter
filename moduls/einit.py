@@ -34,17 +34,17 @@ def ecfg(name, version):
 
     args = parser.parse_args()
 
-    ECFG["a.sendlimit"] = (args.sendlimit if args.sendlimit else "")
-    ECFG["a.loop"] = (args.loop if args.loop else 0)
+    ECFG["a.path"] = (args.configpath if args.configpath else "")
     ECFG["a.verbose"] = (True if args.verbose else False)
     ECFG["a.debug"] = (True if args.debug else False)
-    ECFG["a.ignorecert"] = (True if args.ignorecert else False)
+    ECFG["a.loop"] = (args.loop if args.loop else 0)
+    ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
     ECFG["a.silent"] = (True if args.silent else False)
+    ECFG["a.ignorecert"] = (True if args.ignorecert else False)
     ECFG["a.sendonly"] = (True if args.sendonly else False)
     ECFG["a.ewsonly"] = (True if args.ewsonly else False)
-    ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
-    ECFG["a.path"] = (args.configpath if args.configpath else "")
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
+    ECFG["a.sendlimit"] = (args.sendlimit if args.sendlimit else "")
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
         logme(MODUL, "ConfigDir %s did not exist. Abort !" % (ECFG["a.path"]), ("P1", "EXIT"), ECFG)
