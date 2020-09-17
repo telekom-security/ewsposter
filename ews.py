@@ -2196,7 +2196,6 @@ def honeysap():
         else:
             linecontent = json.loads(line, object_pairs_hook=OrderedDict)
 
-
             """ Prepare and collect Alert Data """
 
             DATA = {"aid": HONEYPOT["nodeid"],
@@ -2220,7 +2219,6 @@ def honeysap():
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": externalIP,
                      "internalIP": internalIP}
-
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2451,7 +2449,7 @@ if __name__ == "__main__":
 
         for i in ("glastopfv3", "dionaea", "honeytrap", "emobility", "conpot", "cowrie", "elasticpot",
                   "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton",
-                  "honeysap","adbhoney", "fatt"):
+                  "honeysap", "adbhoney", "fatt"):
 
             if ECFG["a.modul"]:
                 if ECFG["a.modul"] == i:
@@ -2470,4 +2468,3 @@ if __name__ == "__main__":
         else:
             logme(MODUL, "Sleeping for %s seconds ...." % ECFG["a.loop"], ("P1"), ECFG)
             time.sleep(int(ECFG["a.loop"]))
-

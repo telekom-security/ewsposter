@@ -4,9 +4,9 @@ spooldir = /opt/ews/spool
 logdir = /opt/ews
 del_malware_after_send = false
 send_malware = true
-sendlimit = 400
+sendlimit = 500
 contact = sender@example.com
-proxy = 
+proxy = None
 ip = 1.2.3.4
 
 [EWS]
