@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
-import configparser
 import socket
 import argparse
 import os
-import sys
-import time
+
 from moduls.elog import logme
 from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname
 
@@ -77,15 +75,17 @@ def ecfg(name, version):
     """ Read Main Config Parameter """
 
     ITEMS = ("homedir", "spooldir", "logdir", "contact",
-             "del_malware_after_send", "send_malware", "sendlimit")
+             "del_malware_after_send", "send_malware", 
+             "sendlimit")
+
     MCFG = readcfg("MAIN", ITEMS, ECFG["cfgfile"])
 
     """ Setup Hostname """
+
     MCFG["hostname"] = getHostname()
 
-    """ IP Handling """
+    """ IP Handling: try to determine the external IP """
 
-    """ try to determine the external IP """
     MCFG["ip"] = getOwnExternalIP(ECFG)
 
     if not MCFG["ip"]:
@@ -121,17 +121,17 @@ def ecfg(name, version):
 
     """ home dir available ? """
 
-    if os.path.isdir(MCFG["homedir"]) is not True:
+    if os.path.isdir(MCFG["homedir"]) is False:
         logme(MODUL, "Error missing homedir " + MCFG["homedir"] + " Abort !", ("P1", "EXIT"), ECFG)
     else:
         os.chdir(MCFG["homedir"])
 
     """ spool dir available ? """
 
-    if os.path.isdir(MCFG["spooldir"]) is not True:
+    if os.path.isdir(MCFG["spooldir"]) is False:
         logme(MODUL, "Error missing spooldir " + MCFG["spooldir"] + " Abort !", ("P1", "EXIT"), ECFG)
 
-    # log dir available ?
+    """ log dir available ? """
 
     MCFG["logdir"] = readonecfg("MAIN", "logdir", ECFG["cfgfile"])
 
@@ -145,6 +145,9 @@ def ecfg(name, version):
     """ Proxy Settings ? """
 
     MCFG["proxy"] = readonecfg(MODUL, "proxy", ECFG["cfgfile"])
+
+    if MCFG["proxy"] == "":
+        MCFG["proxy"] = False
 
     """ Read EWS Config Parameter """
 
@@ -196,7 +199,11 @@ def ecfg(name, version):
     ITEMS = ("json", "jsondir")
     EWSJSON = readcfg("EWSJSON", ITEMS, ECFG["cfgfile"])
 
-    if EWSJSON["json"].lower() == "true":
+    if ECFG["a.jsondir"] != "":
+        EWSJSON["json"] = True
+        EWSJSON["jsondir"] = ECFG["a.jsondir"] + os.sep + "ews.json"
+
+    elif EWSJSON["json"].lower() == "true":
         EWSJSON["json"] = True
 
         if os.path.isdir(EWSJSON["jsondir"]) is True:
@@ -207,10 +214,7 @@ def ecfg(name, version):
     else:
         EWSJSON["json"] = False
 
-    if ECFG["a.jsondir"] != "" and os.path.isdir(ECFG["a.jsondir"]) is True:
-        EWSJSON["json"] = True
-        EWSJSON["jsondir"] = ECFG["a.jsondir"] + os.sep + "ews.json"
-
+    
     ECFG.update(MCFG)
     ECFG.update(EWSCFG)
     ECFG.update(HCFG)
@@ -229,10 +233,10 @@ def locksocket(name):
 
     try:
         lock_socket.bind('\0' + name)
-        return True
+        return(True)
     except socket.error:
         print("could not bind socket")
-        return False
+        return(False)
 
 
 if __name__ == "__main__":
