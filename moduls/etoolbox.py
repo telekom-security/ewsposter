@@ -141,7 +141,7 @@ def getOwnExternalIP(MODUL, ECFG):
         else:
             logme(MODUL, "[ERROR] IP address in ews.cfg is not a public IP", ("P1", "LOG"), ECFG)
     except:
-        logme(MODUL, "[ERROR]] ews.cfg contains no IP address", ("P1", "LOG"), ECFG)
+        logme(MODUL, "[ERROR] ews.cfg contains no IP address", ("P1", "LOG"), ECFG)
 
     """ try from public service """
     try:
@@ -168,17 +168,29 @@ def getHostname(MODUL, ECFG):
 
 def getOwnInternalIP(MODUL, ECFG):
     """ try MY_INTIP from ENV """
+   
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 53))
+    IP = s.getsockname()[0]
+    s.close()
+
     try:
         if os.environ.get('MY_INTIP') is not None:
             if ipaddress.ip_address(str(os.environ.get('MY_INTIP'))).is_private:
                 return(os.environ.get('MY_INTIP'))
-            else:
-                logme(MODUL, "[ERROR] Could not determine a valid private IP using 0.0.0.0", ("P1", "LOG"), ECFG)
-                return("0.0.0.0")
     except:
-        logme(MODUL, "[ERROR] Could not determine a valid private IP using 0.0.0.0", ("P1", "LOG"), ECFG)
-        return("0.0.0.0")
+        logme(MODUL, "[ERROR] Could not determine a valid intern IP by Environment variable", ("P1", "LOG"), ECFG)
 
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 53))
+        return(s.getsockname()[0])
+        s.close()
+    except:
+        logme(MODUL, "[ERROR] Could not determine a valid intern IP by socket", ("P1", "LOG"), ECFG)
+
+    return("None")
 
 def resolveHost(host):
     """ resolve an IP, either from IP or hostname """
