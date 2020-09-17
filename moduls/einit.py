@@ -151,22 +151,24 @@ def ecfg(name, version):
 
     """ Read EWS Config Parameter """
 
-    ITEMS = ("ews", "username", "token", "rhost_first", "rhost_second")
+    ITEMS = ("ews", "username", "token", "rhost_first", "rhost_second", "ignorecert")
     EWSCFG = readcfg("EWS", ITEMS, ECFG["cfgfile"])
-
-    """ Set ews real true or false """
 
     if EWSCFG["ews"].lower() == "true":
         EWSCFG["ews"] = True
     else:
         EWSCFG["ews"] = False
 
-    """ ignore cert validation if ignorecert-parameter is set """
+    for index in ["username", "token", "rhost_first", "rhost_second"]:
+        if EWSCFG[index] == "" and EWSCFG["ews"] == True:
+            logme(MODUL, "Error missing " + index + " in [EWS] Config Section " + " Abort !", ("P1", "EXIT"), ECFG)
 
-    EWSCFGCERT = readonecfg("EWS", "ignorecert", ECFG["cfgfile"])
-
-    if EWSCFGCERT.lower() == "true":
-        ECFG["a.ignorecert"] = True
+    if ECFG["a.ignorecert"] is True:
+        EWSCFG["ignorecert"] = True
+    elif EWSCFG["ignorecert"].lower() == "true":
+        EWSCFG["ignorecert"] = True
+    else:
+        EWSCFG["ignorecert"] = False
 
     """ Read HPFEED Config Parameter """
 
@@ -210,7 +212,6 @@ def ecfg(name, version):
             EWSJSON["jsondir"] = EWSJSON["jsondir"] + os.sep + "ews.json"
         else:
             logme(MODUL, "Error missing jsondir " + EWSJSON["jsondir"] + " Abort !", ("P1", "EXIT"), ECFG)
-
     else:
         EWSJSON["json"] = False
 
