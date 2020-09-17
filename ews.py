@@ -41,7 +41,7 @@ def init():
     global internalIP
     global hpc
     externalIP = ECFG["ip"]
-    internalIP = getOwnInternalIP()
+    internalIP = getOwnInternalIP(MODUL,ECFG)
     logging.basicConfig()
     hpc = False
 

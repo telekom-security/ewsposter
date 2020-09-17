@@ -3,9 +3,12 @@
 import socket
 import argparse
 import os
+import ipaddress
+
+import sys
 
 from moduls.elog import logme
-from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname
+from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname, getOwnInternalIP
 
 
 def ecfg(name, version):
@@ -124,16 +127,12 @@ def ecfg(name, version):
     if MCFG["proxy"] == "" or MCFG["proxy"].lower() == "false" or MCFG["proxy"].lower() == "none":
         MCFG["proxy"] = False
 
-    """ Setup Hostname """
-    MCFG["hostname"] = getHostname()
-
-    """ IP Handling: try to determine the external IP """
-    MCFG["ip"] = getOwnExternalIP(ECFG)
-
-    if not MCFG["ip"]:
-        logme(MODUL, "External IP address cannot be determined. Set external IP in ews.cfg, ews.ip or env variable MY_EXTIP or allow external api request.. Abort !", ("P1", "EXIT"), ECFG)
-
-    logme(MODUL, "Using external IP address " + str(MCFG["ip"]), ("P1", "Log"), ECFG)
+    """ ip """
+    if MCFG["ip"] != "" and MCFG["ip"].lower() != "none":
+        try:
+            ipaddress.ip_address(MCFG["ip"])        
+        except (ipaddress.AddressValueError, ValueError) as e:
+            logme(MODUL, "Error IP Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
 
     """ Read EWS Config Parameter """
 
@@ -203,6 +202,19 @@ def ecfg(name, version):
     ECFG.update(EWSCFG)
     ECFG.update(HCFG)
     ECFG.update(EWSJSON)
+
+    """ Collection Hostname, intern and extern IP """
+
+    IPCFG = {}
+
+    """ Setup Hostname """
+    IPCFG["hostname"] = getHostname(MODUL, ECFG)
+    print("Hostname",IPCFG["hostname"])
+    print("InternalIP",getOwnInternalIP(MODUL, ECFG))
+    print("ExternalIP",getOwnExternalIP(MODUL, ECFG))
+
+    sys.exit("AUS")
+
 
     return(ECFG)
 
