@@ -4,7 +4,6 @@ from moduls.elog import logme
 import configparser
 import re
 import time
-import sys
 import os
 import ipaddress
 from requests import get
@@ -67,22 +66,21 @@ def ip4or6(ip):
 
 def readcfg(MODUL, ITEMS, FILE):
 
-    RC = {}
+    result = {}
 
     config = configparser.SafeConfigParser(os.environ)
     config.read(FILE)
 
-    for items in ITEMS:
-        if config.has_option(MODUL, items) is True and len(config.get(MODUL, items)) > 0:
-            RC[items] = config.get(MODUL, items)
+    for item in ITEMS:
+        if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
+            result[item] = config.get(MODUL, item)
         else:
-            print((" => [ERROR] Config parameter [%s] '%s=' didn't find or empty in %s config file. Abort !" % (MODUL, items, FILE)))
-            sys.exit()
+            logme(MODUL, "[ERROR] Config parameter [%s] '%s=' didn't find or empty in %s config file. Abort !" % MODUL, item, FILE, ("P1", "LOG","EXIT"), ECFG)
 
-    if "ip" in RC:
-        RC["ipv"] = ip4or6(RC["ip"])
+    if "ip" in result:
+        result["ipv"] = ip4or6(result["ip"])
 
-    return RC
+    return(result)
 
 
 def readonecfg(MODUL, item, FILE):
@@ -114,7 +112,7 @@ def getOwnExternalIP(MODUL, ECFG):
                 logme(MODUL, "[ERROR] Environment variable MY_EXTIP is not a public IP", ("P1", "LOG"), ECFG)
         else:
             logme(MODUL, "[INFO] Environment variable MY_EXTIP not set", ("P1", "LOG"), ECFG)
-    except:
+    except Exception:
         logme(MODUL, "[ERROR] Environment variable MY_EXTIP contains no IP address", ("P1", "LOG"), ECFG)
 
     """ try ews.ip file """
@@ -123,14 +121,14 @@ def getOwnExternalIP(MODUL, ECFG):
     if os.path.isfile(ewsip):
         pubipfile = readonecfg("MAIN", "ip", ewsip)
         if pubipfile.lower() == "null" or pubipfile.lower() == "false" or pubipfile.lower() == "unknown":
-            logme(MODUL, "[ERROR] ews.ip contained no ip section or empty value for ip. ", ("P1","LOG"), ECFG)
+            logme(MODUL, "[ERROR] ews.ip contained no ip section or empty value for ip. ", ("P1", "LOG"), ECFG)
         else:
             try:
                 if ipaddress.ip_address(str(pubipfile)).is_global:
                     return pubipfile
                 else:
                     logme(MODUL, "[ERROR] IP address in ews.ip is not a public IP", ("P1", "LOG"), ECFG)
-            except:
+            except Exception:
                 logme(MODUL, "[ERROR] ews.ip contains no IP address", ("P1", "LOG"), ECFG)
 
     """ try the IP from ews.cfg """
@@ -140,7 +138,7 @@ def getOwnExternalIP(MODUL, ECFG):
             return(configip)
         else:
             logme(MODUL, "[ERROR] IP address in ews.cfg is not a public IP", ("P1", "LOG"), ECFG)
-    except:
+    except Exception:
         logme(MODUL, "[ERROR] ews.cfg contains no IP address", ("P1", "LOG"), ECFG)
 
     """ try from public service """
@@ -150,7 +148,7 @@ def getOwnExternalIP(MODUL, ECFG):
             return extip
         else:
             logme(MODUL, "[ERROR] IP address returned from external service is not a public IP, this should never happen...", ("P1", "LOG"), ECFG)
-    except:
+    except Exception:
         logme(MODUL, "[ERROR] Could not determine a valid public IP using external service", ("P1", "LOG"), ECFG)
 
     return(False)
@@ -168,35 +166,31 @@ def getHostname(MODUL, ECFG):
 
 def getOwnInternalIP(MODUL, ECFG):
     """ try MY_INTIP from ENV """
-   
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 53))
-    IP = s.getsockname()[0]
-    s.close()
-
     try:
         if os.environ.get('MY_INTIP') is not None:
             if ipaddress.ip_address(str(os.environ.get('MY_INTIP'))).is_private:
                 return(os.environ.get('MY_INTIP'))
-    except:
+    except Exception:
         logme(MODUL, "[ERROR] Could not determine a valid intern IP by Environment variable", ("P1", "LOG"), ECFG)
 
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 53))
-        return(s.getsockname()[0])
-        s.close()
-    except:
-        logme(MODUL, "[ERROR] Could not determine a valid intern IP by socket", ("P1", "LOG"), ECFG)
+        connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        connection.connect(("8.8.8.8", 53))
+        return(connection.getsockname()[0])
+        connection.close()
+    except Exception as e:
+        logme(MODUL, "[ERROR] Could not determine a valid intern IP by socket %s" % e, ("P1", "LOG"), ECFG)
+    finally:
+        connection.close()
 
     return("None")
+
 
 def resolveHost(host):
     """ resolve an IP, either from IP or hostname """
     try:
         return(ipaddress.IPv4Address(host))
-    except:
+    except Exception:
         if ipaddress.IPv4Address(socket.gethostbyname(host)):
             return(socket.gethostbyname(host))
         else:

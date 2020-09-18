@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
-import configparser
 import socket
 import argparse
 import os
 import ipaddress
 
 import sys
-
 from moduls.elog import logme
-from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname, getOwnInternalIP
+from moduls.etoolbox import readcfg, getOwnExternalIP, getHostname, getOwnInternalIP
 
 
 def ecfg(name, version):
@@ -46,10 +44,10 @@ def ecfg(name, version):
     ECFG["a.silent"] = (True if args.silent else False)
     ECFG["a.sendonly"] = (True if args.sendonly else False)
     ECFG["a.ewsonly"] = (True if args.ewsonly else False)
-    ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
+    ECFG["a.modul"] = (args.modul if args.modul and args.modul in ECFG["HONEYLIST"] else "")
     ECFG["a.path"] = (args.configpath if args.configpath else "")
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
-    ECFG["a.sendlimit"] = (args.sendlimit if args.sendlimit else "")
+    ECFG["a.sendlimit"] = (args.sendlimit if args.sendlimit else 0)
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
         logme(MODUL, "ConfigDir %s did not exist. Abort !" % (ECFG["a.path"]), ("P1", "EXIT"), ECFG)
@@ -82,7 +80,7 @@ def ecfg(name, version):
     """ Read Main Config Parameter """
 
     ITEMS = ("homedir", "spooldir", "logdir", "del_malware_after_send", "send_malware",
-             "sendlimit", "contact", "proxy", "ip")
+             "sendlimit", "contact", "proxy", "ip_int", "ip_ext")
 
     MCFG = readcfg("MAIN", ITEMS, ECFG["cfgfile"])
 
@@ -115,7 +113,7 @@ def ecfg(name, version):
         MCFG["send_malware"] = False
 
     """ sendlimit expect """
-    if int(ECFG["a.sendlimit"]) != 0:
+    if int(ECFG["a.sendlimit"]) > 0:
         MCFG["sendlimit"] = ECFG["a.sendlimit"]
 
     if int(MCFG["sendlimit"]) > 500:
@@ -131,12 +129,18 @@ def ecfg(name, version):
     if MCFG["proxy"] == "" or MCFG["proxy"].lower() == "false" or MCFG["proxy"].lower() == "none":
         MCFG["proxy"] = False
 
-    """ ip """
-    if MCFG["ip"] != "" and MCFG["ip"].lower() != "none":
+    """ ip_int and ip_ext"""
+    if MCFG["ip_int"] != "" and MCFG["ip_int"].lower() != "none":
         try:
-            ipaddress.ip_address(MCFG["ip"])        
+            ipaddress.ip_address(MCFG["ip_int"])
         except (ipaddress.AddressValueError, ValueError) as e:
-            logme(MODUL, "Error IP Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
+            logme(MODUL, "Error IP_INT Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
+
+    if MCFG["ip_ext"] != "" and MCFG["ip_ext"].lower() != "none":
+        try:
+            ipaddress.ip_address(MCFG["ip_ext"])
+        except (ipaddress.AddressValueError, ValueError) as e:
+            logme(MODUL, "Error IP_INT Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
 
     """ Read EWS Config Parameter """
 
@@ -205,10 +209,6 @@ def ecfg(name, version):
     else:
         EWSJSON["json"] = False
 
-    if ECFG["a.jsondir"] != "" and os.path.isdir(ECFG["a.jsondir"]) is True:
-        EWSJSON["json"] = True
-        EWSJSON["jsondir"] = ECFG["a.jsondir"] + os.sep + "ews.json"
-
     ECFG.update(MCFG)
     ECFG.update(EWSCFG)
     ECFG.update(HCFG)
@@ -220,18 +220,18 @@ def ecfg(name, version):
 
     """ Setup Hostname """
     IPCFG["hostname"] = getHostname(MODUL, ECFG)
-    print("Hostname",IPCFG["hostname"])
-    print("InternalIP",getOwnInternalIP(MODUL, ECFG))
-    print("ExternalIP",getOwnExternalIP(MODUL, ECFG))
+    print("Hostname", IPCFG["hostname"])
+    print("IP_INT", ECFG["ip_int"])
+    print("IP_EXT", ECFG["ip_ext"])
+    print("InternalIP", getOwnInternalIP(MODUL, ECFG))
+    print("ExternalIP", getOwnExternalIP(MODUL, ECFG))
 
     sys.exit("AUS")
-
 
     return(ECFG)
 
 
 def locksocket(name):
-
     """ create lock socket """
 
     global lock_socket
