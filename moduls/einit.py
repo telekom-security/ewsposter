@@ -4,10 +4,12 @@ import configparser
 import socket
 import argparse
 import os
+import ipaddress
+
 import sys
-import time
+
 from moduls.elog import logme
-from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname
+from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname, getOwnInternalIP
 
 
 def ecfg(name, version):
@@ -41,8 +43,11 @@ def ecfg(name, version):
     ECFG["a.modul"] = (args.modul if args.modul and args.modul in ECFG["HONEYLIST"] else "")
     ECFG["a.silent"] = (True if args.silent else False)
     ECFG["a.ignorecert"] = (True if args.ignorecert else False)
+    ECFG["a.silent"] = (True if args.silent else False)
     ECFG["a.sendonly"] = (True if args.sendonly else False)
     ECFG["a.ewsonly"] = (True if args.ewsonly else False)
+    ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
+    ECFG["a.path"] = (args.configpath if args.configpath else "")
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
     ECFG["a.sendlimit"] = (args.sendlimit if args.sendlimit else "")
 
@@ -60,95 +65,82 @@ def ecfg(name, version):
 
     ECFG["path"] = os.path.dirname(os.path.abspath(__file__)).replace("/moduls", "")
 
-    if ECFG["a.path"] == "":
-        ECFG["a.path"] = ECFG["path"]
+    if ECFG["a.path"] != "":
+        ECFG["path"] = ECFG["a.path"]
 
-    if os.path.isfile(ECFG["a.path"] + os.sep + "ews.cfg") is False:
-        logme(MODUL, "Missing EWS Config %s. Abort !" % (ECFG["a.path"] + os.sep + "ews.cfg"), ("P1", "EXIT"), ECFG)
+    if os.path.isfile(ECFG["path"] + os.sep + "ews.cfg") is False:
+        logme(MODUL, "Missing EWS Config %s. Abort !" % (ECFG["path"] + os.sep + "ews.cfg"), ("P1", "EXIT"), ECFG)
     else:
-        ECFG["cfgfile"] = ECFG["a.path"] + os.sep + "ews.cfg"
+        ECFG["cfgfile"] = ECFG["path"] + os.sep + "ews.cfg"
 
     """ Create IDX File if not exist """
 
-    if os.path.isfile(ECFG["a.path"] + os.sep + "ews.idx") is False:
-        os.open(ECFG["a.path"] + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
+    if os.path.isfile(ECFG["path"] + os.sep + "ews.idx") is False:
+        os.open(ECFG["path"] + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
         logme(MODUL, "Create ews.idx counterfile", ("P1"), ECFG)
 
     """ Read Main Config Parameter """
 
-    ITEMS = ("homedir", "spooldir", "logdir", "contact",
-             "del_malware_after_send", "send_malware", "sendlimit")
+    ITEMS = ("homedir", "spooldir", "logdir", "del_malware_after_send", "send_malware",
+             "sendlimit", "contact", "proxy", "ip")
+
     MCFG = readcfg("MAIN", ITEMS, ECFG["cfgfile"])
 
-    """ Setup Hostname """
-    MCFG["hostname"] = getHostname()
+    """ home dir available ? """
+    if os.path.isdir(MCFG["homedir"]) is False:
+        logme(MODUL, "Error missing homedir " + MCFG["homedir"] + " Abort !", ("P1", "EXIT"), ECFG)
+    else:
+        os.chdir(MCFG["homedir"])
 
-    """ IP Handling """
+    """ spool dir available ? """
+    if os.path.isdir(MCFG["spooldir"]) is False:
+        logme(MODUL, "Error missing spooldir " + MCFG["spooldir"] + " Abort !", ("P1", "EXIT"), ECFG)
 
-    """ try to determine the external IP """
-    MCFG["ip"] = getOwnExternalIP(ECFG)
+    """ log dir available ? """
+    if os.path.isdir(MCFG["logdir"]) is False:
+        logme(MODUL, "Error missing logdir " + MCFG["logdir"] + " Abort !", ("P1", "EXIT"), ECFG)
+    else:
+        MCFG["logfile"] = MCFG["logdir"] + os.sep + "ews.log"
 
-    if not MCFG["ip"]:
-        logme(MODUL, "External IP address cannot be determined. Set external IP in ews.cfg, ews.ip or env variable MY_EXTIP or allow external api request.. Abort !", ("P1", "EXIT"), ECFG)
+    """ del_malware_after_send ? """
+    if MCFG["del_malware_after_send"].lower() == "true":
+        MCFG["del_malware_after_send"] = True
+    else:
+        MCFG["del_malware_after_send"] = False
 
-    logme(MODUL, "Using external IP address " + str(MCFG["ip"]), ("P1", "Log"), ECFG)
+    """ send_malware ? """
+    if MCFG["send_malware"].lower() == "true":
+        MCFG["send_malware"] = True
+    else:
+        MCFG["send_malware"] = False
 
     """ sendlimit expect """
-
-    if ECFG["a.sendlimit"] != "":
+    if int(ECFG["a.sendlimit"]) != 0:
         MCFG["sendlimit"] = ECFG["a.sendlimit"]
 
     if int(MCFG["sendlimit"]) > 500:
         logme(MODUL, "Error Sendlimit " + str(MCFG["sendlimit"]) + " to high. Max 500 ! ", ("P1", "EXIT"), ECFG)
     elif int(MCFG["sendlimit"]) < 1:
         logme(MODUL, "Error Sendlimit " + str(MCFG["sendlimit"]) + " to low. Min 1 ! ", ("P1", "EXIT"), ECFG)
-    elif MCFG["sendlimit"] == "NULL" or str(MCFG["sendlimit"]) == "UNKNOW":
+    elif MCFG["sendlimit"] is None:
         logme(MODUL, "Error Sendlimit " + str(MCFG["sendlimit"]) + " Must set between 1 and 500. ", ("P1", "EXIT"), ECFG)
 
-    """ send_malware ? """
+    """ contact """
 
-    if MCFG["send_malware"].lower() == "true":
-        MCFG["send_malware"] = True
-    else:
-        MCFG["send_malware"] = False
+    """ Proxy Settings """
+    if MCFG["proxy"] == "" or MCFG["proxy"].lower() == "false" or MCFG["proxy"].lower() == "none":
+        MCFG["proxy"] = False
 
-    """ del_malware_after_send ? """
-
-    if MCFG["del_malware_after_send"].lower() == "true":
-        MCFG["del_malware_after_send"] = True
-    else:
-        MCFG["del_malware_after_send"] = False
-
-    """ home dir available ? """
-
-    if os.path.isdir(MCFG["homedir"]) is not True:
-        logme(MODUL, "Error missing homedir " + MCFG["homedir"] + " Abort !", ("P1", "EXIT"), ECFG)
-    else:
-        os.chdir(MCFG["homedir"])
-
-    """ spool dir available ? """
-
-    if os.path.isdir(MCFG["spooldir"]) is not True:
-        logme(MODUL, "Error missing spooldir " + MCFG["spooldir"] + " Abort !", ("P1", "EXIT"), ECFG)
-
-    # log dir available ?
-
-    MCFG["logdir"] = readonecfg("MAIN", "logdir", ECFG["cfgfile"])
-
-    if MCFG["logdir"] != "NULL" and MCFG["logdir"] != "FALSE" and os.path.isdir(MCFG["logdir"]) is True:
-        MCFG["logfile"] = MCFG["logdir"] + os.sep + "ews.log"
-    elif MCFG["logdir"] != "NULL" and MCFG["logdir"] != "FALSE" and os.path.isdir(MCFG["logdir"]) is True:
-        logme(MODUL, "Error missing logdir " + MCFG["logdir"] + " Abort !", ("P1", "EXIT"), ECFG)
-    else:
-        MCFG["logfile"] = "/var/log" + os.sep + "ews.log"
-
-    """ Proxy Settings ? """
-
-    MCFG["proxy"] = readonecfg(MODUL, "proxy", ECFG["cfgfile"])
+    """ ip """
+    if MCFG["ip"] != "" and MCFG["ip"].lower() != "none":
+        try:
+            ipaddress.ip_address(MCFG["ip"])        
+        except (ipaddress.AddressValueError, ValueError) as e:
+            logme(MODUL, "Error IP Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
 
     """ Read EWS Config Parameter """
 
-    ITEMS = ("ews", "username", "token", "rhost_first", "rhost_second")
+    ITEMS = ("ews", "username", "token", "rhost_first", "rhost_second", "ignorecert")
     EWSCFG = readcfg("EWS", ITEMS, ECFG["cfgfile"])
 
     """ Set ews real true or false """
@@ -158,16 +150,22 @@ def ecfg(name, version):
     else:
         EWSCFG["ews"] = False
 
-    """ ignore cert validation if ignorecert-parameter is set """
+    for index in ["username", "token", "rhost_first", "rhost_second"]:
+        if EWSCFG[index] == "" and EWSCFG["ews"] is True:
+            logme(MODUL, "Error missing " + index + " in [EWS] Config Section " + " Abort !", ("P1", "EXIT"), ECFG)
 
-    EWSCFGCERT = readonecfg("EWS", "ignorecert", ECFG["cfgfile"])
-
-    if EWSCFGCERT.lower() == "true":
-        ECFG["a.ignorecert"] = True
+    if ECFG["a.ignorecert"] is True:
+        EWSCFG["ignorecert"] = True
+    elif EWSCFG["ignorecert"].lower() == "true":
+        EWSCFG["ignorecert"] = True
+    else:
+        EWSCFG["ignorecert"] = False
 
     """ Read HPFEED Config Parameter """
 
-    ITEMS = ("hpfeed", "host", "port", "channels", "ident", "secret")
+    ITEMS = ("hpfeed", "host", "port", "channels", "ident", "secret", "hpfformat",
+             "tlscert")
+
     HCFG = readcfg("HPFEED", ITEMS, ECFG["cfgfile"])
 
     if HCFG["hpfeed"].lower() == "true":
@@ -175,28 +173,28 @@ def ecfg(name, version):
     else:
         HCFG["hpfeed"] = False
 
-    """ hpfeeds format """
+    for index in ["host", "port", "channels", "ident", "secret"]:
+        if HCFG[index] == "" and HCFG["hpfeed"] is True:
+            logme(MODUL, "Error missing " + index + " in [HPFEED] Config Section " + " Abort !", ("P1", "EXIT"), ECFG)
 
-    EWSHPFFORMAT = readonecfg("HPFEED", "hpfformat", ECFG["cfgfile"])
+    if HCFG["hpfformat"].lower() not in ("ews", "json"):
+        HCFG["hpfformat"] = "ews"
 
-    if EWSHPFFORMAT.lower() in ("ews", "json"):
-        ECFG["hpfformat"] = EWSHPFFORMAT.lower()
-    else:
-        ECFG["hpfformat"] = "ews"
-
-    """ hpfeeds tls cert """
-
-    EWSHPFCERT = readonecfg("HPFEED", "tlscert", ECFG["cfgfile"])
-
-    if EWSHPFCERT and EWSHPFCERT.lower() != "":
-        ECFG["tlscert"] = EWSHPFCERT.lower()
+    if HCFG["tlscert"].lower() == "false":
+        HCFG["tlscert"] = False
+    elif os.path.isfile(HCFG["tlscert"]) is False:
+        logme(MODUL, "Error missing TLS cert " + HCFG["tlscert"] + " Abort !", ("P1", "EXIT"), ECFG)
 
     """ Read EWSJSON Config Parameter """
 
     ITEMS = ("json", "jsondir")
     EWSJSON = readcfg("EWSJSON", ITEMS, ECFG["cfgfile"])
 
-    if EWSJSON["json"].lower() == "true":
+    if ECFG["a.jsondir"] != "":
+        EWSJSON["json"] = True
+        EWSJSON["jsondir"] = ECFG["a.jsondir"] + os.sep + "ews.json"
+
+    elif EWSJSON["json"].lower() == "true":
         EWSJSON["json"] = True
 
         if os.path.isdir(EWSJSON["jsondir"]) is True:
@@ -216,7 +214,20 @@ def ecfg(name, version):
     ECFG.update(HCFG)
     ECFG.update(EWSJSON)
 
-    return ECFG
+    """ Collection Hostname, intern and extern IP """
+
+    IPCFG = {}
+
+    """ Setup Hostname """
+    IPCFG["hostname"] = getHostname(MODUL, ECFG)
+    print("Hostname",IPCFG["hostname"])
+    print("InternalIP",getOwnInternalIP(MODUL, ECFG))
+    print("ExternalIP",getOwnExternalIP(MODUL, ECFG))
+
+    sys.exit("AUS")
+
+
+    return(ECFG)
 
 
 def locksocket(name):
@@ -229,10 +240,10 @@ def locksocket(name):
 
     try:
         lock_socket.bind('\0' + name)
-        return True
+        return(True)
     except socket.error:
         print("could not bind socket")
-        return False
+        return(False)
 
 
 if __name__ == "__main__":

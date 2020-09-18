@@ -41,7 +41,7 @@ def init():
     global internalIP
     global hpc
     externalIP = ECFG["ip"]
-    internalIP = getOwnInternalIP()
+    internalIP = getOwnInternalIP(MODUL,ECFG)
     logging.basicConfig()
     hpc = False
 
@@ -2468,3 +2468,4 @@ if __name__ == "__main__":
         else:
             logme(MODUL, "Sleeping for %s seconds ...." % ECFG["a.loop"], ("P1"), ECFG)
             time.sleep(int(ECFG["a.loop"]))
+

@@ -3,7 +3,7 @@
 import sys
 import time
 
-def logme(MODUL,MESSAGE,HANDLE,ECFG):
+def logme(MODUL, MESSAGE, HANDLE, ECFG):
 
     if ECFG["a.silent"] is False:
 
