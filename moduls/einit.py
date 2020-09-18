@@ -226,7 +226,7 @@ def ecfg(name, version):
     print("InternalIP", getOwnInternalIP(MODUL, ECFG))
     print("ExternalIP", getOwnExternalIP(MODUL, ECFG))
 
-    sys.exit("AUS")
+    #sys.exit("AUS")
 
     return(ECFG)
 
