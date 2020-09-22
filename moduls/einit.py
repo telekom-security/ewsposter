@@ -15,16 +15,16 @@ def ecfg(name, version):
 
     MODUL = "EINIT"
     ECFG = {}
-    HONEYLIST = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
-                 'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
-                 'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt']
+    ECFG['HONEYLIST'] = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
+                         'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
+                         'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt']
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--configpath", help="Load configuration file from Path")
     parser.add_argument("-v", "--verbose", help="set output verbosity", action="store_true")
     parser.add_argument("-d", "--debug", help="set output debug", action="store_true")
     parser.add_argument("-l", "--loop", help="Go in endless loop. Set {xx} for seconds to wait for next loop", type=int, default=0, action="store")
-    parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=HONEYLIST, action="store")
+    parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=ECFG['HONEYLIST'], action="store")
     parser.add_argument("-s", "--silent", help="silent mode without output", action="store_true")
     parser.add_argument("-i", "--ignorecert", help="ignore certificate warnings", action="store_true")
     parser.add_argument("-S", "--sendonly", help="only send unsend alerts", action="store_true")
@@ -43,7 +43,7 @@ def ecfg(name, version):
     ECFG["a.silent"] = (True if args.silent else False)
     ECFG["a.sendonly"] = (True if args.sendonly else False)
     ECFG["a.ewsonly"] = (True if args.ewsonly else False)
-    ECFG["a.modul"] = (args.modul if args.modul and args.modul in HONEYLIST else "")
+    ECFG["a.modul"] = (args.modul if args.modul and args.modul in ECFG['HONEYLIST'] else "")
     ECFG["a.path"] = (args.configpath if args.configpath else "")
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
 
@@ -80,7 +80,7 @@ def ecfg(name, version):
     ITEMS = ("homedir", "spooldir", "logdir", "del_malware_after_send", "send_malware",
              "sendlimit", "contact", "proxy", "ip_int", "ip_ext")
 
-    MCFG = readcfg("MAIN", ITEMS, ECFG["cfgfile"])
+    MCFG = readcfg('MAIN', ITEMS, ECFG['cfgfile'])
 
     """ home dir available ? """
     if os.path.isdir(MCFG["homedir"]) is False:
@@ -210,15 +210,22 @@ def ecfg(name, version):
     ECFG.update(HCFG)
     ECFG.update(EWSJSON)
 
-    """ Collection Hostname, intern and extern IP """
-
-    IPCFG = {}
-
     """ Setup Hostname """
-    print(getIP(MODUL, ECFG))
 
-    sys.exit("AUS")
+    """ Collection IP Config, Enviroment, lookup """
+    IPCFG = getIP(MODUL, ECFG)
+    
+    if ECFG['ip_int'] == "" or ECFG['ip_int'] == "none":
+        ECFG['ip_int'] = IPCFG['MY_INTIP']
 
+        if ECFG['ip_int'] == "" or ECFG['ip_int'] == "none":
+            ECFG['ip_int'] = IPCFG['local_ip']
+
+    if ECFG['ip_ext'] == "" or ECFG['ip_ext'] == "none":
+        ECFG['ip_ext'] = IPCFG['MY_EXTIP']
+
+        if ECFG['ip_ext'] == "" or ECFG['ip_ext'] == "none":
+            ECFG['ip_ext'] = IPCFG['external_ip']
 
     return(ECFG)
 

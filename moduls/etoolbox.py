@@ -4,13 +4,13 @@ from moduls.elog import logme
 import configparser
 import re
 import time
-import sys
 import os
 import ipaddress
 from requests import get
 import socket
 import random
 import string
+import sys
 
 
 def countme(Section, Item, Count, ECFG):
@@ -75,8 +75,9 @@ def readcfg(MODUL, ITEMS, FILE):
     for item in ITEMS:
         if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
             result[item] = config.get(MODUL, item)
-        else:
-            logme(MODUL, "[ERROR] Config parameter [%s] '%s=' didn't find or empty in %s config file. Abort !" % MODUL, item, FILE, ("P1", "LOG","EXIT"), ECFG)
+        else:       
+            print(f'[ERROR] Config MODUL {MODUL} parameter {item} didn\'t find or empty in {FILE} config file. Abort !')
+            sys.exit()
 
     if "ip" in result:
         result["ipv"] = ip4or6(result["ip"])
