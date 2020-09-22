@@ -166,15 +166,45 @@ def getHostname(MODUL, ECFG):
         return("host-".join(random.choice(string.ascii_lowercase) for i in range(16)))
 
 
+def getIP(MODUL, ECFG):
+    myIP = {}
+
+    """ Read Enviroment Variables """
+    for item in ['MY_INTIP', 'MY_EXTIP']:
+        if os.environ.get(item) is not None:
+            myIP[item] = os.environ.get(item)
+            try:
+                ipaddress.ip_address(myIP[item])
+            except (ipaddress.AddressValueError, ValueError) as e:
+                logme(MODUL, "Error IP Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1"), ECFG)
+        else:
+            myIP[item] = ""
+
+    """ Get local IP via connection """
+    try:
+        connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        connection.connect(("8.8.8.8", 53))
+        myIP["local_ip"] = connection.getsockname()[0]
+    except:
+        logme(MODUL, "[ERROR] Could not determine a valid intern IP by Environment variable", ("P1", "LOG"), ECFG)
+        myIP["local_ip"] = ""
+    finally:
+        connection.close()
+
+    """ get external IP via connection """
+    try:
+        myIP["external_ip"] = get('https://api.ipify.org', timeout=5).text
+    except:
+        logme(MODUL, "[ERROR] Could not determine a valid public IP using external service", ("P1", "LOG"), ECFG)
+        myIP["external_ip"] = ""
+    finally:
+        connection.close()
+
+    return(myIP)
+
 def getOwnInternalIP(MODUL, ECFG):
     """ try MY_INTIP from ENV """
-   
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 53))
-    IP = s.getsockname()[0]
-    s.close()
-
+    
     try:
         if os.environ.get('MY_INTIP') is not None:
             if ipaddress.ip_address(str(os.environ.get('MY_INTIP'))).is_private:

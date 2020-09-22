@@ -8,7 +8,7 @@ import ipaddress
 import sys
 
 from moduls.elog import logme
-from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname, getOwnInternalIP
+from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname, getOwnInternalIP, getIP
 
 
 def ecfg(name, version):
@@ -208,10 +208,7 @@ def ecfg(name, version):
     IPCFG = {}
 
     """ Setup Hostname """
-    IPCFG["hostname"] = getHostname(MODUL, ECFG)
-    print("Hostname",IPCFG["hostname"])
-    print("InternalIP",getOwnInternalIP(MODUL, ECFG))
-    print("ExternalIP",getOwnExternalIP(MODUL, ECFG))
+    print(getIP(MODUL, ECFG))
 
     sys.exit("AUS")
 

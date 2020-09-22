@@ -16,6 +16,7 @@ from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg
 from moduls.elog import logme
 from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, getOwnExternalIP, getOwnInternalIP, resolveHost
+from moduls.ealert import EAlert
 import sqlite3
 import MySQLdb.cursors
 import requests
