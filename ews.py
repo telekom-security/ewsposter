@@ -41,8 +41,8 @@ def init():
     global externalIP
     global internalIP
     global hpc
-    externalIP = ECFG["ip"]
-    internalIP = getOwnInternalIP(MODUL,ECFG)
+    externalIP = ECFG["ip_ext"]
+    internalIP = getOwnInternalIP(MODUL, ECFG)
     logging.basicConfig()
     hpc = False
 
@@ -392,7 +392,7 @@ def glastopfv3():
     ITEMS = ("glastopfv3", "nodeid", "sqlitedb", "malwaredir")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    HONEYPOT["ip"] = externalIP
+    HONEYPOT["ip_ext"] = externalIP
 
     """ Malwaredir exist ? Issue in Glastopf ! RFI Directory first create when the first RFI was downloaded """
 
@@ -475,9 +475,9 @@ def glastopfv3():
                  "internalIP": internalIP}
 
         if "request_raw" in list(row.keys()) and len(row["request_raw"]) > 0:
-             REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore')).decode()
+            REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore')).decode()
 
-        if "filename" in list(row.keys()) and row["filename"] != None and ECFG["send_malware"] is True:
+        if "filename" in list(row.keys()) and row["filename"] is None and ECFG["send_malware"] is True:
             error, malwarefile = malware(HONEYPOT["malwaredir"], row["filename"], ECFG["del_malware_after_send"], False)
             if error == 0:
                 REQUEST["binary"] = malwarefile.decode('utf-8')
@@ -535,10 +535,10 @@ def cowrie():
     ITEMS = ("cowrie", "nodeid", "logfile")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    HONEYPOT["ip"] = readonecfg(MODUL, "ip", ECFG["cfgfile"])
+    HONEYPOT["ip"] = readonecfg(MODUL, "ip_ext", ECFG["cfgfile"])
 
     if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
-        HONEYPOT["ip"] = ECFG["ip"]
+        HONEYPOT["ip"] = ECFG["ip_ext"]
 
     """ logfile file exists ? """
 
@@ -1263,7 +1263,7 @@ def elasticpot():
                 try:
                     if checkForPublicIP(content["dest_ip"]):
                         pubIP = content["dest_ip"]
-                except:
+                except Exception:
                     pubIP = externalIP
 
                 """ Prepair and collect Alert Data """
@@ -1273,7 +1273,7 @@ def elasticpot():
                         "sipv": "ipv" + ip4or6(content["src_ip"]),
                         "sprot": "tcp",
                         "sport": "%s" % content["src_port"],
-                        "tipv": "ipv" + ip4or6(ECFG["ip"]),
+                        "tipv": "ipv" + ip4or6(ECFG["ip_ext"]),
                         "tadr": "%s" % pubIP,
                         "tprot": "tcp",
                         "tport": "%s" % content["dest_port"]}
@@ -2312,7 +2312,6 @@ def adbhoney():
                      "externalIP": externalIP,
                      "internalIP": internalIP}
 
-
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
 
@@ -2448,20 +2447,18 @@ if __name__ == "__main__":
         if ECFG["a.ewsonly"] is False:
             sender()
 
-        for i in ("glastopfv3", "dionaea", "honeytrap", "emobility", "conpot", "cowrie", "elasticpot",
-                  "suricata", "rdpy", "mailoney", "vnclowpot", "heralding", "ciscoasa", "tanner", "glutton",
-                  "honeysap", "adbhoney", "fatt"):
+        for honeypot in ECFG["HONEYLIST"]:
 
             if ECFG["a.modul"]:
-                if ECFG["a.modul"] == i:
-                    if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
-                        eval(i + '()')
+                if ECFG["a.modul"] == honeypot:
+                    if readonecfg(honeypot.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
+                        eval(honeypot + '()')
                         break
                 else:
                     continue
 
-            if readonecfg(i.upper(), i, ECFG["cfgfile"]).lower() == "true":
-                eval(i + '()')
+            if readonecfg(honeypot.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
+                eval(honeypot + '()')
 
         if int(ECFG["a.loop"]) == 0:
             logme(MODUL, "EWSrun finish.", ("P1"), ECFG)

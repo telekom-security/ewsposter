@@ -78,7 +78,7 @@ def ecfg(name, version):
     """ Read Main Config Parameter """
 
     ITEMS = ("homedir", "spooldir", "logdir", "del_malware_after_send", "send_malware",
-             "sendlimit", "contact", "proxy", "ip")
+             "sendlimit", "contact", "proxy", "ip_int", "ip_ext")
 
     MCFG = readcfg("MAIN", ITEMS, ECFG["cfgfile"])
 
@@ -111,7 +111,7 @@ def ecfg(name, version):
         MCFG["send_malware"] = False
 
     """ sendlimit expect """
-    if int(ECFG["a.sendlimit"]) != 0:
+    if int(ECFG["a.sendlimit"]) > 0:
         MCFG["sendlimit"] = ECFG["a.sendlimit"]
 
     if int(MCFG["sendlimit"]) > 500:
@@ -127,12 +127,18 @@ def ecfg(name, version):
     if MCFG["proxy"] == "" or MCFG["proxy"].lower() == "false" or MCFG["proxy"].lower() == "none":
         MCFG["proxy"] = False
 
-    """ ip """
-    if MCFG["ip"] != "" and MCFG["ip"].lower() != "none":
+    """ ip_int and ip_ext"""
+    if MCFG["ip_int"] != "" and MCFG["ip_int"].lower() != "none":
         try:
-            ipaddress.ip_address(MCFG["ip"])        
+            ipaddress.ip_address(MCFG["ip_int"])
         except (ipaddress.AddressValueError, ValueError) as e:
-            logme(MODUL, "Error IP Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
+            logme(MODUL, "Error IP_INT Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
+
+    if MCFG["ip_ext"] != "" and MCFG["ip_ext"].lower() != "none":
+        try:
+            ipaddress.ip_address(MCFG["ip_ext"])
+        except (ipaddress.AddressValueError, ValueError) as e:
+            logme(MODUL, "Error IP_INT Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1", "EXIT"), ECFG)
 
     """ Read EWS Config Parameter """
 
@@ -195,6 +201,7 @@ def ecfg(name, version):
             EWSJSON["jsondir"] = EWSJSON["jsondir"] + os.sep + "ews.json"
         else:
             logme(MODUL, "Error missing jsondir " + EWSJSON["jsondir"] + " Abort !", ("P1", "EXIT"), ECFG)
+
     else:
         EWSJSON["json"] = False
 
