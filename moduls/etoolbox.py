@@ -76,7 +76,7 @@ def readcfg(MODUL, ITEMS, FILE):
         if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
             result[item] = config.get(MODUL, item)
         else:       
-            print(f'[ERROR] Config MODUL {MODUL} parameter {item} didn\'t find or empty in {FILE} config file. Abort !')
+            print(f'[ERROR] in Config MODUL [{MODUL}] parameter {item} didn\'t find or empty in {FILE} config file. Abort !')
             sys.exit()
 
     if "ip" in result:

@@ -15,5 +15,5 @@ honeypots/
 configs/
 malware.md5
 ews.cfg_all
-
+**/*.py.orig
 ews.cfg_single
