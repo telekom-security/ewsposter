@@ -4,6 +4,7 @@ import socket
 import argparse
 import os
 import ipaddress
+import sys
 
 from moduls.elog import logme
 from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname, getOwnInternalIP, getIP
@@ -47,11 +48,11 @@ def ecfg(name, version):
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
         print(f" => [ERROR] ConfigDir {a.path} from commandline argument -c/--configpath did not exist. Abort !")
-        os._exit(1)
+        sys.exit(1)
 
     if ECFG["a.jsondir"] != "" and os.path.isdir(ECFG["a.jsondir"]) is False:
         print(f" => [ERROR] JsonDir {a.jasondir} from commandline argument -j/--jsonpath did not exist. Abort !")
-        os._exit(1)
+        sys.exit(1)
 
     """ say hello """
 
@@ -66,7 +67,7 @@ def ecfg(name, version):
 
     if os.path.isfile(ECFG["path"] + os.sep + "ews.cfg") is False:
         print(f" => [ERROR] Missing EWS Config {ECFG['path']}{os.sep}ews.cfg. Abort !")
-        os._exit(1)
+        sys.exit(1)
     else:
         ECFG["cfgfile"] = ECFG["path"] + os.sep + "ews.cfg"
 
@@ -86,19 +87,19 @@ def ecfg(name, version):
     """ home dir available ? """
     if os.path.isdir(MCFG["homedir"]) is False:
         print(f" => [ERROR] Missing homedir {MCFG['homedir']}. Abort !")
-        os._exit(1)
+        sys.exit(1)
     else:
         os.chdir(MCFG["homedir"])
 
     """ spool dir available ? """
     if os.path.isdir(MCFG["spooldir"]) is False:
         print(f" => [ERROR] Missing spooldir {MCFG['spooldir']}. Abort !")
-        os._exit(1)
+        sys.exit(1)
 
     """ log dir available ? """
     if os.path.isdir(MCFG["logdir"]) is False:
         print(f" => [ERROR] missing logdir {MCFG['logdir']}. Abort !")
-        os._exit(1)
+        sys.exit(1)
     else:
         MCFG["logfile"] = MCFG["logdir"] + os.sep + "ews.log"
 
@@ -120,13 +121,13 @@ def ecfg(name, version):
 
     if int(MCFG["sendlimit"]) > 500:
         print(f" => [ERROR] Sendlimit {str(MCFG['sendlimit'])} to high. Max 500 !")
-        os._exit(1)
+        sys.exit(1)
     elif int(MCFG["sendlimit"]) < 1:
         print(f" = > [ERROR] Sendlimit {str(MCFG['sendlimit'])} to low. Min 1 !")
-        os._exit(1)
+        sys.exit(1)
     elif MCFG["sendlimit"] is None:
         print(f" => [ERROR] Sendlimit {str(MCFG['sendlimit'])}. Must set between 1 and 500.")
-        os._exit(1)
+        sys.exit(1)
 
     """ contact """
 
@@ -140,14 +141,14 @@ def ecfg(name, version):
             ipaddress.ip_address(MCFG["ip_int"])
         except (ipaddress.AddressValueError, ValueError) as e:
             print(f" => [ERROR] ip_int Adress {str(e)} in [EWS] is not an IPv4/IPv6 address. Abort !")
-            os._exit(1)
+            sys.exit(1)
 
     if MCFG["ip_ext"] != "" and MCFG["ip_ext"].lower() != "none":
         try:
             ipaddress.ip_address(MCFG["ip_ext"])
         except (ipaddress.AddressValueError, ValueError) as e:
             print(f" => [ERROR] ip_ext Adress {str(e)} in [EWS] config section is not an IPv4/IPv6 address. Abort !")
-            os._exit(1)
+            sys.exit(1)
 
     """ Read EWS Config Parameter """
 
@@ -185,7 +186,7 @@ def ecfg(name, version):
     for index in ["host", "port", "channels", "ident", "secret"]:
         if HCFG[index] == "" and HCFG["hpfeed"] is True:
             print(f" => [ERROR] Missing {index} in [HPFEED] config section. Abort !")
-            os._exit(1)
+            sys.exit(1)
 
     if HCFG["hpfformat"].lower() not in ("ews", "json"):
         HCFG["hpfformat"] = "ews"

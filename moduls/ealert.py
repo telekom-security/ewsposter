@@ -13,18 +13,29 @@ class EAlert:
         self.jesm = ""
         self.counter = 0
         self.hcounter = 0
+        self.jsonfailcounter = 0
         self.ewsAuth(ECFG["username"], ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
 
     def lineREAD(self, filename, format='json'):
-        lcache = linecache.getline(filename, self.alertCount(self.MODUL, 'get_counter')).lstrip()
+
+        linecounter = int(self.alertCount(self.MODUL, 'get_counter'))
+        lcache = linecache.getline(filename, linecounter)
+        self.alertCount(self.MODUL, "add_counter")
+        linecache.clearcache()
 
         if lcache != '' and format == "json":
-            return(json.loads(lcache))
+            try:
+                jsonline = json.loads(lcache)
+            except ValueError:
+                self.jsonfailcounter += 1
+                print(f" => [WARNING] Invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.")
+                return('jsonfail')
+            else:
+                return(jsonline)
         elif lcache != '' and format == "simple":
             return(lcache)
         else:
-            linecache.clearcache()
             return()
 
     def readCFG(self, items, file):
@@ -70,7 +81,7 @@ class EAlert:
             count.add_section(section)
 
         if count.has_option(section, item) is False:
-            count.set(section, item, str(0))
+            count.set(section, item, str(1))
 
         if isinstance(counting, int) and counting >= 0:
             count.set(section, item, str(counting))
@@ -193,7 +204,6 @@ class EAlert:
             print(f'{key} : {value}')
         return()
 
-
     def jsonAlert(self):
         if self.DATA["source_port"] == "":
             self.DATA["source_port"] = "0"
@@ -277,7 +287,6 @@ class EAlert:
 
         """ Check if ECFG["hpfeed"] """
 
-
     def ewsWebservice(self):
         headers = {'User-Agent': name + " " + version,
                    'Content-type': 'text/xml',
@@ -344,4 +353,3 @@ class EAlert:
         print(self.REQUEST)
         print(self.ADATA)
         return()
-
