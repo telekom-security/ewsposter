@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
+from lxml import etree
+import ipaddress
+from urllib import parse
+import json
+import os
+import random
+import requests
+import re
+import configparser
+import linecache
+import sys 
+
 class EAlert:
 
     def __init__(self, MODUL):
@@ -98,6 +111,39 @@ class EAlert:
         with open(ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
             count.write(countfile)
             countfile.close
+
+        return()
+
+    def fileIndex(self, filename, action, content=None):
+        """ check if file exist, else create file """
+        if not os.path.isfile(filename):
+            with open(filename, "w+") as reader:
+                reader.close()
+
+        """ get a list of content stript newline """
+        with open(filename, "r") as reader:
+            filelist = list(filter(None, [line.rstrip("\n") for line in reader]))
+            reader.close()
+
+        if action == "read":
+            return(filelist)
+
+        if action == "write" and content is not None:
+            with open(filename, "a+") as reader:
+                if isinstance(content, list):
+                    for line in content:
+                        if line not in filelist:
+                            reader.write(line + "\n")
+
+                if isinstance(content, str):
+                    if content not in filelist:
+                        reader.write(content + "\n")
+
+                if isinstance(content, int):
+                    if str(content) not in filelist:
+                        reader.write(str(content) + "\n")
+
+                reader.close()
 
         return()
 

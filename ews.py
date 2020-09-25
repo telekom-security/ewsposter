@@ -15,7 +15,7 @@ import ast
 from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg
 from moduls.elog import logme
-from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, getOwnExternalIP, getOwnInternalIP, resolveHost
+from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, resolveHost
 from moduls.ealert import EAlert
 import sqlite3
 import MySQLdb.cursors
@@ -38,11 +38,7 @@ version = "v1.9.8"
 
 
 def init():
-    global externalIP
-    global internalIP
     global hpc
-    externalIP = ECFG["ip_ext"]
-    internalIP = getOwnInternalIP(MODUL, ECFG)
     logging.basicConfig()
     hpc = False
 
@@ -392,8 +388,6 @@ def glastopfv3():
     ITEMS = ("glastopfv3", "nodeid", "sqlitedb", "malwaredir")
     HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
 
-    HONEYPOT["ip_ext"] = externalIP
-
     """ Malwaredir exist ? Issue in Glastopf ! RFI Directory first create when the first RFI was downloaded """
 
     """
@@ -461,8 +455,8 @@ def glastopfv3():
                 "sipv": "ipv" + ip4or6(re.sub(":.*$", "", row["source"])),
                 "sprot": "tcp",
                 "sport": "",
-                "tipv": "ipv" + ip4or6(HONEYPOT["ip"]),
-                "tadr": HONEYPOT["ip"],
+                "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                "tadr": ECFG['ip_ext'],
                 "tprot": "tcp",
                 "tport": "80"}
 
@@ -471,8 +465,8 @@ def glastopfv3():
 
         ADATA = {"sqliteid": row["id"],
                  "hostname": ECFG["hostname"],
-                 "externalIP": externalIP,
-                 "internalIP": internalIP}
+                 "externalIP": ECFG['ip_ext'],
+                 "internalIP": ECFG['ip_int']}
 
         if "request_raw" in list(row.keys()) and len(row["request_raw"]) > 0:
             REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore')).decode()
@@ -709,8 +703,8 @@ def cowrie():
                  "password": cpassword,
                  "input": cinput,
                  "hostname": ECFG["hostname"],
-                 "externalIP": externalIP,
-                 "internalIP": internalIP}
+                 "externalIP": ECFG['ip_ext'],
+                 "internalIP": ECFG['ip_int']}
 
         """ generate template and send """
 
@@ -832,8 +826,8 @@ def dionaea():
 
         ADATA = {"sqliteid": str(row["connection"]),
                  "hostname": ECFG["hostname"],
-                 "externalIP": externalIP,
-                 "internalIP": internalIP}
+                 "externalIP": ECFG['ip_ext'],
+                 "internalIP": ECFG['ip_int']}
 
         """ Check for malware bin's """
 
@@ -959,8 +953,8 @@ def honeytrap():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             """ Search for Payload """
             if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
@@ -1020,8 +1014,8 @@ def emobility():
     if int(ECFG["sendlimit"]) > 0:
         logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
 
-    I = 0  
-    x = 0 
+    I = 0
+    x = 0
     y = 1
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
@@ -1064,8 +1058,8 @@ def emobility():
             """ collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             """ generate template and send """
 
@@ -1178,8 +1172,8 @@ def conpot():
                              "conpot_id": "%s" % content['id'],
                              "conpot_response": "%s" % content['response'],
                              "hostname": ECFG["hostname"],
-                             "externalIP": externalIP,
-                             "internalIP": internalIP}
+                             "externalIP": ECFG['ip_ext'],
+                             "internalIP": ECFG['ip_int']}
 
                     """ generate template and send """
 
@@ -1264,7 +1258,7 @@ def elasticpot():
                     if checkForPublicIP(content["dest_ip"]):
                         pubIP = content["dest_ip"]
                 except Exception:
-                    pubIP = externalIP
+                    pubIP = ECFG['ip_ext']
 
                 """ Prepair and collect Alert Data """
                 DATA = {"aid": HONEYPOT["nodeid"],
@@ -1286,8 +1280,8 @@ def elasticpot():
 
                 ADATA = {"postdata": "%s" % content["honeypot"]["postdata"],
                          "hostname": ECFG["hostname"],
-                         "externalIP": externalIP,
-                         "internalIP": internalIP}
+                         "externalIP": ECFG['ip_ext'],
+                         "internalIP": ECFG['ip_int']}
 
                 """ generate template and send """
                 esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -1396,8 +1390,8 @@ def suricata():
 
                         ADATA = {"cve_id": "%s" % content["alert"]["cve_id"],
                                  "hostname": ECFG["hostname"],
-                                 "externalIP": externalIP,
-                                 "internalIP": internalIP}
+                                 "externalIP": ECFG['ip_ext'],
+                                 "internalIP": ECFG['ip_int']}
 
                         """ generate template and send """
                         esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -1494,8 +1488,8 @@ def rdpy():
                     "sipv": "ipv" + ip4or6(sourceip),
                     "sprot": "tcp",
                     "sport": sport,
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": "3389"}
 
@@ -1504,8 +1498,8 @@ def rdpy():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             """ generate template and send """
 
@@ -1587,8 +1581,8 @@ def vnclowpot():
                     "sipv": "ipv" + ip4or6(sourceip),
                     "sprot": "tcp",
                     "sport": sport,
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": "5900"}
 
@@ -1597,8 +1591,8 @@ def vnclowpot():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             """ generate template and send """
 
@@ -1690,8 +1684,8 @@ def mailoney():
                     "sipv": "ipv" + ip4or6(sourceip),
                     "sprot": "tcp",
                     "sport": sport,
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECGF['ip_ext'],
                     "tprot": "tcp",
                     "tport": "25"}
 
@@ -1700,8 +1694,8 @@ def mailoney():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             """ generate template and send """
 
@@ -1799,8 +1793,8 @@ def heralding():
                      "username": linecontent[8],
                      "password": linecontent[9],
                      "hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             """ generate template and send """
 
@@ -1893,8 +1887,8 @@ def ciscoasa():
                     "sipv": "ipv" + ip4or6(linecontent['src_ip']),
                     "sprot": "tcp",
                     "sport": "0",
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": "8443"}
 
@@ -1904,8 +1898,8 @@ def ciscoasa():
 
             ADATA = {"payload": str(linecontent['payload_printable']),
                      "hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             """ generate template and send """
 
@@ -1985,8 +1979,8 @@ def tanner():
                     "sipv": "ipv" + ip4or6(str(linecontent['peer']['port'])),
                     "sprot": "tcp",
                     "sport": str(linecontent['peer']['port']),
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": "80"}
 
@@ -1996,8 +1990,8 @@ def tanner():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             reassembledReq = ""
 
@@ -2102,8 +2096,8 @@ def glutton():
                     "sipv": "ipv" + ip4or6(str(linecontent['src_ip'])),
                     "sprot": "tcp",
                     "sport": str(linecontent['src_port']),
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": str(linecontent['dest_port'])}
 
@@ -2112,8 +2106,8 @@ def glutton():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             if "payload_hex" in linecontent:
                 ADATA["binary"] = base64.b64encode(codecs.decode(linecontent['payload_hex'], 'hex')).decode()
@@ -2205,8 +2199,8 @@ def honeysap():
                     "sipv": "ipv" + ip4or6(linecontent['source_ip']),
                     "sprot": "tcp",
                     "sport": str(linecontent['source_port']),
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": str(linecontent['target_port'])}
 
@@ -2218,8 +2212,8 @@ def honeysap():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2299,8 +2293,8 @@ def adbhoney():
                     "sipv": "ipv" + ip4or6(linecontent['src_ip']),
                     "sprot": "tcp",
                     "sport": str(linecontent['src_port']),
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": str(linecontent['dest_port'])}
 
@@ -2309,8 +2303,8 @@ def adbhoney():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2387,8 +2381,8 @@ def fatt():
                     "sipv": "ipv" + ip4or6(linecontent['sourceIp']),
                     "sprot": "tcp",
                     "sport": str(linecontent['sourcePort']),
-                    "tipv": "ipv" + ip4or6(externalIP),
-                    "tadr": externalIP,
+                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": str(linecontent['destinationPort'])}
 
@@ -2397,8 +2391,8 @@ def fatt():
             """ Collect additional Data """
 
             ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": externalIP,
-                     "internalIP": internalIP}
+                     "externalIP": ECFG['ip_ext'],
+                     "internalIP": ECFG['ip_int']}
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)

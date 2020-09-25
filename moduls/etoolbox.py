@@ -100,10 +100,6 @@ def readonecfg(MODUL, item, FILE):
         return "UNKNOW"
 
 
-def checkForPublicIP(ip):
-    return ipaddress.ip_address(ip).is_global
-
-
 def getOwnExternalIP(MODUL, ECFG):
     """  try from env variable """
     try:
@@ -156,47 +152,53 @@ def getOwnExternalIP(MODUL, ECFG):
     return(False)
 
 
-def getHostname(MODUL, ECFG):
-    """ get Hostname from ENV/SOCKET/RANDOM """
-    if os.environ.get('MY_HOSTNAME') is not None:
-        return(os.environ.get('MY_HOSTNAME'))
-    elif socket.gethostname() is not None:
-        return(socket.gethostname())
-    else:
-        return("host-".join(random.choice(string.ascii_lowercase) for i in range(16)))
-
-
 def getIP(MODUL, ECFG):
     myIP = {}
+
+    """ Read ip from ews.ip file if exist """
+    if os.path.isfile(ECFG["path"] + os.sep + "ews.ip"):
+        ipfile = dict(readcfg('EWSIP', ('ip_int', 'ip_ext'), 'ews.ip'))
+
+        for dic in ipfile:
+            if ipfile[dic] != "" and ipfile[dic] is not None:
+                myIP['file_' + dic] = ipfile[dic]
+            else:
+                myIP['file_' + dic] = ""
 
     """ Read Enviroment Variables """
     for item in ['MY_INTIP', 'MY_EXTIP']:
         if os.environ.get(item) is not None:
-            myIP[item] = os.environ.get(item)
+            if item == 'MY_INTIP':
+                myIP['env_ip_int'] = os.environ.get(item)
+            if item == 'MY_EXTIP':
+                myIP['env_ip_ext'] = os.environ.get(item)
             try:
                 ipaddress.ip_address(myIP[item])
             except (ipaddress.AddressValueError, ValueError) as e:
                 logme(MODUL, "Error IP Adress " + str(e) + " in [EWS] is not an IPv4/IPv6 address " + " Abort !", ("P1"), ECFG)
         else:
-            myIP[item] = ""
+            if item == "MY_INTIP":
+                myIP['env_ip_in'] = ""
+            if item == "MY_EXTIP":
+                myIP['env_ip_ext'] = ""
 
     """ Get local IP via connection """
     try:
         connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         connection.connect(("8.8.8.8", 53))
-        myIP["local_ip"] = connection.getsockname()[0]
+        myIP["connect_ip_int"] = connection.getsockname()[0]
     except:
         logme(MODUL, "[ERROR] Could not determine a valid intern IP by Environment variable", ("P1", "LOG"), ECFG)
-        myIP["local_ip"] = ""
+        myIP["connect_ip_int"] = ""
     finally:
         connection.close()
 
     """ get external IP via connection """
     try:
-        myIP["external_ip"] = get('https://api.ipify.org', timeout=5).text
+        myIP["connect_ip_ext"] = get('https://api.ipify.org', timeout=5).text
     except:
         logme(MODUL, "[ERROR] Could not determine a valid public IP using external service", ("P1", "LOG"), ECFG)
-        myIP["external_ip"] = ""
+        myIP["connect_ip_ext"] = ""
     finally:
         connection.close()
 
@@ -224,6 +226,16 @@ def getOwnInternalIP(MODUL, ECFG):
     return("None")
 
 
+def getHostname(MODUL, ECFG):
+    """ get Hostname from ENV/SOCKET/RANDOM """
+    if os.environ.get('MY_HOSTNAME') is not None:
+        return(os.environ.get('MY_HOSTNAME'))
+    elif socket.gethostname() is not None:
+        return(socket.gethostname())
+    else:
+        return("host-".join(random.choice(string.ascii_lowercase) for i in range(16)))
+
+
 def resolveHost(host):
     """ resolve an IP, either from IP or hostname """
     try:
@@ -233,6 +245,10 @@ def resolveHost(host):
             return(socket.gethostbyname(host))
         else:
             return(False)
+
+
+def checkForPublicIP(ip):
+    return ipaddress.ip_address(ip).is_global
 
 
 if __name__ == "__main__":
