@@ -18,7 +18,6 @@ from moduls.elog import logme
 from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, resolveHost
 from moduls.ealert import EAlert
 import sqlite3
-import MySQLdb.cursors
 import requests
 import random
 import base64
@@ -29,18 +28,11 @@ import json
 import OpenSSL.SSL
 import ipaddress
 from collections import OrderedDict
-import logging
 import socket
 from xmljson import BadgerFish
 
 name = "EWS Poster"
-version = "v1.9.8"
-
-
-def init():
-    global hpc
-    logging.basicConfig()
-    hpc = False
+version = "v1.10"
 
 
 def ewswebservice(ems):
@@ -2170,7 +2162,6 @@ def honeysap():
     I = 0
     x = 0
     y = 1
-    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -2232,7 +2223,7 @@ def honeysap():
     writejson(jesm)
 
     if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
@@ -2261,7 +2252,6 @@ def adbhoney():
     I = 0
     x = 0
     y = 1
-    J = 0
 
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
@@ -2323,7 +2313,7 @@ def adbhoney():
     writejson(jesm)
 
     if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
@@ -2352,8 +2342,7 @@ def fatt():
     I = 0
     x = 0
     y = 1
-    J = 0
-
+  
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
@@ -2411,7 +2400,7 @@ def fatt():
     writejson(jesm)
 
     if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 ), ("P2"), ECFG)
     return
 
 
@@ -2423,15 +2412,13 @@ if __name__ == "__main__":
 
     global ECFG
     ECFG = ecfg(name, version)
-    init()
 
     lock = locksocket(name)
 
     if lock is True:
         logme(MODUL, "Create lock socket successfull.", ("P1"), ECFG)
     else:
-        logme(MODUL, "Another Instance is running !", ("P1"), ECFG)
-        logme(MODUL, "EWSrun finish.", ("P1", "EXIT"), ECFG)
+        logme(MODUL, "Another Instance is running ! EWSrun finish.", ("P1", "EXIT"), ECFG)
 
     while True:
 
