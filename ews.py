@@ -269,7 +269,6 @@ def malware(DIR, FILE, KILL, md5):
 
 
 def hpfeedsend(esm, eformat):
-    global hpc
     if not hpc:
         return False
 
@@ -1677,7 +1676,7 @@ def mailoney():
                     "sprot": "tcp",
                     "sport": sport,
                     "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
-                    "tadr": ECGF['ip_ext'],
+                    "tadr": ECFG['ip_ext'],
                     "tprot": "tcp",
                     "tport": "25"}
 
@@ -2342,7 +2341,7 @@ def fatt():
     I = 0
     x = 0
     y = 1
-  
+
     esm = ewsauth(ECFG["username"], ECFG["token"])
     jesm = ""
 
@@ -2400,7 +2399,7 @@ def fatt():
     writejson(jesm)
 
     if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 ), ("P2"), ECFG)
+        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
@@ -2413,6 +2412,9 @@ if __name__ == "__main__":
     global ECFG
     ECFG = ecfg(name, version)
 
+    global hpc
+    hpc = testhpfeedsbroker()
+
     lock = locksocket(name)
 
     if lock is True:
@@ -2421,9 +2423,6 @@ if __name__ == "__main__":
         logme(MODUL, "Another Instance is running ! EWSrun finish.", ("P1", "EXIT"), ECFG)
 
     while True:
-
-        global hpc
-        hpc = testhpfeedsbroker()
 
         if ECFG["a.ewsonly"] is False:
             sender()
