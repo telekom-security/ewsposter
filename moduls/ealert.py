@@ -17,12 +17,17 @@ class EAlert:
         self.ewsAuth(ECFG["username"], ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
 
-    def lineREAD(self, filename, format='json'):
+    def lineREAD(self, filename, format='json', linenumber=None):
+        
+        if linenumber is None:
+            linecounter = int(self.alertCount(self.MODUL, 'get_counter'))
+        else:
+            linecounter = linenumber
 
-        linecounter = int(self.alertCount(self.MODUL, 'get_counter'))
         lcache = linecache.getline(filename, linecounter)
-        self.alertCount(self.MODUL, "add_counter")
-        linecache.clearcache()
+        
+        if linenumber is None:
+            self.alertCount(self.MODUL, "add_counter")
 
         if lcache != '' and format == "json":
             try:
@@ -36,6 +41,7 @@ class EAlert:
         elif lcache != '' and format == "simple":
             return(lcache)
         else:
+            linecache.clearcache()
             return()
 
     def readCFG(self, items, file):
@@ -93,11 +99,44 @@ class EAlert:
             count.set(section, item, str(int(count.get(section, item)) + 1))
 
         elif isinstance(counting, str) and counting == "reset_counter":
-            count.set(section, item, str(0))
+            count.set(section, item, str(1))
 
         with open(ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
             count.write(countfile)
             countfile.close
+
+        return()
+
+    def fileIndex(self, filename, action, content=None):
+        """ check if file exist, else create file """
+        if not os.path.isfile(filename):
+            with open(filename, "w+") as reader:
+                reader.close()
+
+        """ get a list of content stript newline """
+        with open(filename, "r", newline=None) as reader:
+            filelist = list(filter(None, [line.rstrip("\n") for line in reader]))
+            reader.close()
+
+        if action == "read":
+            return(filelist)
+
+        if action == "write" and content is not None:
+            with open(filename, "a+") as reader:
+                if isinstance(content, list):
+                    for line in content:
+                        if line not in filelist and line != "":
+                            reader.write(line + "\n")
+
+                if isinstance(content, str):
+                    if content not in filelist and content != "":
+                        reader.write(content + "\n")
+
+                if isinstance(content, int):
+                    if str(content) not in filelist and content != "":
+                        reader.write(str(content) + "\n")
+
+                reader.close()
 
         return()
 
