@@ -6,8 +6,7 @@ import os
 import ipaddress
 import sys
 
-from moduls.elog import logme
-from moduls.etoolbox import readcfg, readonecfg, getOwnExternalIP, getHostname, getOwnInternalIP, getIP
+from moduls.etoolbox import readcfg, getHostname, getIP
 
 
 def ecfg(name, version):
@@ -47,11 +46,11 @@ def ecfg(name, version):
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
-        print(f" => [ERROR] ConfigDir {a.path} from commandline argument -c/--configpath did not exist. Abort !")
+        print(f" => [ERROR] ConfigDir {ECFG['a.path']} from commandline argument -c/--configpath did not exist. Abort !")
         sys.exit(1)
 
     if ECFG["a.jsondir"] != "" and os.path.isdir(ECFG["a.jsondir"]) is False:
-        print(f" => [ERROR] JsonDir {a.jasondir} from commandline argument -j/--jsonpath did not exist. Abort !")
+        print(f" => [ERROR] JsonDir {ECFG['a.jsondir']} from commandline argument -j/--jsonpath did not exist. Abort !")
         sys.exit(1)
 
     """ say hello """
@@ -195,7 +194,7 @@ def ecfg(name, version):
         HCFG["tlscert"] = False
     elif os.path.isfile(HCFG["tlscert"]) is False:
         print(f" => [ERROR] Missing TLS cert {HCFG['tlscert']}. Abort !")
-        os_exit(1)
+        sys.exit(1)
 
     """ Read EWSJSON Config Parameter """
 
@@ -213,7 +212,7 @@ def ecfg(name, version):
             EWSJSON["jsondir"] = EWSJSON["jsondir"] + os.sep + "ews.json"
         else:
             print(f" => [ERROR] Missing jsondir {EWSJSON['jsondir']} in [EWSJSON]. Abort !")
-            os_exit(1)
+            sys.exit(1)
     else:
         EWSJSON["json"] = False
 
@@ -224,28 +223,25 @@ def ecfg(name, version):
 
     """ Setup Hostname """
 
+    ECFG['hostname'] = getHostname(MODUL, ECFG)
+
     """ Collection IP Config, Enviroment, lookup """
     IPCFG = getIP(MODUL, ECFG)
-    
-    if ECFG['ip_int'] == "" or ECFG['ip_int'] == "none":
-        ECFG['ip_int'] = IPCFG['MY_INTIP']
 
-        if ECFG['ip_int'] == "" or ECFG['ip_int'] == "none":
-            ECFG['ip_int'] = IPCFG['local_ip']
-
-            if ECFG['ip_int'] == "" or ECFG['ip_int'] == "none":
-                print(f" => [ERROR] ip_int is 'none' or empty. Abort !")
-                os_exit(1)
-
-    if ECFG['ip_ext'] == "" or ECFG['ip_ext'] == "none":
-        ECFG['ip_ext'] = IPCFG['MY_EXTIP']
-
-        if ECFG['ip_ext'] == "" or ECFG['ip_ext'] == "none":
-            ECFG['ip_ext'] = IPCFG['external_ip']
-
-            if ECFG['ip_ext'] == "" or ECFG['ip_ext'] == "none":
-                print(f" => [ERROR] ip_ext is 'none' or empty. Abort !")
-                os_exit(1)
+    for place in ['ip_int', 'ip_ext']:
+        """ ip in ews.cfg """
+        if ECFG[place] == "" or ECFG[place] == "none":
+            ECFG[place] = IPCFG['env_' + place]
+            """ ip in env """
+            if ECFG[place] == "" or ECFG[place] == "none":
+                ECFG[place] = IPCFG['file_' + place]
+                """ ip in ews.ip """
+                if ECFG[place] == "" or ECFG[place] == "none":
+                    ECFG[place] = IPCFG['connect_' + place]
+                    """ ip from connection """
+                    if ECFG[place] == "" or ECFG[place] == "none":
+                        print(f" => [ERROR] {place} is 'none' or empty. Abort !")
+                        sys.exit(1)
 
     return(ECFG)
 
