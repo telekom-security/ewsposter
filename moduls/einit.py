@@ -190,8 +190,8 @@ def ecfg(name, version):
     if HCFG["hpfformat"].lower() not in ("ews", "json"):
         HCFG["hpfformat"] = "ews"
 
-    if HCFG["tlscert"].lower() == "false":
-        HCFG["tlscert"] = False
+    if HCFG["tlscert"].lower() == "none" or HCFG["tlscert"] == "":
+        HCFG["tlscert"] = "none"
     elif os.path.isfile(HCFG["tlscert"]) is False:
         print(f" => [ERROR] Missing TLS cert {HCFG['tlscert']}. Abort !")
         sys.exit(1)

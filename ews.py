@@ -300,7 +300,7 @@ def testhpfeedsbroker():
             return False
 
         try:
-            if ECFG["tlscert"].lower() != "false":
+            if ECFG["tlscert"].lower() != "none":
                 hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], certfile=ECFG["tlscert"], reconnect=False)
                 logme("hpfeedsend", "Connecting to %s via TLS" % format(hpc.brokername + "/" + ECFG["host"] + ":" + str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
             else:

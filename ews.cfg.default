@@ -25,8 +25,8 @@ port = 1337
 channels = test
 ident = username
 secret= passwort
-# path/to/certificate for tls broker - or "false" for non-tls broker
-tlscert = false
+# path/to/certificate for tls broker - or "none" for non-tls broker
+tlscert = none
 # hpfeeds submission format: "ews" (xml) or "json"
 hpfformat = ews
 
