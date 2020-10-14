@@ -179,22 +179,25 @@ def ecfg(name, version):
 
     if HCFG["hpfeed"].lower() == "true":
         HCFG["hpfeed"] = True
+
+        for index in ["host", "port", "channels", "ident", "secret"]:
+            if HCFG[index] == "" and HCFG["hpfeed"] is True:
+                print(f" => [ERROR] Missing {index} in [HPFEED] config section. Abort !")
+                sys.exit(1)
+
+        if HCFG["hpfformat"].lower() not in ("ews", "json"):
+            HCFG["hpfformat"] = "ews"
+
+        if HCFG["tlscert"].lower() == "none" or HCFG["tlscert"] == "false":
+            HCFG["tlscert"] = "none"
+        elif os.path.isfile(HCFG["tlscert"]) is False:
+            print(f" => [ERROR] Missing TLS cert {HCFG['tlscert']}. Use tlscert = none")
+            HCFG["tlscert"] = "none"
+        else:
+            print(f" => [INFO] Use TLS cert {HCFG['tlscert']} for HPFeed transfer.")
+
     else:
         HCFG["hpfeed"] = False
-
-    for index in ["host", "port", "channels", "ident", "secret"]:
-        if HCFG[index] == "" and HCFG["hpfeed"] is True:
-            print(f" => [ERROR] Missing {index} in [HPFEED] config section. Abort !")
-            sys.exit(1)
-
-    if HCFG["hpfformat"].lower() not in ("ews", "json"):
-        HCFG["hpfformat"] = "ews"
-
-    if HCFG["tlscert"].lower() == "none" or HCFG["tlscert"] == "":
-        HCFG["tlscert"] = "none"
-    elif os.path.isfile(HCFG["tlscert"]) is False:
-        print(f" => [ERROR] Missing TLS cert {HCFG['tlscert']}. Abort !")
-        sys.exit(1)
 
     """ Read EWSJSON Config Parameter """
 
