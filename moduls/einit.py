@@ -5,6 +5,7 @@ import argparse
 import os
 import ipaddress
 import sys
+import uuid
 
 from moduls.etoolbox import readcfg, getHostname, getIP
 
@@ -223,6 +224,21 @@ def ecfg(name, version):
     ECFG.update(EWSCFG)
     ECFG.update(HCFG)
     ECFG.update(EWSJSON)
+
+    """ Setup UUID """
+
+    if os.environ.get('HONEY_UUID') is not None:
+        ECFG['UUID'] = os.environ.get('HONEY_UUID')
+    else:
+        if os.path.isfile(ECFG["path"] + os.sep + "ews.uuid"):
+            with open(ECFG["path"] + os.sep + "ews.uuid", 'r') as filein:
+                ECFG['uuid'] = filein.read()
+                filein.close()
+        else:
+            with open(ECFG["path"] + os.sep + "ews.uuid", 'w') as fileout:
+                ECFG['UUID'] = str(uuid.uuid4())
+                fileout.write(ECFG['UUID'])
+                fileout.close()
 
     """ Setup Hostname """
 

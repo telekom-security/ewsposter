@@ -8,6 +8,7 @@ log/
 spool/
 .idea/
 ews.ip
+ews.uuid
 hpfbroker/
 work/
 json/

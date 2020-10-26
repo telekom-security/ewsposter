@@ -114,18 +114,13 @@ def getIP(MODUL, ECFG):
                 myIP['file_' + dic] = ""
 
     """ Read Enviroment Variables """
-    for item in ['env_ip_int', 'env_ip_ext']:
-
-        if item == 'env_ip_int' and os.environ.get('MY_INTIP') is not None:
-            myIP[item] = os.environ.get('MY_INTIP')
-
-        if item == 'env_ip_ext' and os.environ.get('MY_EXTIP') is not None:
-            myIP[item] = os.environ.get('MY_EXTIP')
-
-        try:
-            ipaddress.ip_address(myIP[item])
-        except (ipaddress.AddressValueError, ValueError) as e:
-            logme(MODUL, "Error IP Adress " + str(e) + " in Environment Variable is not an IPv4/IPv6 address " + " Abort !", ("P1"), ECFG)
+    for item , envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
+        if os.environ.get(envvar) is not None:
+            myIP[item] = os.environ.get(envvar)
+            try:
+                ipaddress.ip_address(myIP[item])
+            except (ipaddress.AddressValueError, ValueError) as e:
+                logme(MODUL, "Error IP Adress " + str(e) + " in Environment Variable is not an IPv4/IPv6 address " + " Abort !", ("P1"), ECFG)
 
     """ Get local IP via connection """
     try:
