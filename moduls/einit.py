@@ -228,16 +228,16 @@ def ecfg(name, version):
     """ Setup UUID """
 
     if os.environ.get('HONEY_UUID') is not None:
-        ECFG['UUID'] = os.environ.get('HONEY_UUID')
+        ECFG['uuid'] = os.environ.get('HONEY_UUID')
     else:
         if os.path.isfile(ECFG["path"] + os.sep + "ews.uuid"):
             with open(ECFG["path"] + os.sep + "ews.uuid", 'r') as filein:
-                ECFG['uuid'] = filein.read()
+                ECFG['uuid'] = str(filein.read())
                 filein.close()
         else:
             with open(ECFG["path"] + os.sep + "ews.uuid", 'w') as fileout:
-                ECFG['UUID'] = str(uuid.uuid4())
-                fileout.write(ECFG['UUID'])
+                ECFG['uuid'] = str(uuid.uuid4())
+                fileout.write(ECFG['uuid'])
                 fileout.close()
 
     """ Setup Hostname """

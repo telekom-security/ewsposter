@@ -457,7 +457,8 @@ def glastopfv3():
         ADATA = {"sqliteid": row["id"],
                  "hostname": ECFG["hostname"],
                  "externalIP": ECFG['ip_ext'],
-                 "internalIP": ECFG['ip_int']}
+                 "internalIP": ECFG['ip_int'],
+                 "uuid": ECFG['uuid']}
 
         if "request_raw" in list(row.keys()) and len(row["request_raw"]) > 0:
             REQUEST["raw"] = base64.encodebytes(row["request_raw"].encode('ascii', 'ignore')).decode()
@@ -695,7 +696,8 @@ def cowrie():
                  "input": cinput,
                  "hostname": ECFG["hostname"],
                  "externalIP": ECFG['ip_ext'],
-                 "internalIP": ECFG['ip_int']}
+                 "internalIP": ECFG['ip_int'],
+                 "uuid": ECFG['uuid']}
 
         """ generate template and send """
 
@@ -818,7 +820,8 @@ def dionaea():
         ADATA = {"sqliteid": str(row["connection"]),
                  "hostname": ECFG["hostname"],
                  "externalIP": ECFG['ip_ext'],
-                 "internalIP": ECFG['ip_int']}
+                 "internalIP": ECFG['ip_int'],
+                 "uuid": ECFG['uuid']}
 
         """ Check for malware bin's """
 
@@ -945,7 +948,8 @@ def honeytrap():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             """ Search for Payload """
             if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
@@ -1050,7 +1054,8 @@ def emobility():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             """ generate template and send """
 
@@ -1164,7 +1169,8 @@ def conpot():
                              "conpot_response": "%s" % content['response'],
                              "hostname": ECFG["hostname"],
                              "externalIP": ECFG['ip_ext'],
-                             "internalIP": ECFG['ip_int']}
+                             "internalIP": ECFG['ip_int'],
+                             "uuid": ECFG['uuid']}
 
                     """ generate template and send """
 
@@ -1272,7 +1278,8 @@ def elasticpot():
                 ADATA = {"postdata": "%s" % content["honeypot"]["postdata"],
                          "hostname": ECFG["hostname"],
                          "externalIP": ECFG['ip_ext'],
-                         "internalIP": ECFG['ip_int']}
+                         "internalIP": ECFG['ip_int'],
+                         "uuid": ECFG['uuid']}
 
                 """ generate template and send """
                 esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -1382,7 +1389,8 @@ def suricata():
                         ADATA = {"cve_id": "%s" % content["alert"]["cve_id"],
                                  "hostname": ECFG["hostname"],
                                  "externalIP": ECFG['ip_ext'],
-                                 "internalIP": ECFG['ip_int']}
+                                 "internalIP": ECFG['ip_int'],
+                                 "uuid": ECFG['uuid']}
 
                         """ generate template and send """
                         esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -1490,7 +1498,8 @@ def rdpy():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             """ generate template and send """
 
@@ -1583,7 +1592,8 @@ def vnclowpot():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             """ generate template and send """
 
@@ -1686,7 +1696,8 @@ def mailoney():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             """ generate template and send """
 
@@ -1785,7 +1796,8 @@ def heralding():
                      "password": linecontent[9],
                      "hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             """ generate template and send """
 
@@ -1890,7 +1902,8 @@ def ciscoasa():
             ADATA = {"payload": str(linecontent['payload_printable']),
                      "hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             """ generate template and send """
 
@@ -1982,7 +1995,8 @@ def tanner():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             reassembledReq = ""
 
@@ -2098,7 +2112,8 @@ def glutton():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             if "payload_hex" in linecontent:
                 ADATA["binary"] = base64.b64encode(codecs.decode(linecontent['payload_hex'], 'hex')).decode()
@@ -2203,7 +2218,8 @@ def honeysap():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2293,7 +2309,8 @@ def adbhoney():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
@@ -2380,7 +2397,8 @@ def fatt():
 
             ADATA = {"hostname": ECFG["hostname"],
                      "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int']}
+                     "internalIP": ECFG['ip_int'],
+                     "uuid": ECFG['uuid']}
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
             jesm = buildjson(jesm, DATA, REQUEST, ADATA)
