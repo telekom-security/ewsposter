@@ -32,7 +32,7 @@ import socket
 from xmljson import BadgerFish
 
 name = "EWS Poster"
-version = "v1.10"
+version = "v1.11"
 
 
 def ewswebservice(ems):

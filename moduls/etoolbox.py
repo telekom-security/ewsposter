@@ -84,6 +84,26 @@ def readcfg(MODUL, ITEMS, FILE):
 
     return(result)
 
+def checkSECTIONcfg(MODUL,FILE):
+    
+    config = configparser.SafeConfigParser(os.environ)
+    config.read(FILE)
+
+    if config.has_section(MODUL):
+        return True  
+    else: 
+        return False
+ 
+def checkITEMcfg(MODUL,ITEM,FILE):
+
+    config = configparser.SafeConfigParser(os.environ)
+    config.read(FILE)
+
+    if config.has_section(MODUL) and config.has_section(ITEM):
+        return True  
+    else: 
+        return False
+
 
 def readonecfg(MODUL, item, FILE):
 
@@ -105,16 +125,26 @@ def getIP(MODUL, ECFG):
 
     """ Read ip from ews.ip file if exist """
     if os.path.isfile(ECFG["path"] + os.sep + "ews.ip"):
-        ipfile = dict(readcfg('EWSIP', ('ip_int', 'ip_ext'), 'ews.ip'))
+        if checkSECTIONcfg("EWSIP", "ews.ip"):
+            ipfile = dict(readcfg('EWSIP', ('ip_int', 'ip_ext'), 'ews.ip'))
 
-        for dic in ipfile:
-            if ipfile[dic] != "" and ipfile[dic] is not None:
-                myIP['file_' + dic] = ipfile[dic]
-            else:
-                myIP['file_' + dic] = ""
+            for dic in ipfile:
+                if ipfile[dic] != "" and ipfile[dic] is not None:
+                    myIP['file_' + dic] = ipfile[dic]
+                else:
+                    myIP['file_' + dic] = ""
+
+        elif checkSECTIONcfg("MAIN", "ews.ip"):
+            ipfile = dict(readcfg('MAIN', ('ip',), 'ews.ip'))
+            myIP['file_ip_int'] = ""
+            myIP['file_ip_ext'] = ipfile['ip']
+
+        else:
+            logme(MODUL, "[ERROR] File ews.ip exist but not in an right format. Abort!", ("P1", "LOG", "EXIT"), ECFG)
+       
 
     """ Read Enviroment Variables """
-    for item , envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
+    for item, envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
         if os.environ.get(envvar) is not None:
             myIP[item] = os.environ.get(envvar)
             try:
