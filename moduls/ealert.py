@@ -12,7 +12,7 @@ import requests
 import re
 import configparser
 import linecache
-import sys 
+import sys
 
 class EAlert:
 
@@ -31,14 +31,14 @@ class EAlert:
         print(f' => Starting {self.MODUL} Honeypot Modul.')
 
     def lineREAD(self, filename, format='json', linenumber=None):
-        
+
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter'))
         else:
             linecounter = linenumber
 
         lcache = linecache.getline(filename, linecounter)
-        
+
         if linenumber is None:
             self.alertCount(self.MODUL, "add_counter")
 
