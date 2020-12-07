@@ -166,7 +166,7 @@ def sender():
 
         for files in FILEIN:
             fpart = files.split('.')
-            if len(fpart) == 3 and int(fpart[1]) > 4:
+            if len(fpart) == 3 and int(fpart[1]) > 10:
                 logme(MODUL, "Cleaning spooler dir: %s delete file: %s reached max transmit counter !" % (DIR, files), ("LOG"), ECFG)
                 os.remove(DIR + os.sep + files)
 
