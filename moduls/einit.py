@@ -119,7 +119,7 @@ def ecfg(name, version):
     if int(ECFG["a.sendlimit"]) > 0:
         MCFG["sendlimit"] = ECFG["a.sendlimit"]
 
-    if int(MCFG["sendlimit"]) > 500:
+    if int(MCFG["sendlimit"]) > 5000:
         print(f" => [ERROR] Sendlimit {str(MCFG['sendlimit'])} to high. Max 500 !")
         sys.exit(1)
     elif int(MCFG["sendlimit"]) < 1:
