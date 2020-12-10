@@ -32,7 +32,7 @@ import socket
 from xmljson import BadgerFish
 
 name = "EWS Poster"
-version = "v1.11"
+version = "v1.12"
 
 
 def ewswebservice(ems):
@@ -1246,11 +1246,6 @@ def elasticpot():
                 countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
             else:
-                """ filter empty requests and nagios checks """
-
-                if content["honeypot"]["query"] == os.sep or content["honeypot"]["query"] == "/index.do?hash=DEADBEEF&activate=1":
-                    countme(MODUL, 'fileline', -2, ECFG)
-                    continue
                 try:
                     if checkForPublicIP(content["dest_ip"]):
                         pubIP = content["dest_ip"]
@@ -1267,15 +1262,20 @@ def elasticpot():
                         "tipv": "ipv" + ip4or6(ECFG["ip_ext"]),
                         "tadr": "%s" % pubIP,
                         "tprot": "tcp",
-                        "tport": "%s" % content["dest_port"]}
+                        "tport": "%s" % content["dst_port"]}
 
-                REQUEST = {"description": "ElasticSearch Honeypot : Elasticpot",
-                           "url": parse.quote(content["honeypot"]["query"].encode('ascii', 'ignore')),
-                           "raw": content["honeypot"]["raw"]}
+                REQUEST = {"description": "ElasticSearch Honeypot : Elasticpot"}
+
+                if 'url' in content:
+                    REQUEST.update({"url": parse.quote(content["url"].encode('ascii', 'ignore'))})
+
+                for element in ['user_agent', 'request', 'payload', 'content_type', 'accept_language']:
+                    if element in content:
+                        REQUEST.update({element: content[element]})
 
                 """ Collect additional Data """
 
-                ADATA = {"postdata": "%s" % content["honeypot"]["postdata"],
+                ADATA = {"message": content["message"],
                          "hostname": ECFG["hostname"],
                          "externalIP": ECFG['ip_ext'],
                          "internalIP": ECFG['ip_int'],
