@@ -32,7 +32,7 @@ import socket
 from xmljson import BadgerFish
 
 name = "EWS Poster"
-version = "v1.12"
+version = "v1.13"
 
 
 def ewswebservice(ems):
@@ -2013,6 +2013,18 @@ def tanner():
                     if linecontent['headers'][i]:
                         headercontent = linecontent['headers'][i]
                     reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
+            try:
+                if len(linecontent['post_data']) > 0:
+                    postdatacontent=""
+                    for key, value in linecontent['post_data'].items():
+                        if len(postdatacontent) != 0:
+                            postdatacontent+="&"
+                        postdatacontent+=("%s=%s"% (key, value))
+                    reassembledReq += "\r\n{}".format(postdatacontent)
+
+            except KeyError as e:
+                # no postdata
+                pass
 
             REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore')).decode()
 
