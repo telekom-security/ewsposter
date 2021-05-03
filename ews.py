@@ -17,6 +17,7 @@ from moduls.einit import locksocket, ecfg
 from moduls.elog import logme
 from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, resolveHost
 from moduls.ealert import EAlert
+from moduls.esend import ESend
 import sqlite3
 import requests
 import random
@@ -30,9 +31,10 @@ import ipaddress
 from collections import OrderedDict
 import socket
 from xmljson import BadgerFish
+import sys
 
 name = "EWS Poster"
-version = "v1.11"
+version = "v1.14"
 
 
 def ewswebservice(ems):
@@ -116,76 +118,6 @@ def viewcounter(MODUL, x, y):
         y += 1
 
     return x, y
-
-
-def sender():
-    MODUL = "sender"
-
-    def clean_dir(DIR, MODUL):
-        FILEIN = filelist(DIR)
-
-        for files in FILEIN:
-            if ".ews" not in files:
-                os.remove(DIR + os.sep + files)
-                logme(MODUL, "Cleaning spooler dir: %s delete file: %s" % (DIR, files), ("LOG"), ECFG)
-        return()
-
-    def check_job(DIR, MODUL):
-        FILEIN = filelist(DIR)
-
-        if len(FILEIN) < 1:
-            logme(MODUL, "Sender : No Jobs to send in %s" % (DIR), ("P1"), ECFG)
-            return False
-        else:
-            logme(MODUL, "Sender : There are %s jobs to send in %s" % (str(len(FILEIN)), DIR), ("P1"), ECFG)
-            return True
-
-    def send_job(DIR):
-        FILEIN = filelist(DIR)
-
-        for files in FILEIN:
-            with open(DIR + os.sep + files, 'r') as alert:
-                EWSALERT = alert.read()
-                alert.close()
-
-            if ewswebservice(EWSALERT) is True:
-                os.remove(DIR + os.sep + files)
-            else:
-                fpart = files.split('.')
-
-                if len(fpart) == 2:
-                    newname = fpart[0] + ".1." + fpart[1]
-                else:
-                    newname = fpart[0] + "." + str(int(fpart[1]) + 1) + "." + fpart[2]
-
-                os.rename(DIR + os.sep + files, DIR + os.sep + newname)
-        return
-
-    def del_job(DIR, MODUL):
-        FILEIN = filelist(DIR)
-
-        for files in FILEIN:
-            fpart = files.split('.')
-            if len(fpart) == 3 and int(fpart[1]) > 4:
-                logme(MODUL, "Cleaning spooler dir: %s delete file: %s reached max transmit counter !" % (DIR, files), ("LOG"), ECFG)
-                os.remove(DIR + os.sep + files)
-
-    def filelist(DIR):
-
-        if os.path.isdir(DIR) is not True:
-            logme(MODUL, "Error missing dir " + DIR + " Abort !", ("P1", "EXIT"), ECFG)
-        else:
-            return os.listdir(DIR)
-
-    clean_dir(ECFG["spooldir"], MODUL)
-    del_job(ECFG["spooldir"], MODUL)
-
-    if check_job(ECFG["spooldir"], MODUL) is False:
-        return
-
-    send_job(ECFG["spooldir"])
-
-    return
 
 
 def buildews(esm, DATA, REQUEST, ADATA):
@@ -1246,11 +1178,6 @@ def elasticpot():
                 countme(MODUL, 'fileline', -2, ECFG)
                 J += 1
             else:
-                """ filter empty requests and nagios checks """
-
-                if content["honeypot"]["query"] == os.sep or content["honeypot"]["query"] == "/index.do?hash=DEADBEEF&activate=1":
-                    countme(MODUL, 'fileline', -2, ECFG)
-                    continue
                 try:
                     if checkForPublicIP(content["dest_ip"]):
                         pubIP = content["dest_ip"]
@@ -1267,15 +1194,20 @@ def elasticpot():
                         "tipv": "ipv" + ip4or6(ECFG["ip_ext"]),
                         "tadr": "%s" % pubIP,
                         "tprot": "tcp",
-                        "tport": "%s" % content["dest_port"]}
+                        "tport": "%s" % content["dst_port"]}
 
-                REQUEST = {"description": "ElasticSearch Honeypot : Elasticpot",
-                           "url": parse.quote(content["honeypot"]["query"].encode('ascii', 'ignore')),
-                           "raw": content["honeypot"]["raw"]}
+                REQUEST = {"description": "ElasticSearch Honeypot : Elasticpot"}
+
+                if 'url' in content:
+                    REQUEST.update({"url": parse.quote(content["url"].encode('ascii', 'ignore'))})
+
+                for element in ['user_agent', 'request', 'payload', 'content_type', 'accept_language']:
+                    if element in content:
+                        REQUEST.update({element: content[element]})
 
                 """ Collect additional Data """
 
-                ADATA = {"postdata": "%s" % content["honeypot"]["postdata"],
+                ADATA = {"message": content["message"],
                          "hostname": ECFG["hostname"],
                          "externalIP": ECFG['ip_ext'],
                          "internalIP": ECFG['ip_int'],
@@ -2013,6 +1945,18 @@ def tanner():
                     if linecontent['headers'][i]:
                         headercontent = linecontent['headers'][i]
                     reassembledReq = "{}{}: {}\r\n".format(reassembledReq, i.title(), headercontent)
+            try:
+                if len(linecontent['post_data']) > 0:
+                    postdatacontent=""
+                    for key, value in linecontent['post_data'].items():
+                        if len(postdatacontent) != 0:
+                            postdatacontent+="&"
+                        postdatacontent+=("%s=%s"% (key, value))
+                    reassembledReq += "\r\n{}".format(postdatacontent)
+
+            except KeyError as e:
+                # no postdata
+                pass
 
             REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore')).decode()
 
@@ -2421,6 +2365,47 @@ def fatt():
     return
 
 
+def ipphoney():
+
+    ipphoney = EAlert('ipphoney', ECFG)
+
+    ITEMS = ['ipphoney', 'nodeid', 'logfile']
+    HONEYPOT = (ipphoney.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = ipphoney.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if line == 'jsonfail':
+            continue
+        if len(line) == 0:
+            break
+
+        ipphoney.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            ipphoney.data('timestamp', line['timestamp'][0:10] + " " + line['timestamp'][11:19])
+            ipphoney.data("timezone", time.strftime('%z'))
+
+        ipphoney.data('source_address', line['src_ip']) if 'src_ip' in line else None
+        ipphoney.data('target_address', line['src_ip']) if 'dst_ip' in line else None
+        ipphoney.data('source_port', line['src_port']) if 'src_port' in line else None
+        ipphoney.data('target_port', line['dst_port']) if 'dst_port' in line else None
+        ipphoney.data('source_protokoll', "tcp")
+        ipphoney.data('target_protokoll', "tcp")
+
+        ipphoney.request("description", "IPP Honeypot")
+
+        ipphoney.adata('hostname', ECFG['hostname'])
+        ipphoney.adata('externalIP', ECFG['ip_ext'])
+        ipphoney.adata('internalIP', ECFG['ip_int'])
+        ipphoney.adata('uuid', ECFG['uuid'])
+
+        if ipphoney.buildAlert() == "sendlimit":
+            break
+
+    ipphoney.finAlert()
+
+
 """ --- [ MAIN ] ------------------------------------------------------------------ """
 
 if __name__ == "__main__":
@@ -2429,6 +2414,8 @@ if __name__ == "__main__":
 
     global ECFG
     ECFG = ecfg(name, version)
+    ECFG['name'] = name
+    ECFG['version'] = version
 
     global hpc
     hpc = testhpfeedsbroker()
@@ -2443,7 +2430,7 @@ if __name__ == "__main__":
     while True:
 
         if ECFG["a.ewsonly"] is False:
-            sender()
+            ESend(ECFG)
 
         for honeypot in ECFG["HONEYLIST"]:
 

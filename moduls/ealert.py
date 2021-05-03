@@ -12,26 +12,33 @@ import requests
 import re
 import configparser
 import linecache
-import sys
+import sys 
+import OpenSSL.SSL
+import hpfeeds
+import socket
+from xmljson import BadgerFish
+from collections import OrderedDict
 
 class EAlert:
 
-    def __init__(self, MODUL):
+    def __init__(self, MODUL, ECFG):
 
         self.MODUL = MODUL.upper()
         self.DATA = {}
         self.REQUEST = {}
         self.ADATA = {}
+        self.ECFG = ECFG
         self.esm = ""
         self.jesm = ""
         self.counter = 0
         self.hcounter = 0
         self.jsonfailcounter = 0
-        self.ewsAuth(ECFG["username"], ECFG["token"])
+        self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
 
-    def lineREAD(self, filename, format='json', linenumber=None):
 
+    def lineREAD(self, filename, format='json', linenumber=None):
+        
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter'))
         else:
@@ -39,7 +46,7 @@ class EAlert:
 
         lcache = linecache.getline(filename, linecounter)
 
-        if linenumber is None:
+        if linenumber is None and lcache != '':
             self.alertCount(self.MODUL, "add_counter")
 
         if lcache != '' and format == "json":
@@ -72,7 +79,7 @@ class EAlert:
                     returndic[item] = None
                 self.checkCFG(item, returndic[item])
             else:
-                errormsg = "[ERROR] Config parameter [{}] '{}=' didn't find or empty in {} config file. Abort !".format(self.MODUL, item, file)
+                errormsg = "[ERROR] Config parameter [{}] '{}=' didn't find or empty in {} config file. Abort!".format(self.MODUL, item, file)
                 print(errormsg)
 
         return(returndic)
@@ -94,7 +101,7 @@ class EAlert:
     def alertCount(self, section, counting, item='index'):
 
         count = configparser.ConfigParser()
-        count.read(ECFG["homedir"] + os.sep + "ews.idx")
+        count.read(self.ECFG["homedir"] + os.sep + "ews.idx")
 
         if count.has_section(section) is False:
             count.add_section(section)
@@ -114,7 +121,7 @@ class EAlert:
         elif isinstance(counting, str) and counting == "reset_counter":
             count.set(section, item, str(1))
 
-        with open(ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
+        with open(self.ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
             count.write(countfile)
             countfile.close
 
@@ -196,7 +203,7 @@ class EAlert:
 
     def ewsAuth(self, username, token):
         self.esm = etree.Element("EWS-SimpleMessage", version="3.0")
-        Auth = etree.SubElement(self.esm, "Authenticatio")
+        Auth = etree.SubElement(self.esm, "Authentication")
         etree.SubElement(Auth, "username").text = username
         etree.SubElement(Auth, "token").text = token
         return()
@@ -205,8 +212,8 @@ class EAlert:
         Alert = etree.SubElement(self.esm, "Alert")
         etree.SubElement(Alert, "Analyzer", id=self.DATA["analyzer_id"])
         etree.SubElement(Alert, "CreateTime", tz=self.DATA["timezone"]).text = self.DATA["timestamp"]
-        etree.SubElement(Alert, "Source", category=self.DATA["source_ip_version"], port=self.DATA["source_port"], protocol=self.DATA["source_protokoll"]).text = self.DATA["source_address"]
-        etree.SubElement(Alert, "Target", category=self.DATA["target_ip_version"], port=self.DATA["target_port"], protocol=self.DATA["target_protokoll"]).text = self.DATA["target_address"]
+        etree.SubElement(Alert, "Source", category=self.DATA["source_ip_version"], port=str(self.DATA["source_port"]), protocol=self.DATA["source_protokoll"]).text = self.DATA["source_address"]
+        etree.SubElement(Alert, "Target", category=self.DATA["target_ip_version"], port=str(self.DATA["target_port"]), protocol=self.DATA["target_protokoll"]).text = self.DATA["target_address"]
 
         if "corigin" and "cident" and "ctext" in self.DATA:
             etree.SubElement(Alert, "Classification", origin=self.DATA["corigin"], ident=self.DATA["cident"], text=self.DATA["ctext"])
@@ -226,7 +233,7 @@ class EAlert:
         return()
 
     def ewsWrite(self):
-        with open(ECFG['spooldir'] + os.sep + time.strftime('%Y%m%dT%H%M%S') + ".ews", "wb") as file:
+        with open(self.ECFG['spooldir'] + os.sep + time.strftime('%Y%m%dT%H%M%S') + ".ews", "wb") as file:
             file.write(etree.tostring(self.esm, pretty_print=True))
             file.close
         return()
@@ -280,43 +287,59 @@ class EAlert:
         return()
 
     def jsonWrite(self):
-        if len(self.jesm) > 0 and ECFG["json"] is True:
-            with open(ECFG["a.jsondir"], 'a+') as file:
+        if len(self.jesm) > 0 and self.ECFG["json"] is True:
+            if len(self.ECFG['a.jsondir']) > 0:
+                jsondir = self.ECFG['a.jsondir']
+            else:
+                jsondir = self.ECFG['jsondir']
+
+            with open(jsondir, 'a+') as file:
                 file.write(self.jesm)
                 file.close
         return()
 
-    def buildAlert(self):
-        if self.dataCheck() is False:
-            return(False)
-
-        self.ewsAlert()
-
-        if ECFG['json'] is True:
-            self.jsonAlert()
-
-        if ECFG['a.verbose'] is True:
-            self.ewsVerbose()
-
-        """ After alert was created """
+    def clearandcount(self):
+        """ Count up and delete data variables """
         self.counter += 1
-        self.alertCount(self.MODUL, "add_counter")
         self.DATA.clear()
         self.REQUEST.clear()
         self.ADATA.clear()
+        return()
+
+    def buildAlert(self):
+        """ Check if all required data exists. """
+        if self.dataCheck() is False:
+            print(f'{self.MODUL} there my an problem white collectet Datas. dataCheck skip!')
+            self.clearandcount()
+            return(False)
+
+        """ Create XML Alert """
+        self.ewsAlert()
+
+        if self.ECFG['json'] is True:
+            self.jsonAlert()
+
+        if self.ECFG['a.verbose'] is True:
+            self.ewsVerbose()
+        
+        """ clear, count, check if Sendlimit ist reach ! """
+        self.clearandcount()
+        if (self.counter + (self.hcounter * 100)) >= int(self.ECFG["sendlimit"]):
+            print(f'    -> Sendlimit ({self.ECFG["sendlimit"]}) for Honeypot {self.MODUL} reached. Skip.')
+            return('sendlimit')
 
         """ check if alerts must be send """
         if int(self.esm.xpath('count(//Alert)')) >= 100:
             self.counter = 0
             self.hcounter += 1
             self.sendAlert()
-            self.ewsAuth(ECFG["username"], ECFG["token"])
+            self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
 
         return(True)
 
     def finAlert(self):
         """ check for unsend EWS alerts """
-        if int(self.esm.xpath('count(//Alert)')) >= 0:
+        if int(self.esm.xpath('count(//Alert)')) > 0:
             self.sendAlert()
 
         """ finish json alerts  """
@@ -324,14 +347,20 @@ class EAlert:
 
     def sendAlert(self):
         """ Check if ECFG["a.ewsonly"] """
-        if ECFG["a.ewsonly"] is True:
+        if self.ECFG["a.ewsonly"] is True:
             self.ewsWrite()
             return(True)
 
         """ Check if ECFG["a.debug"] """
 
-        """ Check if ECFG["ews"] """
-        if ECFG["ews"] is True and self.ewsWebservice() is not True:
+        """ Print Counter """
+        if self.counter == 0 and self.hcounter > 1:
+            print(f"    -> Send {100 * self.hcounter:3d} {self.MODUL} alerts to EWS Backend.")
+        if self.counter > 0 and self.hcounter == 0:
+            print(f"    -> Send {self.counter:3d} {self.MODUL} alert(s) to EWS Backend.")
+
+        """ Send via Webservice or drop to Spool """
+        if self.ECFG["ews"] is True and self.ewsWebservice() is not True:
             self.ewsWrite()
             return(False)
         else:
@@ -340,30 +369,31 @@ class EAlert:
         """ Check if ECFG["hpfeed"] """
 
     def ewsWebservice(self):
-        headers = {'User-Agent': name + " " + version,
+        headers = {'User-Agent': self.ECFG['name'] + " " + self.ECFG['version'],
                    'Content-type': 'text/xml',
                    'SOAPAction': '',
                    'Charset': 'UTF-8',
                    'Connection': 'close'}
 
-        host = random.choice([ECFG["rhost_first"], ECFG["rhost_second"]])
+        host = random.choice([self.ECFG["rhost_first"], self.ECFG["rhost_second"]])
 
-        if ECFG["proxy"] != "" and "https:" in ECFG["proxy"]:
-            proxy = {"https": ECFG["proxy"]}
-        elif ECFG["proxy"] != "" and "http:" in ECFG["proxy"]:
-            proxy = {"http": ECFG["proxy"]}
-        else:
-            proxy = {}
+        proxies = {}
 
-        verify = (False if ECFG["a.ignorecert"] is True else True)
+        if self.ECFG['proxy'] is not False:
+            if "https:" in self.ECFG["proxy"]:
+                proxies = {"https": self.ECFG["proxy"]}
+            elif "http:" in self.ECFG["proxy"]:
+                proxies = {"http": self.ECFG["proxy"]}
+
+        verify = (False if self.ECFG["a.ignorecert"] is True else True)
 
         try:
             webservice = requests.post(host,
-                                       data=self.esm,
+                                       data=etree.tostring(self.esm),
                                        headers=headers,
                                        allow_redirects=True,
                                        timeout=60,
-                                       proxy=proxy,
+                                       proxies=proxies,
                                        verify=verify)
 
             webservice.raise_for_status()
@@ -373,27 +403,23 @@ class EAlert:
                 print("XML Result != ok ( %s) (%s)" % (xmlresult, webservice.text))
                 return(False)
 
-        except request.excepions.Timeout as e:
-            print(f'Timeout. Error: {e}')
+            return(True)
+
+        except requests.exceptions.Timeout:
+            print("Timeout to remote host")
             return(False)
 
-        except request.excepions.ConnectionError as e:
-            print(f'Connection Error. Error: {e}')
+        except requests.exceptions.ConnectionError:
+            print("Remote host didn't answer!")
             return(False)
 
-        except request.excepions.HTTPError as e:
-            print(f'HTTP Error." Error: {e}')
+        except requests.exceptions.HTTPError:
+            print("HTTP Errorcode != 200")
             return(False)
 
-        except request.excepions.ConnectTimeout as e:
-            print(f'Connection Timeout. Error: {e}')
+        except OpenSSL.SSL.WantWriteError:
+            print("OpenSSL Write Buffer too small")
             return(False)
-
-        except OpenSSL.SSL.WantWriteError as e:
-            print(f'OpenSSL Write Buffer too small. Error: {e}')
-            return(False)
-
-        return(True)
 
     def ewsprint(self):
         print(etree.tostring(self.esm, pretty_print=True))
@@ -405,3 +431,51 @@ class EAlert:
         print(self.REQUEST)
         print(self.ADATA)
         return()
+
+    def hpfeedsend(self, esm, eformat):
+        if self.ECFG["hpfeed"] is True:
+            """ workaround if hpfeeds broker is offline as otherwise hpfeeds lib will loop connection attempt """
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            result = sock.connect_ex((self.ECFG["host"], int(self.ECFG["port"])))
+            sock.close()
+
+            if result != 0:
+                """ broker unavailable """
+                print(f'HPFEEDS broker is configured to {self.ECFG["host"]}:{self.ECFG["port"]} but is currently unavailable. Disabling hpfeeds submission for this round!')
+                return(False)
+            else:
+                try:
+                    hpc = ''
+                    if self.ECFG["tlscert"].lower() != "none":
+                        hpc = hpfeeds.new(self.ECFG["host"],
+                                          int(self.ECFG["port"]),
+                                          self.ECFG["ident"],
+                                          self.ECFG["secret"],
+                                          certfile=self.ECFG["tlscert"],
+                                          reconnect=False)
+                        print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via TLS')
+                    else:
+                        hpc = hpfeeds.new(self.ECFG["host"],
+                                          int(self.ECFG["port"]),
+                                          self.ECFG["ident"],
+                                          self.ECFG["secret"],
+                                          reconnect=False)
+                        print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via none TLS')
+
+                    """ remove auth header """
+                    etree.strip_elements(self.esm, "Authentication")
+
+                    for i in range(0, len(self.esm)):
+                        if eformat == "xml":
+                            hpc.publish(self.ECFG["channels"], etree.tostring(esm[i], pretty_print=False))
+
+                        if eformat == "json":
+                            bf = BadgerFish(dict_type=OrderedDict)
+                            hpc.publish(self.ECFG["channels"], json.dumps(bf.data(esm[i])))
+
+                    return(True)
+
+                except hpfeeds.FeedException as e:
+                    print(f'HPFeeds Error ({e}%)')
+                    return(False)
