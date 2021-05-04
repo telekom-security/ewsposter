@@ -2186,97 +2186,6 @@ def honeysap():
     return
 
 
-def adbhoney():
-
-    MODUL = "ADBHONEY"
-    logme(MODUL, "Starting ADBHoney Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("adbhoney", "nodeid", "logfile")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ logfile file exists ? """
-
-    if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
-
-    """ count limit """
-
-    imin = int(countme(MODUL, 'fileline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    while True:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-
-        if len(line) == 0:
-            break
-        else:
-            linecontent = json.loads(line, object_pairs_hook=OrderedDict)
-
-            if linecontent['eventid'] != "adbhoney.session.connect":
-                continue
-
-            """ Prepare and collect Alert Data """
-
-            DATA = {"aid": HONEYPOT["nodeid"],
-                    "timestamp": linecontent['timestamp'][0:10] + " " + linecontent['timestamp'][11:19],
-                    "sadr": linecontent['src_ip'],
-                    "sipv": "ipv" + ip4or6(linecontent['src_ip']),
-                    "sprot": "tcp",
-                    "sport": str(linecontent['src_port']),
-                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
-                    "tadr": ECFG['ip_ext'],
-                    "tprot": "tcp",
-                    "tport": str(linecontent['dest_port'])}
-
-            REQUEST = {"description": "ADBHoney Honeypot"}
-
-            """ Collect additional Data """
-
-            ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int'],
-                     "uuid": ECFG['uuid']}
-
-            esm = buildews(esm, DATA, REQUEST, ADATA)
-            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-            countme(MODUL, 'fileline', -2, ECFG)
-
-            if ECFG["a.verbose"] is True:
-                verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
-    return
-
-
 def ipphoney():
 
     ipphoney = EAlert('ipphoney', ECFG)
@@ -2357,6 +2266,49 @@ def fatt():
             break
 
     fatt.finAlert()
+
+
+def adbhoney():
+
+    adbhoney = EAlert('adbhoney', ECFG)
+
+    ITEMS = ['adbhoney', 'nodeid', 'logfile']
+    HONEYPOT = (adbhoney.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = adbhoney.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if line == 'jsonfail':
+            continue
+        if len(line) == 0:
+            break
+        if line['eventid'] != "adbhoney.session.connect":
+            continue
+
+        adbhoney.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            adbhoney.data('timestamp', line['timestamp'][0:10] + " " + line['timestamp'][11:19])
+            adbhoney.data("timezone", time.strftime('%z'))
+
+        adbhoney.data('source_address', line['src_ip']) if 'src_ip' in line else None
+        adbhoney.data('target_address', ECFG['ip_ext'])
+        adbhoney.data('source_port', str(line['src_port'])) if 'src_port' in line else None
+        adbhoney.data('target_port', str(line['dest_port'])) if 'dest_port' in line else None
+        adbhoney.data('source_protokoll', "tcp")
+        adbhoney.data('target_protokoll', "tcp")
+
+        adbhoney.request("description", "ADBHoney Honeypot")
+
+        adbhoney.adata('hostname', ECFG['hostname'])
+        adbhoney.adata('externalIP', ECFG['ip_ext'])
+        adbhoney.adata('internalIP', ECFG['ip_int'])
+        adbhoney.adata('uuid', ECFG['uuid'])
+
+        if adbhoney.buildAlert() == "sendlimit":
+            break
+
+    adbhoney.finAlert()
 
 
 """ --- [ MAIN ] ------------------------------------------------------------------ """
