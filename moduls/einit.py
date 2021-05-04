@@ -58,6 +58,11 @@ def ecfg(name, version):
 
     print(f"{name} {version} (c) by Markus Schroer <markus.schroer@telekom.de>")
 
+    """ set name and version """
+
+    ECFG['name'] = name
+    ECFG['version'] = version
+
     """ read EWSPoster Main Path """
 
     ECFG["path"] = os.path.dirname(os.path.abspath(__file__)).replace("/moduls", "")

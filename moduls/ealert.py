@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
+from datetime import datetime
 from lxml import etree
 import ipaddress
 from urllib import parse
@@ -17,6 +17,7 @@ import hpfeeds
 import socket
 from xmljson import BadgerFish
 from collections import OrderedDict
+import sys
 
 class EAlert:
 
@@ -231,10 +232,10 @@ class EAlert:
         return()
 
     def ewsWrite(self):
-        with open(self.ECFG['spooldir'] + os.sep + time.strftime('%Y%m%dT%H%M%S') + ".ews", "wb") as file:
+        with open(self.ECFG['spooldir'] + os.sep + datetime.now().strftime('%Y%m%dT%H%M%S.%f')[:-3] + ".ews", "wb") as file:
             file.write(etree.tostring(self.esm, pretty_print=True))
             file.close
-        return()
+            return()
 
     def ewsVerbose(self):
         print(f'--------------- {self.MODUL} ---------------')
@@ -285,7 +286,7 @@ class EAlert:
         return()
 
     def jsonWrite(self):
-        if len(self.jesm) > 0 and self.ECFG["json"] is True:
+        if len(self.jesm) > 0:
             if len(self.ECFG['a.jsondir']) > 0:
                 jsondir = self.ECFG['a.jsondir']
             else:
@@ -294,7 +295,7 @@ class EAlert:
             with open(jsondir, 'a+') as file:
                 file.write(self.jesm)
                 file.close
-        return()
+            return()
 
     def clearandcount(self):
         """ Count up and delete data variables """
@@ -311,16 +312,15 @@ class EAlert:
             self.clearandcount()
             return(False)
 
-        """ Create XML Alert """
+        """ Create ews and json alert """
         self.ewsAlert()
+        self.jsonAlert()
 
-        if self.ECFG['json'] is True:
-            self.jsonAlert()
-
+        """ View Alert details if ARG Verbose is on """
         if self.ECFG['a.verbose'] is True:
             self.ewsVerbose()
 
-        """ clear, count, check if Sendlimit ist reach ! """
+        """ clear, count, check if sendlimit ist reach ! """
         self.clearandcount()
         if (self.counter + (self.hcounter * 100)) >= int(self.ECFG["sendlimit"]):
             print(f'    -> Sendlimit ({self.ECFG["sendlimit"]}) for Honeypot {self.MODUL} reached. Skip.')
@@ -331,7 +331,6 @@ class EAlert:
             self.counter = 0
             self.hcounter += 1
             self.sendAlert()
-            self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
 
         return(True)
 
@@ -340,31 +339,42 @@ class EAlert:
         if int(self.esm.xpath('count(//Alert)')) > 0:
             self.sendAlert()
 
-        """ finish json alerts  """
-        self.jsonWrite()
+    def clearAlert(self):
+        """ Clean ews & json """
+        self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
+        self.jesm = ''
 
     def sendAlert(self):
-        """ Check if ECFG["a.ewsonly"] """
-        if self.ECFG["a.ewsonly"] is True:
-            self.ewsWrite()
-            return(True)
-
-        """ Check if ECFG["a.debug"] """
-
         """ Print Counter """
-        if self.counter == 0 and self.hcounter > 1:
-            print(f"    -> Send {100 * self.hcounter:3d} {self.MODUL} alerts to EWS Backend.")
-        if self.counter > 0 and self.hcounter == 0:
+        
+        if self.hcounter >= 1 and self.counter == 0:
+            print(f'    -> Send {100*self.hcounter:3d} {self.MODUL} alert(s) to EWS Backend.')
+        if self.counter > 0:
             print(f"    -> Send {self.counter:3d} {self.MODUL} alert(s) to EWS Backend.")
 
-        """ Send via Webservice or drop to Spool """
-        if self.ECFG["ews"] is True and self.ewsWebservice() is not True:
+        """ When ARG 'EWS Only' write to file and return """
+        if self.ECFG["a.ewsonly"] is True:
             self.ewsWrite()
-            return(False)
-        else:
+            self.clearAlert()
             return(True)
 
+        """ When json = true write to json file """
+        if self.ECFG["json"] is True:
+            self.jsonWrite()
+
         """ Check if ECFG["hpfeed"] """
+        if self.ECFG["hpfeed"] is True:
+            self.hpfeedsend()
+
+        """ Send via webservice or drop to spool """
+        if self.ECFG["ews"] is True:
+            if self.ewsWebservice() is False:
+                self.ewsWrite()
+                self.clearAlert()
+                return(False)
+            else:
+                self.clearAlert()
+                return(True)
 
     def ewsWebservice(self):
         headers = {'User-Agent': self.ECFG['name'] + " " + self.ECFG['version'],
@@ -431,49 +441,48 @@ class EAlert:
         return()
 
     def hpfeedsend(self, esm, eformat):
-        if self.ECFG["hpfeed"] is True:
-            """ workaround if hpfeeds broker is offline as otherwise hpfeeds lib will loop connection attempt """
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(2)
-            result = sock.connect_ex((self.ECFG["host"], int(self.ECFG["port"])))
-            sock.close()
+        """ workaround if hpfeeds broker is offline as otherwise hpfeeds lib will loop connection attempt """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(2)
+        result = sock.connect_ex((self.ECFG["host"], int(self.ECFG["port"])))
+        sock.close()
 
-            if result != 0:
-                """ broker unavailable """
-                print(f'HPFEEDS broker is configured to {self.ECFG["host"]}:{self.ECFG["port"]} but is currently unavailable. Disabling hpfeeds submission for this round!')
-                return(False)
+        if result != 0:
+            """ broker unavailable """
+            print(f'HPFEEDS broker is configured to {self.ECFG["host"]}:{self.ECFG["port"]} but is currently unavailable. Disabling hpfeeds submission for this round!')
+            return(False)
+
+        try:
+            hpc = ''
+            if self.ECFG["tlscert"].lower() != "none":
+                hpc = hpfeeds.new(self.ECFG["host"],
+                                  int(self.ECFG["port"]),
+                                  self.ECFG["ident"],
+                                  self.ECFG["secret"],
+                                  certfile=self.ECFG["tlscert"],
+                                  reconnect=False)
+                print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via TLS')
             else:
-                try:
-                    hpc = ''
-                    if self.ECFG["tlscert"].lower() != "none":
-                        hpc = hpfeeds.new(self.ECFG["host"],
-                                          int(self.ECFG["port"]),
-                                          self.ECFG["ident"],
-                                          self.ECFG["secret"],
-                                          certfile=self.ECFG["tlscert"],
-                                          reconnect=False)
-                        print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via TLS')
-                    else:
-                        hpc = hpfeeds.new(self.ECFG["host"],
-                                          int(self.ECFG["port"]),
-                                          self.ECFG["ident"],
-                                          self.ECFG["secret"],
-                                          reconnect=False)
-                        print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via none TLS')
+                hpc = hpfeeds.new(self.ECFG["host"],
+                                  int(self.ECFG["port"]),
+                                  self.ECFG["ident"],
+                                  self.ECFG["secret"],
+                                  reconnect=False)
+                print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via none TLS')
 
-                    """ remove auth header """
-                    etree.strip_elements(self.esm, "Authentication")
+            """ remove auth header """
+            etree.strip_elements(self.esm, "Authentication")
 
-                    for i in range(0, len(self.esm)):
-                        if eformat == "xml":
-                            hpc.publish(self.ECFG["channels"], etree.tostring(esm[i], pretty_print=False))
+            for i in range(0, len(self.esm)):
+                if eformat == "xml":
+                    hpc.publish(self.ECFG["channels"], etree.tostring(esm[i], pretty_print=False))
 
-                        if eformat == "json":
-                            bf = BadgerFish(dict_type=OrderedDict)
-                            hpc.publish(self.ECFG["channels"], json.dumps(bf.data(esm[i])))
+                if eformat == "json":
+                    bf = BadgerFish(dict_type=OrderedDict)
+                    hpc.publish(self.ECFG["channels"], json.dumps(bf.data(esm[i])))
 
-                    return(True)
+            return(True)
 
-                except hpfeeds.FeedException as e:
-                    print(f'HPFeeds Error ({e}%)')
-                    return(False)
+        except hpfeeds.FeedException as e:
+            print(f'HPFeeds Error ({e})')
+            return(False)

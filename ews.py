@@ -2319,8 +2319,6 @@ if __name__ == "__main__":
 
     global ECFG
     ECFG = ecfg(name, version)
-    ECFG['name'] = name
-    ECFG['version'] = version
 
     global hpc
     hpc = testhpfeedsbroker()
