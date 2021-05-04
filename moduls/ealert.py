@@ -12,7 +12,6 @@ import requests
 import re
 import configparser
 import linecache
-import sys 
 import OpenSSL.SSL
 import hpfeeds
 import socket
@@ -36,9 +35,8 @@ class EAlert:
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
 
-
     def lineREAD(self, filename, format='json', linenumber=None):
-        
+
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter'))
         else:
@@ -321,7 +319,7 @@ class EAlert:
 
         if self.ECFG['a.verbose'] is True:
             self.ewsVerbose()
-        
+
         """ clear, count, check if Sendlimit ist reach ! """
         self.clearandcount()
         if (self.counter + (self.hcounter * 100)) >= int(self.ECFG["sendlimit"]):

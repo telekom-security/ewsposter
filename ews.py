@@ -2277,94 +2277,6 @@ def adbhoney():
     return
 
 
-def fatt():
-
-    MODUL = "FATT"
-    logme(MODUL, "Starting FATT Honeypot Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("fatt", "nodeid", "logfile")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ logfile file exists ? """
-
-    if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
-
-    """ count limit """
-
-    imin = int(countme(MODUL, 'fileline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    while True:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-
-        if len(line) == 0:
-            break
-        else:
-            linecontent = json.loads(line, object_pairs_hook=OrderedDict)
-
-            """ Prepare and collect Alert Data """
-
-            DATA = {"aid": HONEYPOT["nodeid"],
-                    "timestamp": linecontent['timestamp'][0:10] + " " + linecontent['timestamp'][11:19],
-                    "sadr": linecontent['sourceIp'],
-                    "sipv": "ipv" + ip4or6(linecontent['sourceIp']),
-                    "sprot": "tcp",
-                    "sport": str(linecontent['sourcePort']),
-                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
-                    "tadr": ECFG['ip_ext'],
-                    "tprot": "tcp",
-                    "tport": str(linecontent['destinationPort'])}
-
-            REQUEST = {"description": "FATT Honeypot"}
-
-            """ Collect additional Data """
-
-            ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int'],
-                     "uuid": ECFG['uuid']}
-
-            esm = buildews(esm, DATA, REQUEST, ADATA)
-            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-            countme(MODUL, 'fileline', -2, ECFG)
-
-            if ECFG["a.verbose"] is True:
-                verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
-    return
-
-
 def ipphoney():
 
     ipphoney = EAlert('ipphoney', ECFG)
@@ -2387,7 +2299,7 @@ def ipphoney():
             ipphoney.data("timezone", time.strftime('%z'))
 
         ipphoney.data('source_address', line['src_ip']) if 'src_ip' in line else None
-        ipphoney.data('target_address', line['src_ip']) if 'dst_ip' in line else None
+        ipphoney.data('target_address', line['dst_ip']) if 'dst_ip' in line else None
         ipphoney.data('source_port', line['src_port']) if 'src_port' in line else None
         ipphoney.data('target_port', line['dst_port']) if 'dst_port' in line else None
         ipphoney.data('source_protokoll', "tcp")
@@ -2404,6 +2316,47 @@ def ipphoney():
             break
 
     ipphoney.finAlert()
+
+
+def fatt():
+
+    fatt = EAlert('fatt', ECFG)
+
+    ITEMS = ['fatt', 'nodeid', 'logfile']
+    HONEYPOT = (fatt.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = fatt.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if line == 'jsonfail':
+            continue
+        if len(line) == 0:
+            break
+
+        fatt.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            fatt.data('timestamp', line['timestamp'][0:10] + " " + line['timestamp'][11:19])
+            fatt.data("timezone", time.strftime('%z'))
+
+        fatt.data('source_address', line['sourceIp']) if 'sourceIp' in line else None
+        fatt.data('target_address', ECFG['ip_ext'])
+        fatt.data('source_port', str(line['sourcePort'])) if 'sourcePort' in line else None
+        fatt.data('target_port', str(line['destinationPort'])) if 'destinationPort' in line else None
+        fatt.data('source_protokoll', "tcp")
+        fatt.data('target_protokoll', "tcp")
+
+        fatt.request("description", "FATT Honeypot")
+
+        fatt.adata('hostname', ECFG['hostname'])
+        fatt.adata('externalIP', ECFG['ip_ext'])
+        fatt.adata('internalIP', ECFG['ip_int'])
+        fatt.adata('uuid', ECFG['uuid'])
+
+        if fatt.buildAlert() == "sendlimit":
+            break
+
+    fatt.finAlert()
 
 
 """ --- [ MAIN ] ------------------------------------------------------------------ """
