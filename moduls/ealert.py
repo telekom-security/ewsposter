@@ -183,6 +183,7 @@ class EAlert:
 
         for keyword in keywords:
             if keyword not in self.DATA:
+                print(f'{self.MODUL} missing keyword {keyword}. dataCheck skipt!')
                 return(False)
 
         if "cident" in self.DATA or "corigin" in self.DATA or "ctext" in self.DATA:
@@ -308,7 +309,6 @@ class EAlert:
     def buildAlert(self):
         """ Check if all required data exists. """
         if self.dataCheck() is False:
-            print(f'{self.MODUL} there my an problem white collectet Datas. dataCheck skip!')
             self.clearandcount()
             return(False)
 
@@ -346,7 +346,7 @@ class EAlert:
 
     def sendAlert(self):
         """ Print Counter """
-        
+
         if self.hcounter >= 1 and self.counter == 0:
             print(f'    -> Send {100*self.hcounter:3d} {self.MODUL} alert(s) to EWS Backend.')
         if self.counter > 0:

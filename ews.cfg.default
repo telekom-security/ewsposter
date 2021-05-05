@@ -132,3 +132,8 @@ logfile = /opt/fatt/log/fatt.log
 ipphoney = false
 nodeid = <your unique analyzer id>
 logfile = /opt/ipphoney/log/ipphoney.log
+
+[DICOMPOT]
+dicompot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/dicompot/log/dicompot.log

@@ -15,7 +15,7 @@ import ast
 from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg
 from moduls.elog import logme
-from moduls.etoolbox import ip4or6, readcfg, readonecfg, timestamp, calcminmax, countme, checkForPublicIP, resolveHost
+from moduls.etoolbox import ip4or6, readcfg, readonecfg, calcminmax, countme, checkForPublicIP
 from moduls.ealert import EAlert
 from moduls.esend import ESend
 import sqlite3
@@ -153,7 +153,7 @@ def sendews(esm):
 
 
 def writeews(EWSALERT):
-    with open(ECFG["spooldir"] + os.sep + timestamp() + ".ews", 'wb') as f:
+    with open(ECFG["spooldir"] + os.sep + datetime.now().strftime('%Y%m%dT%H%M%S.%f')[:-3] + ".ews", 'wb') as f:
         f.write(EWSALERT)
         f.close()
 
@@ -2062,16 +2062,6 @@ def glutton():
             if "payload_hex" in linecontent:
                 ADATA["binary"] = base64.b64encode(codecs.decode(linecontent['payload_hex'], 'hex')).decode()
 
-            """
-            if re.search("[+]", linecontent['msg']):
-                print "found [] in " + str(linecontent)
-
-
-            #REQUEST["raw"] = base64.encodestring(reassembledReq.encode('ascii', 'ignore'))
-            REQUEST["raw"] = base64.encodebytes(reassembledReq.encode('ascii', 'ignore')).decode()
-
-            """
-
             """ generate template and send """
 
             esm = buildews(esm, DATA, REQUEST, ADATA)
@@ -2092,97 +2082,6 @@ def glutton():
 
     if y > 1:
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
-    return
-
-
-def honeysap():
-
-    MODUL = "HONEYSAP"
-    logme(MODUL, "Starting honeysap Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("honeysap", "nodeid", "logfile")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ logfile file exists ? """
-
-    if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
-
-    """ count limit """
-
-    imin = int(countme(MODUL, 'fileline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    while True:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-
-        if len(line) == 0:
-            break
-        else:
-            linecontent = json.loads(line, object_pairs_hook=OrderedDict)
-
-            """ Prepare and collect Alert Data """
-
-            DATA = {"aid": HONEYPOT["nodeid"],
-                    "timestamp": linecontent['timestamp'][:-7],
-                    "sadr": linecontent['source_ip'],
-                    "sipv": "ipv" + ip4or6(linecontent['source_ip']),
-                    "sprot": "tcp",
-                    "sport": str(linecontent['source_port']),
-                    "tipv": "ipv" + ip4or6(ECFG['ip_ext']),
-                    "tadr": ECFG['ip_ext'],
-                    "tprot": "tcp",
-                    "tport": str(linecontent['target_port'])}
-
-            REQUEST = {"description": "Honeysap Honeypot"}
-
-            if linecontent['request'] != "":
-                REQUEST['request'] = linecontent['request']
-
-            """ Collect additional Data """
-
-            ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int'],
-                     "uuid": ECFG['uuid']}
-
-            esm = buildews(esm, DATA, REQUEST, ADATA)
-            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-            countme(MODUL, 'fileline', -2, ECFG)
-
-            if ECFG["a.verbose"] is True:
-                verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
@@ -2309,6 +2208,91 @@ def adbhoney():
             break
 
     adbhoney.finAlert()
+
+
+def honeysap():
+
+    honeysap = EAlert('honeysap', ECFG)
+
+    ITEMS = ['honeysap', 'nodeid', 'logfile']
+    HONEYPOT = (honeysap.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = honeysap.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if line == 'jsonfail':
+            continue
+        if len(line) == 0:
+            break
+
+        honeysap.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            honeysap.data('timestamp', line['timestamp'][0:19])
+            honeysap.data("timezone", time.strftime('%z'))
+
+        honeysap.data('source_address', line['source_ip']) if 'source_ip' in line else None
+        honeysap.data('target_address', ECFG['ip_ext'])
+        honeysap.data('source_port', str(line['source_port'])) if 'source_port' in line else None
+        honeysap.data('target_port', str(line['target_port'])) if 'target_port' in line else None
+        honeysap.data('source_protokoll', "tcp")
+        honeysap.data('target_protokoll', "tcp")
+
+        honeysap.request("description", "Honeysap Honeypot")
+        honeysap.request("request", line['request']) if line['request'] != "" else None
+
+        honeysap.adata('hostname', ECFG['hostname'])
+        honeysap.adata('externalIP', ECFG['ip_ext'])
+        honeysap.adata('internalIP', ECFG['ip_int'])
+        honeysap.adata('uuid', ECFG['uuid'])
+
+        if honeysap.buildAlert() == "sendlimit":
+            break
+
+    honeysap.finAlert()
+
+
+def dicompot():
+
+    dicompot = EAlert('dicompot', ECFG)
+
+    ITEMS = ['dicompot', 'nodeid', 'logfile']
+    HONEYPOT = (dicompot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = dicompot.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if line == 'jsonfail':
+            continue
+        if len(line) == 0:
+            break
+        if 'Status' in line or 'Version' in line:
+            continue
+
+        dicompot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'time' in line:
+            dicompot.data('timestamp', line['time'])
+            dicompot.data("timezone", time.strftime('%z'))
+
+        dicompot.data('source_address', line['IP']) if 'IP' in line else None
+        dicompot.data('target_address', ECFG['ip_ext'])
+        dicompot.data('source_port', str(line['Port'])) if 'Port' in line else None
+        dicompot.data('target_port', "11112")
+        dicompot.data('source_protokoll', "tcp")
+        dicompot.data('target_protokoll', "tcp")
+
+        dicompot.request("description", "Dicompot Honeypot")
+
+        dicompot.adata('hostname', ECFG['hostname'])
+        dicompot.adata('externalIP', ECFG['ip_ext'])
+        dicompot.adata('internalIP', ECFG['ip_int'])
+        dicompot.adata('uuid', ECFG['uuid'])
+
+        if dicompot.buildAlert() == "sendlimit":
+            break
+
+    dicompot.finAlert()
 
 
 """ --- [ MAIN ] ------------------------------------------------------------------ """
