@@ -2234,6 +2234,12 @@ def elasticpot():
     elasticpot.finAlert()
 
 
+def medpot():
+    pass
+
+def honeypy():
+    pass
+
 """ --- [ MAIN ] ------------------------------------------------------------------ """
 
 if __name__ == "__main__":

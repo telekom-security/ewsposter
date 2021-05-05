@@ -18,6 +18,7 @@ import socket
 from xmljson import BadgerFish
 from collections import OrderedDict
 import sys
+import logging
 
 class EAlert:
 
@@ -35,6 +36,10 @@ class EAlert:
         self.jsonfailcounter = 0
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
+        logging.basicConfig(filename=f"{ECFG['logdir']}/ews.log",
+                            filemode="w",
+                            format='%(asctime)s - %(levelname)s - %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S')
 
     def lineREAD(self, filename, format='json', linenumber=None):
 
@@ -53,7 +58,7 @@ class EAlert:
                 jsonline = json.loads(lcache)
             except ValueError:
                 self.jsonfailcounter += 1
-                print(f" => [WARNING] Invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.")
+                logging.warning(f"[lineREAD] Invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.")
                 return('jsonfail')
             else:
                 return(jsonline)
@@ -78,8 +83,9 @@ class EAlert:
                     returndic[item] = None
                 self.checkCFG(item, returndic[item])
             else:
-                errormsg = "[ERROR] Config parameter [{}] '{}=' didn't find or empty in {} config file. Abort!".format(self.MODUL, item, file)
-                print(errormsg)
+                errormsg = f"[readCFG] Config parameter '{item}=' didn't find or empty in config file '{file}'. Abort!"
+                print("=> ", errormsg)
+                logging.error(errormsg)
 
         return(returndic)
 
@@ -88,14 +94,18 @@ class EAlert:
         dirs = ["payloaddir", "malwaredir", "jsondir", "homedir", "spooldir", "logdir"]
 
         if key in files and os.path.isfile(value) is False:
-            print(f'=> [ERROR] Mission File! {key} = {value} in Modul [{self.MODUL}]. Abort !')
+            errormsg = f"[checkCFG] Mission File! {key} = {value}. Abort!"
+            print("=> ", errormsg)
+            logging.error(errormsg)
             sys.exit()
 
         if key in dirs and os.path.isdir(value) is False:
-            print(f'=> [ERROR] Mission Directory! {key} = {value} in Modul [{self.MODUL}]. Abort !')
+            errormsg = f"[checkCFG] Mission Directory! {key} = {value}. Abort!"
+            print("=> ", errormsg)
+            logging.error(errormsg)
             sys.exit()
 
-        return()
+        return(True)
 
     def alertCount(self, section, counting, item='index'):
 
@@ -172,6 +182,9 @@ class EAlert:
                 self.DATA["target_ip_version"] = "ipv" + str(ipaddress.ip_address(value).version)
                 """ Add PublicIP check/rewrite here!"""
         else:
+            errormsg = f"[data] Unknow keyword {key} = {value}."
+            print("=> ", errormsg)
+            logging.error(errormsg)
             return(False)
 
         return(True)
@@ -184,13 +197,18 @@ class EAlert:
 
         for keyword in keywords:
             if keyword not in self.DATA:
-                print(f'{self.MODUL} missing keyword {keyword}. dataCheck skipt!')
+                errormsg = f"[dataCheck] missing keyword '{keyword}'. Alert skipt!"
+                print("=> ", errormsg)
+                logging.error(errormsg)
                 return(False)
 
         if "cident" in self.DATA or "corigin" in self.DATA or "ctext" in self.DATA:
             if "cident" in self.DATA and "corigin" in self.DATA and "ctext" in self.DATA:
                 return(True)
             else:
+                errormsg = f"[dataCheck] Unkown ciden/corgin/ctext combination. Alert skipt!"
+                print("=> ", errormsg)
+                logging.error(errormsg)
                 return(False)
         return(True)
 
@@ -409,25 +427,25 @@ class EAlert:
             xmlresult = re.search('<StatusCode>(.*)</StatusCode>', webservice.text).groups()[0]
 
             if xmlresult != "OK":
-                print("XML Result != ok ( %s) (%s)" % (xmlresult, webservice.text))
+                logging.warning(f'[ewsWebservice] XML Result != ok ({xmlresult}) ({webservice.text})')
                 return(False)
 
             return(True)
 
         except requests.exceptions.Timeout:
-            print("Timeout to remote host")
+            logging.warning(f'[ewsWebservice] Timeout to remote Host {host}')
             return(False)
 
         except requests.exceptions.ConnectionError:
-            print("Remote host didn't answer!")
+            logging.warning(f"[ewsWebservice] Remote Host {host} didn't answer!")
             return(False)
 
         except requests.exceptions.HTTPError:
-            print("HTTP Errorcode != 200")
+            logging.warning(f'[ewsWebservice] HTTP(S) Errorcode != 200')
             return(False)
 
         except OpenSSL.SSL.WantWriteError:
-            print("OpenSSL Write Buffer too small")
+            logging.warning(f'[ewsWebservice] OpenSSL Write Buffer too small')
             return(False)
 
     def ewsprint(self):
@@ -450,7 +468,7 @@ class EAlert:
 
         if result != 0:
             """ broker unavailable """
-            print(f'HPFEEDS broker is configured to {self.ECFG["host"]}:{self.ECFG["port"]} but is currently unavailable. Disabling hpfeeds submission for this round!')
+            loggin.warning(f'HPFEEDS broker is configured to {self.ECFG["host"]}:{self.ECFG["port"]} but is currently unavailable. Disabling hpfeeds submission for this round!')
             return(False)
 
         try:
@@ -462,14 +480,14 @@ class EAlert:
                                   self.ECFG["secret"],
                                   certfile=self.ECFG["tlscert"],
                                   reconnect=False)
-                print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via TLS')
+                print(f'    -> Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via TLS')
             else:
                 hpc = hpfeeds.new(self.ECFG["host"],
                                   int(self.ECFG["port"]),
                                   self.ECFG["ident"],
                                   self.ECFG["secret"],
                                   reconnect=False)
-                print(f'Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via none TLS')
+                print(f'    -> Connecting to {hpc.brokername}/{self.ECFG["host"]}:{self.ECFG["port"]} via none TLS')
 
             """ remove auth header """
             etree.strip_elements(self.esm, "Authentication")
