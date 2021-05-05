@@ -170,6 +170,7 @@ class EAlert:
                 self.DATA["source_ip_version"] = "ipv" + str(ipaddress.ip_address(value).version)
             if key == "target_address":
                 self.DATA["target_ip_version"] = "ipv" + str(ipaddress.ip_address(value).version)
+                """ Add PublicIP check/rewrite here!"""
         else:
             return(False)
 

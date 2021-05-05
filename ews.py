@@ -15,7 +15,7 @@ import ast
 from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg
 from moduls.elog import logme
-from moduls.etoolbox import ip4or6, readcfg, readonecfg, calcminmax, countme, checkForPublicIP
+from moduls.etoolbox import ip4or6, readcfg, readonecfg, calcminmax, countme
 from moduls.ealert import EAlert
 from moduls.esend import ESend
 import sqlite3
@@ -1124,114 +1124,6 @@ def conpot():
 
         if y > 1:
             logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
-    return
-
-
-def elasticpotX():
-    MODUL = "ELASTICPOT"
-    logme(MODUL, "Starting Elasticpot Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("elasticpot", "nodeid", "logfile")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ logfile file exists ? """
-
-    if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
-
-    """ count limit """
-
-    imin = int(countme(MODUL, 'fileline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-    J = 0
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    while True:
-        x, y = viewcounter(MODUL, x, y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
-
-        if len(line) == 0:
-            break
-        else:
-            """ parse json """
-            try:
-                content = json.loads(line)
-            except ValueError:
-                logme(MODUL, "Invalid json entry found in line " + str(currentline) + ", skipping entry.", ("P3"), ECFG)
-                countme(MODUL, 'fileline', -2, ECFG)
-                J += 1
-            else:
-                try:
-                    if checkForPublicIP(content["dest_ip"]):
-                        pubIP = content["dest_ip"]
-                except Exception:
-                    pubIP = ECFG['ip_ext']
-
-                """ Prepair and collect Alert Data """
-                DATA = {"aid": HONEYPOT["nodeid"],
-                        "timestamp": "%s" % re.sub("T", " ", content["timestamp"]),
-                        "sadr": "%s" % content["src_ip"],
-                        "sipv": "ipv" + ip4or6(content["src_ip"]),
-                        "sprot": "tcp",
-                        "sport": "%s" % content["src_port"],
-                        "tipv": "ipv" + ip4or6(ECFG["ip_ext"]),
-                        "tadr": "%s" % pubIP,
-                        "tprot": "tcp",
-                        "tport": "%s" % content["dst_port"]}
-
-                REQUEST = {"description": "ElasticSearch Honeypot : Elasticpot"}
-
-                if 'url' in content:
-                    REQUEST.update({"url": parse.quote(content["url"].encode('ascii', 'ignore'))})
-
-                for element in ['user_agent', 'request', 'payload', 'content_type', 'accept_language']:
-                    if element in content:
-                        REQUEST.update({element: content[element]})
-
-                """ Collect additional Data """
-
-                ADATA = {"message": content["message"],
-                         "hostname": ECFG["hostname"],
-                         "externalIP": ECFG['ip_ext'],
-                         "internalIP": ECFG['ip_int'],
-                         "uuid": ECFG['uuid']}
-
-                """ generate template and send """
-                esm = buildews(esm, DATA, REQUEST, ADATA)
-                jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-                countme(MODUL, 'fileline', -2, ECFG)
-
-                if ECFG["a.verbose"] is True:
-                    verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
     return
 
 
