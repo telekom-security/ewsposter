@@ -1127,7 +1127,7 @@ def conpot():
     return
 
 
-def elasticpot():
+def elasticpotX():
     MODUL = "ELASTICPOT"
     logme(MODUL, "Starting Elasticpot Modul.", ("P1"), ECFG)
 
@@ -2293,6 +2293,53 @@ def dicompot():
             break
 
     dicompot.finAlert()
+
+
+def elasticpot():
+
+    elasticpot = EAlert('elasticpot', ECFG)
+
+    ITEMS = ['elasticport', 'nodeid', 'logfile']
+    HONEYPOT = (elasticpot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = elasticpot.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if line == 'jsonfail':
+            continue
+        if len(line) == 0:
+            break
+
+        elasticpot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            elasticpot.data('timestamp', f"{line['timestamp'][0:10]} {line['timestamp'][11:19]}")
+            elasticpot.data("timezone", time.strftime('%z'))
+
+        elasticpot.data('source_address', line['src_ip']) if 'src_ip' in line else None
+        elasticpot.data('target_address', line['dst_ip']) if 'dst_ip' in line else None
+        elasticpot.data('source_port', str(line['src_port'])) if 'src_port' in line else None
+        elasticpot.data('target_port', str(line['dst_port'])) if 'dst_port' in line else None
+        elasticpot.data('source_protokoll', "tcp")
+        elasticpot.data('target_protokoll', "tcp")
+
+        elasticpot.request("description", "ElasticSearch Honeypot : Elasticpot")
+        elasticpot.request("url", parse.quote(line["url"].encode('ascii', 'ignore'))) if 'url' in line else None
+
+        for element in ['user_agent', 'request', 'payload', 'content_type', 'accept_language']:
+            if element in line:
+                elasticpot.request(element, str(line[element]))
+
+        elasticpot.adata('hostname', ECFG['hostname'])
+        elasticpot.adata('externalIP', ECFG['ip_ext'])
+        elasticpot.adata('internalIP', ECFG['ip_int'])
+        elasticpot.adata('uuid', ECFG['uuid'])
+        elasticpot.adata('message', line['message']) if 'message' in line else None
+
+        if elasticpot.buildAlert() == "sendlimit":
+            break
+
+    elasticpot.finAlert()
 
 
 """ --- [ MAIN ] ------------------------------------------------------------------ """
