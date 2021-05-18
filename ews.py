@@ -34,7 +34,7 @@ import sys
 import pprint
 
 name = "EWS Poster"
-version = "v1.14"
+version = "v1.15"
 
 
 def ewswebservice(ems):
@@ -172,12 +172,11 @@ def md5malware(malware_md5):
 
         if malware_md5 in open(ECFG["homedir"] + os.sep + "malware.md5", "r").read():
             malwarefile.close()
-            return False
-
+            return(False)
         else:
             malwarefile.write(malware_md5 + "\n")
             malwarefile.close()
-            return True
+            return(True)
 
 
 def malware(DIR, FILE, KILL, md5):
@@ -1667,11 +1666,8 @@ def glastopfv3():
             glastopfv3.request('raw', base64.encodebytes(line['request_raw'].encode('ascii', 'ignore')).decode())
 
         if 'filename' in line and line['filename'] is not None and ECFG['send_malware'] is True:
-            error, malwarefile = malware(HONEYPOT["malwaredir"], str(line["filename"]), ECFG["del_malware_after_send"], False)
-            if error == 0:
-                glastopfv3.request("binary", malwarefile.decode('utf-8'))
-            else:
-                print(f"  => [ERROR] Missiong Malwarefile {line['filename']}")
+            error, message, payload = glastopfv3.malwarecheck(HONEYPOT["malwaredir"], str(line["filename"]), ECFG["del_malware_after_send"], str(line["filename"]))
+            glastopfv3.request("binary", payload.decode('utf-8')) if error is True and len(payload) > 0 else None
 
         glastopfv3.adata('hostname', ECFG['hostname'])
         glastopfv3.adata('externalIP', ECFG['ip_ext'])

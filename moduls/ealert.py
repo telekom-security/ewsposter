@@ -21,6 +21,7 @@ import sys
 import logging
 import sqlite3
 import pprint
+import base64
 
 class EAlert:
 
@@ -77,6 +78,7 @@ class EAlert:
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter', item))
         else:
+            print("get Linenumber",linenumber)
             linecounter = linenumber
 
         if self.sqlite3connect is False:
@@ -85,7 +87,7 @@ class EAlert:
             self.c = self.con.cursor()
             self.sqlite3connect = True
 
-        if self.MODUL == 'GLASTOPFV3' and self.sqlite3connect == True:
+        if self.MODUL == 'GLASTOPFV3' and self.sqlite3connect is True:
             if self.maxid == 0:
                 self.c.execute("SELECT max(id) from events")
                 self.maxid = self.c.fetchone()["max(id)"]
@@ -99,7 +101,7 @@ class EAlert:
 
         self.con.close()
         return()
-       
+
     def readCFG(self, items, file):
 
         config = configparser.ConfigParser()
@@ -382,7 +384,7 @@ class EAlert:
         if (self.counter + (self.hcounter * 100)) >= int(self.ECFG["sendlimit"]):
             print(f'    -> Sendlimit ({self.ECFG["sendlimit"]}) for Honeypot {self.MODUL} reached. Skip.')
             return('sendlimit')
-        
+
         return(True)
 
     def finAlert(self):
@@ -401,7 +403,7 @@ class EAlert:
         if self.hcounter >= 1 and self.counter == 0:
             print(f'    -> Send {100*self.hcounter:3d} {self.MODUL} alert(s) to EWS Backend.')
         if self.counter > 0:
-            print(f"    -> Send! {self.counter:3d} {self.MODUL} alert(s) to EWS Backend.")
+            print(f"    -> Send {100 * self.hcounter + self.counter:3d} {self.MODUL} alert(s) to EWS Backend.")
 
         """ When ARG 'EWS Only' write to file and return """
         if self.ECFG["a.ewsonly"] is True:
@@ -500,7 +502,7 @@ class EAlert:
 
         if result != 0:
             """ broker unavailable """
-            loggin.warning(f'HPFEEDS broker is configured to {self.ECFG["host"]}:{self.ECFG["port"]} but is currently unavailable. Disabling hpfeeds submission for this round!')
+            logging.warning(f"HPFEEDS broker is configured to {self.ECFG['host']}:{self.ECFG['port']} but is currently unavailable. Disabling hpfeeds submission for this round!")
             return(False)
 
         try:
@@ -537,3 +539,37 @@ class EAlert:
         except hpfeeds.FeedException as e:
             print(f'HPFeeds Error ({e})')
             return(False)
+
+    def malwarecheck(self, malwaredir, malwarefile, localremove, md5filechecksum=None):
+        if not os.path.isdir(malwaredir):
+            return(False, f"[ERROR] Malwaredir {malwaredir} does not exist!", None)
+
+        if self.md5malware(md5filechecksum) is False:
+            return(False, f"[ERROR] MD5 {md5filechecksum} already submitted.", None)
+
+        if os.path.isfile(malwaredir + os.sep + malwarefile) is True:
+            if os.path.getsize(malwaredir + os.sep + malwarefile) <= 5 * 1024 * 1024:
+                payload = open(malwaredir + os.sep + malwarefile, "rb").read()
+                if localremove is True:
+                    os.remove(malwaredir + os.sep + malwarefile)
+                return(True, f'payload', base64.b64encode(payload))
+            else:
+                return(False, f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 5 MB! Not send.", None)
+        else:
+            return(False, f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", None)
+
+    def md5malware(self, md5filechecksum):
+        with open(self.ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
+
+            if os.stat(self.ECFG["homedir"] + os.sep + "malware.md5").st_size == 0:
+                malwarefile.write(f'{md5filechecksum}\n')
+                malwarefile.close()
+                return(True)
+
+            if md5filechecksum in open(self.ECFG["homedir"] + os.sep + "malware.md5", "r").read():
+                malwarefile.close()
+                return(False)
+            else:
+                malwarefile.write(f'{md5filechecksum}\n')
+                malwarefile.close()
+                return(True)
