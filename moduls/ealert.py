@@ -19,6 +19,8 @@ from xmljson import BadgerFish
 from collections import OrderedDict
 import sys
 import logging
+import sqlite3
+import pprint
 
 class EAlert:
 
@@ -34,6 +36,8 @@ class EAlert:
         self.counter = 0
         self.hcounter = 0
         self.jsonfailcounter = 0
+        self.sqlite3connect = False
+        self.maxid = 0
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
         logging.basicConfig(filename=f"{ECFG['logdir']}/ews.log",
@@ -41,17 +45,17 @@ class EAlert:
                             format='%(asctime)s - %(levelname)s - %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S')
 
-    def lineREAD(self, filename, format='json', linenumber=None):
+    def lineREAD(self, filename, format='json', linenumber=None, item='index'):
 
         if linenumber is None:
-            linecounter = int(self.alertCount(self.MODUL, 'get_counter'))
+            linecounter = int(self.alertCount(self.MODUL, 'get_counter', item))
         else:
             linecounter = linenumber
 
         lcache = linecache.getline(filename, linecounter)
 
         if linenumber is None and lcache != '':
-            self.alertCount(self.MODUL, "add_counter")
+            self.alertCount(self.MODUL, "add_counter", item)
 
         if lcache != '' and format == "json":
             try:
@@ -68,6 +72,34 @@ class EAlert:
             linecache.clearcache()
             return()
 
+    def lineSQLITE(self, filename, linenumber=None, item='index'):
+
+        if linenumber is None:
+            linecounter = int(self.alertCount(self.MODUL, 'get_counter', item))
+        else:
+            linecounter = linenumber
+
+        if self.sqlite3connect is False:
+            self.con = sqlite3.connect(filename, 30)
+            self.con.row_factory = sqlite3.Row
+            self.c = self.con.cursor()
+            self.sqlite3connect = True
+
+        if self.MODUL == 'GLASTOPFV3' and self.sqlite3connect == True:
+            if self.maxid == 0:
+                self.c.execute("SELECT max(id) from events")
+                self.maxid = self.c.fetchone()["max(id)"]
+
+            if self.maxid >= linecounter:
+                self.c.execute("SELECT * from events where id = ?", (str(linecounter),))
+                self.alertCount(self.MODUL, "add_counter", item)
+                return(dict(self.c.fetchone()))
+            else:
+                return('')
+
+        self.con.close()
+        return()
+       
     def readCFG(self, items, file):
 
         config = configparser.ConfigParser()
@@ -339,18 +371,18 @@ class EAlert:
         if self.ECFG['a.verbose'] is True:
             self.ewsVerbose()
 
-        """ clear, count, check if sendlimit ist reach ! """
-        self.clearandcount()
-        if (self.counter + (self.hcounter * 100)) >= int(self.ECFG["sendlimit"]):
-            print(f'    -> Sendlimit ({self.ECFG["sendlimit"]}) for Honeypot {self.MODUL} reached. Skip.')
-            return('sendlimit')
-
         """ check if alerts must be send """
         if int(self.esm.xpath('count(//Alert)')) >= 100:
             self.counter = 0
             self.hcounter += 1
             self.sendAlert()
 
+        """ clear, count, check if sendlimit ist reach ! """
+        self.clearandcount()
+        if (self.counter + (self.hcounter * 100)) >= int(self.ECFG["sendlimit"]):
+            print(f'    -> Sendlimit ({self.ECFG["sendlimit"]}) for Honeypot {self.MODUL} reached. Skip.')
+            return('sendlimit')
+        
         return(True)
 
     def finAlert(self):
@@ -369,7 +401,7 @@ class EAlert:
         if self.hcounter >= 1 and self.counter == 0:
             print(f'    -> Send {100*self.hcounter:3d} {self.MODUL} alert(s) to EWS Backend.')
         if self.counter > 0:
-            print(f"    -> Send {self.counter:3d} {self.MODUL} alert(s) to EWS Backend.")
+            print(f"    -> Send! {self.counter:3d} {self.MODUL} alert(s) to EWS Backend.")
 
         """ When ARG 'EWS Only' write to file and return """
         if self.ECFG["a.ewsonly"] is True:
@@ -453,10 +485,10 @@ class EAlert:
         return
 
     def printdata(self):
-        print(self.MODUL)
-        print(self.DATA)
-        print(self.REQUEST)
-        print(self.ADATA)
+        print(f"MODUL: {self.MODUL}\n")
+        print(f"DATA:  {self.DATA}\n")
+        print(f"REQUEST: {self.REQUEST}\n")
+        print(f"ADATA: {self.ADATA}\n")
         return()
 
     def hpfeedsend(self, esm, eformat):
