@@ -78,7 +78,6 @@ class EAlert:
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter', item))
         else:
-            print("get Linenumber",linenumber)
             linecounter = linenumber
 
         if self.sqlite3connect is False:
@@ -89,7 +88,7 @@ class EAlert:
 
         if self.MODUL == 'GLASTOPFV3' and self.sqlite3connect is True:
             if self.maxid == 0:
-                self.c.execute("SELECT max(id) from events")
+                self.c.execute("SELECT max(id) from events;")
                 self.maxid = self.c.fetchone()["max(id)"]
 
             if self.maxid >= linecounter:
@@ -98,6 +97,21 @@ class EAlert:
                 return(dict(self.c.fetchone()))
             else:
                 return('')
+
+        if self.MODUL == 'DIONAEA' and self.sqlite3connect is True:
+            if self.maxid == 0:
+                self.c.execute("SELECT max(connection) from connections;")
+                self.maxid = self.c.fetchone()["max(connection)"]
+
+            if self.maxid >= linecounter:
+                data = self.c.execute("SELECT * from connections where connection = ?;", (str(linecounter),)).fetchone()
+                download = self.c.execute("SELECT download_md5_hash from downloads where connection = ?;", (str(linecounter),)).fetchone()
+                if download is None:
+                    download = ''
+                self.alertCount(self.MODUL, "add_counter", item)
+                return(dict(data), dict(download))
+            else:
+                return('', '')
 
         self.con.close()
         return()
@@ -545,7 +559,7 @@ class EAlert:
             return(False, f"[ERROR] Malwaredir {malwaredir} does not exist!", None)
 
         if self.md5malware(md5filechecksum) is False:
-            return(False, f"[ERROR] MD5 {md5filechecksum} already submitted.", None)
+            return(False, f"[ERROR] MD5File {md5filechecksum} already submitted.", None)
 
         if os.path.isfile(malwaredir + os.sep + malwarefile) is True:
             if os.path.getsize(malwaredir + os.sep + malwarefile) <= 5 * 1024 * 1024:

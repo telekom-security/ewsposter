@@ -17,7 +17,6 @@ from moduls.elog import logme
 from moduls.etoolbox import ip4or6, readcfg, readonecfg, calcminmax, countme
 from moduls.ealert import EAlert
 from moduls.esend import ESend
-import sqlite3
 import requests
 import random
 import base64
@@ -512,363 +511,6 @@ def cowrie():
 
     if y > 1:
         logme(MODUL, "%s EWS alert records send ..." % (x + y - 1), ("P2"), ECFG)
-    return
-
-
-def dionaea():
-    MODUL = "DIONAEA"
-    logme(MODUL, "Starting Dionaea Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("dionaea", "nodeid", "sqlitedb", "malwaredir")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ Malwaredir exist """
-
-    if os.path.isdir(HONEYPOT["malwaredir"]) is False:
-        logme(MODUL, "[ERROR] Missing Malware Dir " + HONEYPOT["malwaredir"] + ". Abort !", ("P3", "LOG"), ECFG)
-
-    """ is sqlitedb exist ? """
-
-    if os.path.isfile(HONEYPOT["sqlitedb"]) is False:
-        logme(MODUL, "[ERROR] Missing sqlitedb file " + HONEYPOT["sqlitedb"] + ". Abort !", ("P3", "LOG"), ECFG)
-        return
-
-    """ open database """
-
-    con = sqlite3.connect(HONEYPOT["sqlitedb"], 30)
-    con.row_factory = sqlite3.Row
-    c = con.cursor()
-
-    """ calculate send limit """
-
-    try:
-        c.execute("SELECT max(connection) from connections;")
-    except sqlite3.DatabaseError:
-        logme(MODUL, "[INFO] Sqlitedb %s is corrupt or does not contain events. Skipping ! " % HONEYPOT["sqlitedb"],
-              ("P3", "LOG"), ECFG)
-        return
-
-    maxid = c.fetchone()["max(connection)"]
-
-    if maxid is None:
-        logme(MODUL, "[INFO] No entry's in Dionaea Database. Skip !", ("P2", "LOG"), ECFG)
-        return
-
-    imin, imax = calcminmax(MODUL, int(countme(MODUL, 'sqliteid', -1, ECFG)), int(maxid), ECFG)
-
-    """ read alerts from database """
-
-    c.execute("SELECT * from connections where connection > ? and connection <= ?;", (imin, imax,))
-    rows = c.fetchall()
-
-    """ counter inits """
-
-    x = 0
-    y = 1
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    for row in rows:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        """ filter empty remote_host """
-
-        if row["remote_host"] == "":
-            countme(MODUL, 'sqliteid', row["connection"], ECFG)
-            continue
-
-        """ fix docker problems with dionaea IPs """
-        if '::ffff:' in row["remote_host"]:
-            remoteHost = row["remote_host"].split('::ffff:')[1]
-        else:
-            remoteHost = row["remote_host"]
-
-        if '::ffff:' in row["local_host"]:
-            localHost = row["local_host"].split('::ffff:')[1]
-        else:
-            localHost = row["local_host"]
-
-        """ prepare and collect Alert Data """
-
-        DATA = {"aid": HONEYPOT["nodeid"],
-                "timestamp": datetime.utcfromtimestamp(int(row["connection_timestamp"])).strftime('%Y-%m-%d %H:%M:%S'),
-                "sadr": str(remoteHost),
-                "sipv": "ipv" + ip4or6(str(remoteHost)),
-                "sprot": str(row["connection_transport"]),
-                "sport": str(row["remote_port"]),
-                "tipv": "ipv" + ip4or6(str(localHost)),
-                "tadr": str(localHost),
-                "tprot": str(row["connection_transport"]),
-                "tport": str(row["local_port"])}
-
-        REQUEST = {"description": "Network Honeyport Dionaea v0.1.0"}
-
-        """ Collect additional Data """
-
-        ADATA = {"sqliteid": str(row["connection"]),
-                 "hostname": ECFG["hostname"],
-                 "externalIP": ECFG['ip_ext'],
-                 "internalIP": ECFG['ip_int'],
-                 "uuid": ECFG['uuid']}
-
-        """ Check for malware bin's """
-
-        c.execute("SELECT download_md5_hash from downloads where connection = ?;", (str(row["connection"]),))
-        check = c.fetchone()
-        if check is not None and ECFG["send_malware"] is True:
-            error, malwarefile = malware(HONEYPOT["malwaredir"], check[0], ECFG["del_malware_after_send"], check[0])
-            if error == 0:
-                REQUEST["binary"] = malwarefile.decode('utf-8')
-            else:
-                logme(MODUL, "Malwarefile: %s" % malwarefile, ("P1", "LOG"), ECFG)
-            if check[0]:
-                ADATA["payload_md5"] = check[0]
-
-        """ generate template and send """
-
-        esm = buildews(esm, DATA, REQUEST, ADATA)
-        jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-        countme(MODUL, 'sqliteid', row["connection"], ECFG)
-
-        if ECFG["a.verbose"] is True:
-            verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    con.close()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 1), ("P2"), ECFG)
-    return
-
-
-def honeytrap():
-
-    MODUL = "HONEYTRAP"
-    logme(MODUL, "Starting Honeytrap Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("honeytrap", "nodeid", "attackerfile", "payloaddir", "newversion")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ Attacking file exists """
-
-    if os.path.isfile(HONEYPOT["attackerfile"]) is False:
-        logme(MODUL, "[ERROR] Missing Attacker File " + HONEYPOT["attackerfile"] + ". Abort !", ("P3", "LOG"), ECFG)
-
-    """ Payloaddir exist """
-
-    if os.path.isdir(HONEYPOT["payloaddir"]) is False:
-        logme(MODUL, "[ERROR] Missing Payload Dir " + HONEYPOT["payloaddir"] + ". Abort !", ("P3", "LOG"), ECFG)
-
-    """ New Version are use """
-
-    if HONEYPOT["newversion"].lower() == "true" and not os.path.isdir(HONEYPOT["payloaddir"]):
-        logme(MODUL, "[ERROR] Missing Payload Directory " + HONEYPOT["payloaddir"] + ". Abort !", ("P3", "LOG"), ECFG)
-
-    """ Calc MD5sum for Payloadfiles """
-
-    if HONEYPOT["newversion"].lower() == "true":
-        logme(MODUL, "Calculate MD5sum for Payload Files", ("P2"), ECFG)
-
-        for i in os.listdir(HONEYPOT["payloaddir"]):
-            if "_md5_" not in i:
-                filein = HONEYPOT["payloaddir"] + os.sep + i
-                os.rename(filein, filein + "_md5_" + hashlib.md5(open(filein, 'rb').read()).hexdigest())
-
-    """ count limit """
-    imin = int(countme(MODUL, 'fileline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    while True:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["attackerfile"], (imin + I)).rstrip()
-
-        if len(line) == 0:
-            break
-        else:
-            line = re.sub(r'  ', r' ', re.sub(r'[\[\]\-\>]', r'', line))
-
-            if HONEYPOT["newversion"].lower() == "false":
-                date, time, _, source, dest, _ = line.split(" ", 5)
-                protocol = ""
-                md5 = ""
-            else:
-                date, time, _, protocol, source, dest, md5, _ = line.split(" ", 7)
-
-            """  Prepair and collect Alert Data """
-
-            DATA = {"aid": HONEYPOT["nodeid"],
-                    "timestamp": "%s-%s-%s %s" % (date[0:4], date[4:6], date[6:8], time[0:8]),
-                    "sadr": re.sub(":.*$", "", source),
-                    "sipv": "ipv" + ip4or6(re.sub(":.*$", "", source)),
-                    "sprot": protocol,
-                    "sport": re.sub("^.*:", "", source),
-                    "tipv": "ipv" + ip4or6(re.sub(":.*$", "", dest)),
-                    "tadr": re.sub(":.*$", "", dest),
-                    "tprot": protocol,
-                    "tport": re.sub("^.*:", "", dest)}
-
-            REQUEST = {"description": "NetworkHoneypot Honeytrap v1.1"}
-
-            """ Collect additional Data """
-
-            ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int'],
-                     "uuid": ECFG['uuid']}
-
-            """ Search for Payload """
-            if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
-                sfile = "from_port_%s-%s_*_%s-%s-%s_md5_%s" % (re.sub("^.*:", "", dest), protocol, date[0:4], date[4:6], date[6:8], md5)
-                for mfile in os.listdir(HONEYPOT["payloaddir"]):
-                    if fnmatch.fnmatch(mfile, sfile):
-                        error, payloadfile = malware(HONEYPOT["payloaddir"], mfile, False, md5)
-                        if error == 0:
-                            REQUEST["binary"] = payloadfile.decode('utf-8')
-                        else:
-                            logme(MODUL, "Malwarefile : %s" % payloadfile, ("P1", "LOG"), ECFG)
-                        if md5:
-                            ADATA["payload_md5"] = md5
-
-            """ generate template and send """
-
-            esm = buildews(esm, DATA, REQUEST, ADATA)
-            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-            countme(MODUL, 'fileline', -2, ECFG)
-
-            if ECFG["a.verbose"] is True:
-                verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
-    return
-
-
-def emobility():
-
-    MODUL = "EMOBILITY"
-    logme(MODUL, "Starting eMobility Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("eMobility", "nodeid", "logfile")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ logfile file exists ? """
-
-    if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
-
-    """ count limit """
-
-    imin = int(countme(MODUL, 'fileline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    while True:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-
-        if len(line) == 0:
-            break
-        else:
-            """ Prepair and collect Alert Data """
-
-            line = re.sub(r'  ', r' ', re.sub(r'[\[\]\-\>]', r'', line))
-
-            srcipandport, dstipandport, url, dateandtime = line.split("|", 3)
-
-            DATA = {"aid": HONEYPOT["nodeid"],
-                    "timestamp": "%s-%s-%s %s" % (dateandtime[0:4], dateandtime[4:6], dateandtime[6:8], dateandtime[9:17]),
-                    "sadr": "%s.%s.%s.%s" % (srcipandport.split(".")[0], srcipandport.split(".")[1], srcipandport.split(".")[2], srcipandport.split(".")[3]),
-                    "sipv": "ipv4",
-                    "sprot": "tcp",
-                    "sport": srcipandport.split(".")[4],
-                    "tipv": "ipv4",
-                    "tadr": "%s.%s.%s.%s" % (dstipandport.split(".")[0], dstipandport.split(".")[1], dstipandport.split(".")[2], dstipandport.split(".")[3]),
-                    "tprot": "tcp",
-                    "tport": dstipandport.split(".")[4]}
-
-            REQUEST = {"description": "eMobility Honeypot",
-                       "url": parse.quote(url.encode('ascii', 'ignore'))}
-
-            """ collect additional Data """
-
-            ADATA = {"hostname": ECFG["hostname"],
-                     "externalIP": ECFG['ip_ext'],
-                     "internalIP": ECFG['ip_int'],
-                     "uuid": ECFG['uuid']}
-
-            """ generate template and send """
-
-            esm = buildews(esm, DATA, REQUEST, ADATA)
-            jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-            countme(MODUL, 'fileline', -2, ECFG)
-
-            if ECFG["a.verbose"] is True:
-                verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2), ("P2"), ECFG)
     return
 
 
@@ -1633,6 +1275,7 @@ def conpot():
 
 
 def glastopfv3():
+
     glastopfv3 = EAlert('glastopfv3', ECFG)
 
     ITEMS = ['glastopfv3', 'nodeid', 'sqlitedb', 'malwaredir']
@@ -1685,6 +1328,162 @@ def glastopfv3():
     return()
 
 
+def emobility():
+
+    emobility = EAlert('emobility', ECFG)
+
+    ITEMS = ['emobility', 'nodeid', 'logfile']
+    HONEYPOT = (emobility.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = emobility.lineREAD(HONEYPOT['logfile'], 'simple')
+
+        if len(line) == 0:
+            break
+
+        srcipandport, dstipandport, url, dateandtime = line.split("|", 3)
+
+        emobility.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+        emobility.data('timestamp', f"{dateandtime[0:10]} {dateandtime[11:19]}")
+        emobility.data("timezone", time.strftime('%z'))
+
+        emobility.data('source_address', f"{srcipandport.split('.')[0]}.{srcipandport.split('.')[1]}.{srcipandport.split('.')[2]}.{srcipandport.split('.')[3]}")
+        emobility.data('target_address', f"{dstipandport.split('.')[0]}.{dstipandport.split('.')[1]}.{dstipandport.split('.')[2]}.{dstipandport.split('.')[3]}")
+        emobility.data('source_port', f"{srcipandport.split('.')[4]}")
+        emobility.data('target_port', f"{dstipandport.split('.')[4]}")
+        emobility.data('source_protokoll', "tcp")
+        emobility.data('target_protokoll', "tcp")
+
+        emobility.request('description', 'Emobility Honeypot')
+        emobility.request('url', parse.quote(url.encode('ascii', 'ignore')))
+
+        emobility.adata('hostname', ECFG['hostname'])
+        emobility.adata('externalIP', ECFG['ip_ext'])
+        emobility.adata('internalIP', ECFG['ip_int'])
+        emobility.adata('uuid', ECFG['uuid'])
+
+        if emobility.buildAlert() == "sendlimit":
+            break
+
+    emobility.finAlert()
+    return()
+
+
+def dionaea():
+
+    dionaea = EAlert('dionaea', ECFG)
+
+    ITEMS = ['dionaea', 'nodeid', 'sqlitedb', 'malwaredir']
+    HONEYPOT = (dionaea.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line, download = dionaea.lineSQLITE(HONEYPOT['sqlitedb'])
+
+        if len(line) == 0:
+            break
+        if line['remote_host'] == "":
+            continue
+
+        for dockerIp in ['remote_host', 'local_host']:
+            if '..ffff:' in line[dockerIp]:
+                line[dockerIp] = line[dockerIp].split('::ffff:')[1]
+
+        dionaea.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'connection_timestamp' in line:
+            dionaea.data('timestamp', datetime.utcfromtimestamp(int(line["connection_timestamp"])).strftime('%Y-%m-%d %H:%M:%S'))
+            dionaea.data("timezone", time.strftime('%z'))
+
+        dionaea.data('source_address', line['remote_host']) if 'remote_host' in line else None
+        dionaea.data('target_address', line['local_host']) if 'local_host' in line else None
+        dionaea.data('source_port', line['remote_port']) if 'remote_port' in line else None
+        dionaea.data('target_port', line['local_port']) if 'local_port' in line else None
+        dionaea.data('source_protokoll', line['connection_transport']) if 'connection_transport' in line else None
+        dionaea.data('target_protokoll', line['connection_transport']) if 'connection_transport' in line else None
+
+        dionaea.request('description', 'Network Honeyport Dionaea v0.1.0')
+
+        if 'download_md5_hash' in download and ECFG['send_malware'] is True:
+            error, message, payload = dionaea.malwarecheck(HONEYPOT['malwaredir'], str(download['download_md5_hash']), ECFG['del_malware_after_send'], str(download['download_md5_hash']))
+            dionaea.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
+
+        dionaea.adata('hostname', ECFG['hostname'])
+        dionaea.adata('externalIP', ECFG['ip_ext'])
+        dionaea.adata('internalIP', ECFG['ip_int'])
+        dionaea.adata('uuid', ECFG['uuid'])
+        dionaea.adata('payload_md5', download['download_md5_hash']) if 'download_md5_hash' in download else None
+
+        if dionaea.buildAlert() == "sendlimit":
+            break
+
+    dionaea.finAlert()
+    return()
+
+
+def honeytrap():
+
+    honeytrap = EAlert('honeytrap', ECFG)
+
+    ITEMS = ['honeytrap', 'nodeid', 'attackerfile', 'payloaddir', 'newversion']
+    HONEYPOT = (honeytrap.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if HONEYPOT["newversion"].lower() == "true":
+        print("    -> Calculate MD5Sum for payload files and rename files.")
+        for index in os.listdir(HONEYPOT["payloaddir"]):
+            if '_md5_' not in index:
+                filein = HONEYPOT["payloaddir"] + os.sep + index
+                os.rename(filein, filein + "_md5_" + hashlib.md5(open(filein, 'rb').read()).hexdigest())
+
+    while True:
+        line = honeytrap.lineREAD(HONEYPOT['attackerfile'], 'simple')
+
+        if len(line) == 0:
+            break
+
+        line = re.sub(r'  ', r' ', re.sub(r'[\[\]\-\>]', r'', line))
+
+        if HONEYPOT["newversion"].lower() == "false":
+            dates, times, _, source, dest, _ = line.split(" ", 5)
+            protocol = ""
+            md5 = ""
+        else:
+            dates, times, _, protocol, source, dest, md5, _ = line.split(" ", 7)
+
+        honeytrap.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        honeytrap.data('timestamp', f"{dates[0:4]}-{dates[4:6]}-{dates[6:8]} {times[0:8]}")
+        honeytrap.data("timezone", time.strftime('%z'))
+
+        honeytrap.data('source_address', re.sub(":.*$", "", source)) if source else None
+        honeytrap.data('target_address', re.sub(":.*$", "", dest)) if dest else None
+        honeytrap.data('source_port', re.sub("^.*:", "", source)) if source else None
+        honeytrap.data('target_port', re.sub("^.*:", "", dest)) if dest else None
+        honeytrap.data('source_protokoll', protocol) if protocol else None
+        honeytrap.data('target_protokoll', protocol) if protocol else None
+
+        honeytrap.request('description', 'NetworkHoneypot Honeytrap v1.1')
+
+        if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
+            sourcefile = f'from_port_{re.sub("^.*:", "", dest)}-{protocol}_*_{dates[0:4]}-{dates[4:6]}-{dates[6:8]}_md5_{md5}'
+            print(sourcefile)
+            for matchfile in os.listdir(HONEYPOT["payloaddir"]):
+                if fnmatch.fnmatch(matchfile, sourcefile):
+                    error, message, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], matchfile, False, md5)
+                    honeytrap.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
+
+        honeytrap.adata('hostname', ECFG['hostname'])
+        honeytrap.adata('externalIP', ECFG['ip_ext'])
+        honeytrap.adata('internalIP', ECFG['ip_int'])
+        honeytrap.adata('uuid', ECFG['uuid'])
+        honeytrap.adata('payload_md5', md5) if md5 else None
+
+        if honeytrap.buildAlert() == "sendlimit":
+            break
+
+    honeytrap.finAlert()
+    return()
+
+
 def medpot():
     pass
 
@@ -1706,11 +1505,7 @@ if __name__ == "__main__":
     hpc = testhpfeedsbroker()
 
     lock = locksocket(name)
-
-    if lock is True:
-        logme(MODUL, "Create lock socket successfull.", ("P1"), ECFG)
-    else:
-        logme(MODUL, "Another Instance is running ! EWSrun finish.", ("P1", "EXIT"), ECFG)
+    print(" => Create lock socket successfull.") if lock is True else print(" => Another Instance is running ! EWSrun finish.")
 
     while True:
 
@@ -1731,8 +1526,8 @@ if __name__ == "__main__":
                 eval(honeypot + '()')
 
         if int(ECFG["a.loop"]) == 0:
-            logme(MODUL, "EWSrun finish.", ("P1"), ECFG)
+            print(" => EWSrun finish.")
             break
         else:
-            logme(MODUL, "Sleeping for %s seconds ...." % ECFG["a.loop"], ("P1"), ECFG)
+            print(f" => Sleeping for {ECFG['a.loop']} seconds ...")
             time.sleep(int(ECFG["a.loop"]))
