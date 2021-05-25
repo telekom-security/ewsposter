@@ -6,631 +6,19 @@ import os
 import time
 import codecs
 import hashlib
-from linecache import getline, clearcache
 from datetime import datetime
-from lxml import etree
-from copy import deepcopy
 import glob
 from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg
 from moduls.elog import logme
-from moduls.etoolbox import ip4or6, readcfg, readonecfg, calcminmax, countme
+from moduls.etoolbox import readonecfg
 from moduls.ealert import EAlert
 from moduls.esend import ESend
-import requests
-import random
 import base64
 from urllib import parse
-import hpfeeds
-import fnmatch
-import json
-import OpenSSL.SSL
-import ipaddress
-from collections import OrderedDict
-import socket
-from xmljson import BadgerFish
-import sys
-import pprint
 
 name = "EWS Poster"
-version = "v1.15"
-
-
-def ewswebservice(ems):
-
-    MODUL = "ewswebservice"
-
-    headers = {'User-Agent': name + " " + version,
-               'Content-type': 'text/xml',
-               'SOAPAction': '',
-               'charset': 'UTF-8',
-               'Connection': 'close'}
-
-    host = random.choice([ECFG["rhost_first"], ECFG["rhost_second"]])
-
-    if ECFG["proxy"] != "NULL" and ECFG["proxy"] != "FALSE":
-        proxydic = {"https": ECFG["proxy"]}
-    else:
-        proxydic = {}
-
-    try:
-        if "https" not in proxydic:
-            webservice = requests.post(host,
-                                       data=ems,
-                                       headers=headers,
-                                       allow_redirects=True,
-                                       timeout=60,
-                                       verify=not ECFG["a.ignorecert"])
-        else:
-            webservice = requests.post(host,
-                                       data=ems,
-                                       headers=headers,
-                                       allow_redirects=True,
-                                       proxies=proxydic,
-                                       timeout=60,
-                                       verify=not ECFG["a.ignorecert"])
-
-        webservice.raise_for_status()
-
-        xmlresult = re.search('<StatusCode>(.*)</StatusCode>', webservice.text).groups()[0]
-
-        if xmlresult != "OK":
-            logme(MODUL, "XML Result != ok ( %s) (%s)" % (xmlresult, webservice.text), ("LOG", "VERBOSE"), ECFG)
-            return False
-
-        if ECFG["a.verbose"] is True:
-            logme(MODUL, "---- Webservice Report ----", ("VERBOSE"), ECFG)
-            logme(MODUL, "HOST          : %s" % (host), ("VERBOSE"), ECFG)
-            logme(MODUL, "XML Result    : %s" % (xmlresult), ("VERBOSE"), ECFG)
-            logme(MODUL, "Statuscode    : %s" % (webservice.status_code), ("VERBOSE"), ECFG)
-            logme(MODUL, "Header        : %s" % (webservice.headers), ("VERBOSE"), ECFG)
-            logme(MODUL, "Body          : %s" % (webservice.text), ("VERBOSE"), ECFG)
-            logme(MODUL, "", ("VERBOSE"), ECFG)
-
-        return True
-
-    except requests.exceptions.Timeout as e:
-        logme(MODUL, "Timeout to remote host %s (%s)" % (host, str(e)), ("LOG", "VERBOSE"), ECFG)
-        return False
-
-    except requests.exceptions.ConnectionError as e:
-        logme(MODUL, "Remote host %s didn't answer! (%s)" % (host, str(e)), ("LOG", "VERBOSE"), ECFG)
-        return False
-
-    except requests.exceptions.HTTPError as e:
-        logme(MODUL, "HTTP Errorcode != 200 (%s)" % (str(e)), ("LOG", "VERBOSE"), ECFG)
-        return False
-
-    except OpenSSL.SSL.WantWriteError as e:
-        logme(MODUL, "OpenSSL Write Buffer too small (%s)" % (str(e)), ("LOG", "VERBOSE"), ECFG)
-        return False
-
-
-def viewcounter(MODUL, x, y):
-
-    if y == 100:
-        x += 100
-        """ Inform every 100 send records """
-        logme(MODUL, str(x) + " log entries processed ...", ("P2"), ECFG)
-        y = 1
-    else:
-        y += 1
-
-    return x, y
-
-
-def buildews(esm, DATA, REQUEST, ADATA):
-
-    ewsalert(esm, DATA, REQUEST, ADATA)
-
-    if int(esm.xpath('count(//Alert)')) >= 100:
-        sendews(esm)
-        esm = ewsauth(ECFG["username"], ECFG["token"])
-
-    return esm
-
-
-def sendews(esm):
-
-    if ECFG["a.ewsonly"] is True:
-        writeews(etree.tostring(esm, pretty_print=True))
-        return
-
-    if ECFG["a.debug"] is True:
-        writeews(etree.tostring(esm, pretty_print=True))
-
-    if ECFG["ews"] is True and ewswebservice(etree.tostring(esm)) is not True:
-        writeews(etree.tostring(esm, pretty_print=True))
-
-    if ECFG["hpfeed"] is True:
-        if ECFG["hpfformat"].lower() == "json":
-            hpfeedsend(esm, "json")
-        else:
-            hpfeedsend(esm, "xml")
-
-    return
-
-
-def writeews(EWSALERT):
-    with open(ECFG["spooldir"] + os.sep + datetime.now().strftime('%Y%m%dT%H%M%S.%f')[:-3] + ".ews", 'wb') as f:
-        f.write(EWSALERT)
-        f.close()
-
-    return True
-
-
-def md5malware(malware_md5):
-    """ create file if its not present """
-    with open(ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
-
-        """ empty file """
-        if os.stat(ECFG["homedir"] + os.sep + "malware.md5").st_size == 0:
-            malwarefile.write(malware_md5 + "\n")
-            malwarefile.close()
-            return True
-
-        if malware_md5 in open(ECFG["homedir"] + os.sep + "malware.md5", "r").read():
-            malwarefile.close()
-            return(False)
-        else:
-            malwarefile.write(malware_md5 + "\n")
-            malwarefile.close()
-            return(True)
-
-
-def malware(DIR, FILE, KILL, md5):
-    if not os.path.isdir(DIR):
-        return 1, DIR + " DOES NOT EXIST!"
-
-    if md5 and not md5malware(md5):
-        return 1, "Malware MD5 %s already submitted." % md5
-
-    if os.path.isfile(DIR + os.sep + FILE) is True:
-        if os.path.getsize(DIR + os.sep + FILE) <= 5 * 1024 * 1024:
-            payload = open(DIR + os.sep + FILE, "rb").read()
-            malwarefile = base64.b64encode(payload)
-            if KILL is True:
-                os.remove(DIR + os.sep + FILE)
-            return 0, malwarefile
-        else:
-            return 1, "FILE " + DIR + os.sep + FILE + " is bigger than 5 MB!"
-    else:
-        return 1, "FILE " + DIR + os.sep + FILE + " DOES NOT EXIST!"
-
-
-def hpfeedsend(esm, eformat):
-    if not hpc:
-        return False
-
-    """ remove auth header """
-    etree.strip_elements(esm, "Authentication")
-
-    for i in range(0, len(esm)):
-        if eformat == "xml":
-            hpc.publish(ECFG["channels"], etree.tostring(esm[i], pretty_print=False))
-
-        if eformat == "json":
-            bf = BadgerFish(dict_type=OrderedDict)
-            hpc.publish(ECFG["channels"], json.dumps(bf.data(esm[i])))
-
-    return True
-
-
-def testhpfeedsbroker():
-    if ECFG["hpfeed"] is True:
-        """ workaround if hpfeeds broker is offline as otherwise hpfeeds lib will loop connection attempt """
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(2)
-        result = sock.connect_ex((ECFG["host"], int(ECFG["port"])))
-        sock.close()
-
-        if result != 0:
-            """ broker unavailable """
-            logme(MODUL, "HPFEEDS broker is configured to {0}:{1} but is currently unavailable. Disabling hpfeeds submission for this round!".format(ECFG["host"], ECFG["port"]), ("P1"), ECFG)
-            return False
-
-        try:
-            if ECFG["tlscert"].lower() != "none":
-                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], certfile=ECFG["tlscert"], reconnect=False)
-                logme("hpfeedsend", "Connecting to %s via TLS" % format(hpc.brokername + "/" + ECFG["host"] + ":" + str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
-            else:
-                hpc = hpfeeds.new(ECFG["host"], int(ECFG["port"]), ECFG["ident"], ECFG["secret"], reconnect=False)
-                logme("hpfeedsend", "Connecting to %s" % format(hpc.brokername + "/" + ECFG["host"] + ":" + str(ECFG["port"])), ("P3", "VERBOSE"), ECFG)
-
-            return hpc
-
-        except hpfeeds.FeedException as e:
-            logme("hpfeedsend", "HPFeeds Error (%s)" % format(e), ("P1", "VERBOSE"), ECFG)
-            return False
-    return False
-
-
-def buildjson(jesm, DATA, REQUEST, ADATA):
-
-    if DATA["sport"] == "":
-        DATA["sport"] = "0"
-
-    if 'raw' in REQUEST and REQUEST['raw'] != "":
-        REQUEST['raw'] = REQUEST['raw']
-
-    myjson = {}
-    myjson['timestamp'] = ("%sT%s.000000" % (DATA["timestamp"][0:10], DATA["timestamp"][11:19]))
-    myjson['event_type'] = "alert"
-    myjson['src_ip'] = DATA["sadr"]
-    myjson['src_port'] = DATA['sport']
-    myjson['dest_ip'] = DATA['tadr']
-    myjson['dest_port'] = DATA['tport']
-
-    if REQUEST:
-        myjson["request"] = REQUEST
-
-    if ADATA:
-        myjson["additionaldata"] = ADATA
-
-    return jesm + json.dumps(myjson) + "\n"
-
-
-def writejson(jesm):
-    if len(jesm) > 0 and ECFG["json"] is True:
-        with open(ECFG["jsondir"], 'a+') as f:
-            f.write(jesm)
-            f.close()
-
-
-def verbosemode(MODUL, DATA, REQUEST, ADATA):
-    logme(MODUL, "---- " + MODUL + " ----", ("VERBOSE"), ECFG)
-    logme(MODUL, "Nodeid          : %s" % DATA["aid"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Timestamp       : %s" % DATA["timestamp"], ("VERBOSE"), ECFG)
-    logme(MODUL, "", ("VERBOSE"), ECFG)
-    logme(MODUL, "Source IP       : %s" % DATA["sadr"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Source IPv      : %s" % DATA["sipv"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Source Port     : %s" % DATA["sport"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Source Protocol : %s" % DATA["sprot"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Target IP       : %s" % DATA["tadr"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Target IPv      : %s" % DATA["tipv"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Target Port     : %s" % DATA["tport"], ("VERBOSE"), ECFG)
-    logme(MODUL, "Target Protocol : %s" % DATA["tprot"], ("VERBOSE"), ECFG)
-
-    for key, value in list(ADATA.items()):
-        logme(MODUL, "%s       : %s" % (key, value), ("VERBOSE"), ECFG)
-
-    logme(MODUL, "", ("VERBOSE"), ECFG)
-
-    return()
-
-
-def cowrie():
-
-    MODUL = "COWRIE"
-    logme(MODUL, "Starting Cowrie Modul.", ("P1"), ECFG)
-
-    """ session related variables """
-    lastSubmittedLine, firstOpenedWithoutClose = 0, 0
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("cowrie", "nodeid", "logfile")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    HONEYPOT["ip"] = readonecfg(MODUL, "ip_ext", ECFG["cfgfile"])
-
-    if HONEYPOT["ip"].lower() == "false" or HONEYPOT["ip"].lower() == "null":
-        HONEYPOT["ip"] = ECFG["ip_ext"]
-
-    """ logfile file exists ? """
-
-    if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
-
-    """ count limit """
-
-    imin = int(countme(MODUL, 'firstopenedwithoutclose', -1, ECFG))
-
-    if imin > 0:
-        imin = imin - 1
-    firstOpenedWithoutClose = imin
-    lastSubmittedLine = int(countme(MODUL, 'lastsubmittedline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-    J = 0
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    """ dict to gather session information """
-    cowriesessions = OrderedDict()
-    sessionstosend = []
-
-    while True:
-        if int(ECFG["sendlimit"]) > 0 and J >= int(ECFG["sendlimit"]):
-            break
-        I += 1
-
-        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
-
-        if len(line) == 0:
-            break
-        else:
-            """ parse json """
-            try:
-                content = json.loads(line)
-            except ValueError:
-                logme(MODUL, "Invalid json entry found in line " + str(currentline) + ", skipping entry.", ("P3"), ECFG)
-            else:
-                """ if new session is started, store session-related info """
-                if (content['eventid'] == "cowrie.session.connect"):
-                    """
-                         create empty session content: structure will be the same as kippo, add dst port and commands
-                         | id  | username | password | success | logintimestamp | session | sessionstarttime| sessionendtime | ip | cowrieip | version| src_port|dst_port|dst_ip|commands | successful login
-                    """
-                    cowriesessions[content["session"]] = [currentline, '', '', '', '', content["session"], content["timestamp"], '', content["src_ip"], content["sensor"], '', content["src_port"], content["dst_port"], content["dst_ip"], "", False]
-                    firstOpenedWithoutClose = list(cowriesessions.values())[0][0]
-
-                """ store correponding ssh client version """
-                if (content['eventid'] == "cowrie.client.version"):
-                    if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][10] = content["version"]
-
-                """ create successful login """
-                if (content['eventid'] == "cowrie.login.success"):
-                    if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][3] = "Success"
-                        cowriesessions[content["session"]][1] = content["username"]
-                        cowriesessions[content["session"]][2] = content["password"]
-                        cowriesessions[content["session"]][4] = content["timestamp"]
-                        cowriesessions[content["session"]][15] = True
-
-                """ create failed login """
-                if (content['eventid'] == "cowrie.login.failed"):
-                    if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][3] = "Fail"
-                        cowriesessions[content["session"]][1] = content["username"]
-                        cowriesessions[content["session"]][2] = content["password"]
-                        cowriesessions[content["session"]][4] = content["timestamp"]
-                        if currentline > lastSubmittedLine:
-                            sessionstosend.append(deepcopy(cowriesessions[content["session"]]))
-                            lastSubmittedLine = currentline
-                            J += 1
-
-                """ store terminal input / commands """
-                if (content['eventid'] == "cowrie.command.input"):
-                    if content["session"] in cowriesessions:
-                        cowriesessions[content["session"]][14] = cowriesessions[content["session"]][14] + "\n" + content["input"]
-                        cowriesessions[content["session"]][15] = True
-
-                """ store session close """
-                if (content['eventid'] == "cowrie.session.closed"):
-                    if content["session"] in cowriesessions:
-                        if (cowriesessions[content["session"]][5] == content["session"]):
-                            cowriesessions[content["session"]][7] == content["timestamp"]
-                            if currentline > lastSubmittedLine:
-                                if cowriesessions[content["session"]][15] is True:
-                                    sessionstosend.append(deepcopy(cowriesessions[content["session"]]))
-                                    lastSubmittedLine = currentline
-                                    J += 1
-                                cowriesessions.pop(content["session"])
-                                if len(cowriesessions) == 0:
-                                    firstOpenedWithoutClose = currentline
-
-    """ loop through list of sessions to send """
-    for key in sessionstosend:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        """ map ssh ports for t-pot """
-        if key[12] == 2223:
-            service = "Telnet"
-            serviceport = "23"
-        elif key[12] == 2222:
-            service = "SSH"
-            serviceport = "22"
-        elif key[12] == 23:
-            service = "Telnet"
-            serviceport = "23"
-        else:
-            service = "SSH"
-            serviceport = "22"
-
-        DATA = {"aid": HONEYPOT["nodeid"],
-                "timestamp": "%s-%s-%s %s" % (key[4][0:4], key[4][5:7], key[4][8:10], key[4][11:19]),
-                "sadr": str(key[8]),
-                "sipv": "ipv" + ip4or6(str(key[8])),
-                "sprot": "tcp",
-                "sport": str(key[11]),
-                "tipv": "ipv" + ip4or6(HONEYPOT["ip"]),
-                "tadr": str(key[13]),
-                "tprot": "tcp",
-                "tport": serviceport}
-
-        REQUEST = {"description": service + " Honeypot Cowrie"}
-
-        """ Collect additional Data """
-        login = str(key[3])
-        if (key[7] != ""):
-            endtime = "%s-%s-%s %s" % (key[7][0:4], key[7][5:7], key[7][8:10], key[7][11:19])
-        else:
-            endtime = ""
-
-        """ fix unicode in json log """
-        cusername, cpassword, cinput = "", "", ""
-        try:
-            cusername = str(key[1])
-        except UnicodeEncodeError:
-            logme(MODUL, "Unicode in username  " + key[1] + " - removing unicode.", ("P3"), ECFG)
-            cusername = key[1].encode('ascii', 'ignore')
-
-        try:
-            cpassword = str(key[2])
-        except UnicodeEncodeError:
-            logme(MODUL, "Unicode in password " + key[2] + " - removing unicode.", ("P3"), ECFG)
-            cpassword = key[2].encode('ascii', 'ignore')
-
-        try:
-            cinput = str(key[14])
-        except UnicodeEncodeError:
-            logme(MODUL, "Unicode in input " + key[14] + " - removing unicode.", ("P3"), ECFG)
-            cinput = str(key[14]).encode('ascii', 'ignore')
-
-        ADATA = {"sessionid": str(key[5]),
-                 "starttime": "%s-%s-%s %s" % (key[6][0:4], key[6][5:7], key[6][8:10], key[6][11:19]),
-                 "endtime": endtime,
-                 "version": str(key[10]),
-                 "login": login,
-                 "username": cusername,
-                 "password": cpassword,
-                 "input": cinput,
-                 "hostname": ECFG["hostname"],
-                 "externalIP": ECFG['ip_ext'],
-                 "internalIP": ECFG['ip_int'],
-                 "uuid": ECFG['uuid']}
-
-        """ generate template and send """
-
-        esm = buildews(esm, DATA, REQUEST, ADATA)
-        jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-        countme(MODUL, 'firstopenedwithoutclose', firstOpenedWithoutClose, ECFG)
-        countme(MODUL, 'lastsubmittedline', lastSubmittedLine, ECFG)
-
-        if ECFG["a.verbose"] is True:
-            verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 1), ("P2"), ECFG)
-    return
-
-
-def suricata():
-    MODUL = "SURICATA"
-    logme(MODUL, "Starting Suricata Modul.", ("P1"), ECFG)
-
-    """ collect honeypot config dic """
-
-    ITEMS = ("suricata", "nodeid", "logfile")
-    HONEYPOT = readcfg(MODUL, ITEMS, ECFG["cfgfile"])
-
-    """ logfile file exists ? """
-
-    if os.path.isfile(HONEYPOT["logfile"]) is False:
-        logme(MODUL, "[ERROR] Missing LogFile " + HONEYPOT["logfile"] + ". Skip !", ("P3", "LOG"), ECFG)
-
-    """ count limit """
-
-    imin = int(countme(MODUL, 'fileline', -1, ECFG))
-
-    if int(ECFG["sendlimit"]) > 0:
-        logme(MODUL, "Send Limit is set to : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-
-    I = 0
-    x = 0
-    y = 1
-    J = 0
-
-    esm = ewsauth(ECFG["username"], ECFG["token"])
-    jesm = ""
-
-    while True:
-
-        x, y = viewcounter(MODUL, x, y)
-
-        I += 1
-
-        if int(ECFG["sendlimit"]) > 0 and I > int(ECFG["sendlimit"]):
-            break
-
-        line = getline(HONEYPOT["logfile"], (imin + I)).rstrip()
-        currentline = imin + I
-
-        if len(line) == 0:
-            break
-        else:
-            """ parse json """
-            try:
-                content = json.loads(line)
-            except ValueError:
-                logme(MODUL, "Invalid json entry found in line " + str(currentline) + ", skipping entry.", ("P3"), ECFG)
-                countme(MODUL, 'fileline', -2, ECFG)
-                J += 1
-            else:
-                if 'alert' in content and "src_port" in content:
-                    if 'cve_id' in content['alert']:
-                        """ use t-pots external address if src_ip is rfc1819 / private """
-                        if (ipaddress.ip_address(content["dest_ip"]).is_private):
-                            externalip = content["t-pot_ip_ext"]
-                        else:
-                            externalip = content["dest_ip"]
-
-                        """ Prepare and collect Alert Data """
-
-                        DATA = {"aid": HONEYPOT["nodeid"],
-                                "timestamp": "%s" % re.sub("T", " ", content["timestamp"][:-12]),
-                                "sadr": "%s" % content["src_ip"],
-                                "sipv": "ipv" + ip4or6(content["src_ip"]),
-                                "sprot": content["proto"].lower(),
-                                "sport": "%d" % content["src_port"],
-                                "tipv": "ipv" + ip4or6(externalip),
-                                "tadr": "%s" % externalip,
-                                "tprot": content["proto"].lower(),
-                                "tport": "%d" % content["dest_port"]}
-
-                        if "http" in content:
-                            httpextras = parse.quote(str(content["http"]).encode('ascii', 'ignore'))
-                        else:
-                            httpextras = ""
-
-                        REQUEST = {"description": "Suricata CVE Attack",
-                                   "request": httpextras}
-
-                        """ Collect additional Data """
-
-                        ADATA = {"cve_id": "%s" % content["alert"]["cve_id"],
-                                 "hostname": ECFG["hostname"],
-                                 "externalIP": ECFG['ip_ext'],
-                                 "internalIP": ECFG['ip_int'],
-                                 "uuid": ECFG['uuid']}
-
-                        """ generate template and send """
-                        esm = buildews(esm, DATA, REQUEST, ADATA)
-                        jesm = buildjson(jesm, DATA, REQUEST, ADATA)
-
-                        countme(MODUL, 'fileline', -2, ECFG)
-
-                        if ECFG["a.verbose"] is True:
-                            verbosemode(MODUL, DATA, REQUEST, ADATA)
-
-                    else:
-                        countme(MODUL, 'fileline', -2, ECFG)
-                        J += 1
-                else:
-                    countme(MODUL, 'fileline', -2, ECFG)
-                    J += 1
-
-    """ Cleaning linecache """
-    clearcache()
-
-    if int(esm.xpath('count(//Alert)')) > 0:
-        sendews(esm)
-
-    writejson(jesm)
-
-    if y > 1:
-        logme(MODUL, "%s EWS alert records send ..." % (x + y - 2 - J), ("P2"), ECFG)
-    return
-
+version = "v1.16"
 
 def ipphoney():
 
@@ -642,10 +30,10 @@ def ipphoney():
     while True:
         line = ipphoney.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
 
         ipphoney.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
@@ -684,10 +72,10 @@ def fatt():
     while True:
         line = fatt.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
 
         fatt.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
@@ -726,10 +114,10 @@ def adbhoney():
     while True:
         line = adbhoney.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
         if line['eventid'] != "adbhoney.session.connect":
             continue
 
@@ -770,10 +158,10 @@ def honeysap():
     while True:
         line = honeysap.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
 
         honeysap.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
@@ -813,10 +201,10 @@ def dicompot():
     while True:
         line = dicompot.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
         if 'Status' in line or 'Version' in line:
             continue
 
@@ -857,10 +245,10 @@ def elasticpot():
     while True:
         line = elasticpot.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
 
         elasticpot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
@@ -905,10 +293,10 @@ def glutton():
     while True:
         line = glutton.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
         if "src_ip" not in line:
             continue
         if "error" in line["level"]:
@@ -952,10 +340,10 @@ def ciscoasa():
     while True:
         line = ciscoasa.lineREAD(HONEYPOT['logfile'], 'json')
 
-        if line == 'jsonfail':
-            continue
         if len(line) == 0:
             break
+        if line == 'jsonfail':
+            continue
         if 'Status' in line or 'Version' in line:
             continue
 
@@ -1188,7 +576,8 @@ def mailoney():
 
         if len(line) == 0:
             break
-
+        if line == 'jsonfail':
+            continue
         if 'EHLO User' not in line['data']:
             continue
 
@@ -1241,6 +630,8 @@ def conpot():
 
             if len(line) == 0:
                 break
+            if line == 'jsonfail':
+                continue
             if 'NEW_CONNECTION' not in line['event_type']:
                 continue
 
@@ -1464,12 +855,11 @@ def honeytrap():
         honeytrap.request('description', 'NetworkHoneypot Honeytrap v1.1')
 
         if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
-            sourcefile = f'from_port_{re.sub("^.*:", "", dest)}-{protocol}_*_{dates[0:4]}-{dates[4:6]}-{dates[6:8]}_md5_{md5}'
-            print(sourcefile)
             for matchfile in os.listdir(HONEYPOT["payloaddir"]):
-                if fnmatch.fnmatch(matchfile, sourcefile):
+                if re.findall(f'.*{md5}*', matchfile):
                     error, message, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], matchfile, False, md5)
                     honeytrap.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
+                    break
 
         honeytrap.adata('hostname', ECFG['hostname'])
         honeytrap.adata('externalIP', ECFG['ip_ext'])
@@ -1481,6 +871,146 @@ def honeytrap():
             break
 
     honeytrap.finAlert()
+    return()
+
+
+def cowrie():
+
+    cowrie = EAlert('cowrie', ECFG)
+
+    ITEMS = ['cowrie', 'nodeid', 'logfile']
+    HONEYPOT = (cowrie.readCFG(ITEMS, ECFG['cfgfile']))
+
+    cowrieSessionIDs = cowrie.fileIndex('cowrie.session', 'read')
+    cowrieSessions = {}
+
+    cowrie.alertCount('COWRIE', 'reset_counter')
+
+    while True:
+        line = cowrie.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+        if not line['session'] or line['session'] in cowrieSessionIDs:
+            continue
+
+        sid = line['session']
+
+        if line['eventid'] == 'cowrie.session.connect' and line['session'] not in cowrieSessions:
+            cowrieSessions[sid] = {}
+            cowrieSessions[sid]['timestamp_start'] = line['timestamp']
+            cowrieSessions[sid]['source_ip'] = line['src_ip']
+            cowrieSessions[sid]['source_port'] = line['src_port']
+            cowrieSessions[sid]['target_ip'] = line['dst_ip']
+            cowrieSessions[sid]['target_port'] = line['dst_port']
+            cowrieSessions[sid]['session_id'] = line['session']
+            cowrieSessions[sid]['protocol'] = line['protocol']
+
+        if line['eventid'] == 'cowrie.login.success' and line['session'] in cowrieSessions:
+            cowrieSessions[sid]['login'] = "Success"
+            cowrieSessions[sid]['username'] = line['username']
+            cowrieSessions[sid]['password'] = line['password']
+            cowrieSessions[sid]['timestamp_login'] = line['timestamp']
+
+        if line['eventid'] == 'cowrie.login.failed' and line['session'] in cowrieSessions:
+            cowrieSessions[sid]['login'] = "Fail"
+            cowrieSessions[sid]['username'] = line['username']
+            cowrieSessions[sid]['password'] = line['password']
+            cowrieSessions[sid]['timestamp_login'] = line['timestamp']
+
+        if line['eventid'] == 'cowrie.session.closed' and line['session'] in cowrieSessions:
+            cowrieSessions[sid]['timestamp_close'] = line['timestamp']
+
+        if line['eventid'] == 'cowrieSession.command.input' and line['session'] in cowrieSessions:
+            cowrieSessions[sid]['input'] = line['input']
+
+        if line['eventid'] == 'cowrie.client.version' and line['session'] in cowrieSessions:
+            cowrieSessions[sid]['client_version'] = line['version']
+
+    """ second loop """
+
+    for session in cowrieSessions:
+        cowrie.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if cowrieSessions[session]['timestamp_start']:
+            cowrie.data('timestamp', f"{cowrieSessions[session]['timestamp_start'][0:10]} {cowrieSessions[session]['timestamp_start'][11:19]}")
+            cowrie.data("timezone", time.strftime('%z'))
+
+        cowrie.data('source_address', cowrieSessions[session]['source_ip']) if cowrieSessions[session]['source_ip'] else None
+        cowrie.data('target_address', cowrieSessions[session]['target_ip']) if cowrieSessions[session]['target_ip'] else None
+        cowrie.data('source_port', cowrieSessions[session]['source_port']) if cowrieSessions[session]['source_port'] else None
+        cowrie.data('target_port', cowrieSessions[session]['target_port']) if cowrieSessions[session]['target_port'] else None
+        cowrie.data('source_protokoll', 'tcp')
+        cowrie.data('target_protokoll', 'tcp')
+
+        if cowrieSessions[session]['target_port'] == "23" or cowrieSessions[session]['target_port'] == "2323":
+            cowrie.request("description", "Telnet Honeypot Cowrie")
+        else:
+            cowrie.request("description", "SSH Honeypot Cowrie")
+
+        cowrie.adata('sessionid', session) if session else None
+        cowrie.adata('logintime', f"{cowrieSessions[session]['timestamp_login'][0:10]} {cowrieSessions[session]['timestamp_login'][11:19]}") if 'timestamp_login' in cowrieSessions[session] else None
+        cowrie.adata('endtimetime', f"{cowrieSessions[session]['timestamp_close'][0:10]} {cowrieSessions[session]['timestamp_close'][11:19]}") if 'timestamp_close' in cowrieSessions[session] else None
+        cowrie.adata('version', str(cowrieSessions[session]['client_version'])) if 'client_version' in cowrieSessions[session] else None
+        cowrie.adata('login', cowrieSessions[session]['login']) if 'login' in cowrieSessions[session] else None
+        cowrie.adata('username', cowrieSessions[session]['username']) if 'username' in cowrieSessions[session]else None
+        cowrie.adata('password', cowrieSessions[session]['password']) if 'password' in cowrieSessions[session] else None
+        cowrie.adata('input', cowrieSessions[session]['input']) if 'input' in cowrieSessions[session] else None
+        cowrie.adata('hostname', ECFG['hostname'])
+        cowrie.adata('externalIP', ECFG['ip_ext'])
+        cowrie.adata('internalIP', ECFG['ip_int'])
+        cowrie.adata('uuid', ECFG['uuid'])
+
+        cowrie.fileIndex('cowrie.session', 'write', session)
+
+        if cowrie.buildAlert() == "sendlimit":
+            break
+
+    cowrie.finAlert()
+    return()
+
+
+def suricata():
+
+    suricata = EAlert('suricata', ECFG)
+
+    ITEMS = ['suricata', 'nodeid', 'logfile']
+    HONEYPOT = (suricata.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = suricata.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+
+        suricata.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            suricata.data('timestamp', f"{line['timestamp'][0:10]} {line['timestamp'][11:19]}")
+            suricata.data("timezone", time.strftime('%z'))
+
+        suricata.data('source_address', line['src_ip']) if 'src_ip' in line else None
+        suricata.data('target_address', line['dest_ip']) if 'dest_ip' in line else None
+        suricata.data('source_port', line['src_port']) if 'src_port' in line else None
+        suricata.data('target_port', line['dest_port']) if 'dest_port' in line else None
+        suricata.data('source_protokoll', line['proto'].lower()) if 'proto' in line else None
+        suricata.data('target_protokoll', line['proto'].lower()) if 'proto' in line else None
+
+        suricata.request('description', 'Suricata Attack')
+
+        suricata.adata('hostname', ECFG['hostname'])
+        suricata.adata('externalIP', ECFG['ip_ext'])
+        suricata.adata('internalIP', ECFG['ip_int'])
+        suricata.adata('uuid', ECFG['uuid'])
+
+        if suricata.buildAlert() == "sendlimit":
+            break
+
+    suricata.finAlert()
     return()
 
 
@@ -1500,9 +1030,6 @@ if __name__ == "__main__":
 
     global ECFG
     ECFG = ecfg(name, version)
-
-    global hpc
-    hpc = testhpfeedsbroker()
 
     lock = locksocket(name)
     print(" => Create lock socket successfull.") if lock is True else print(" => Another Instance is running ! EWSrun finish.")

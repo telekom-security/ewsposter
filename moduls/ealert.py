@@ -185,6 +185,9 @@ class EAlert:
         return()
 
     def fileIndex(self, filename, action, content=None):
+
+        filename = self.ECFG['homedir'] + os.sep + filename
+
         """ check if file exist, else create file """
         if not os.path.isfile(filename):
             with open(filename, "w+") as reader:
@@ -226,9 +229,11 @@ class EAlert:
             self.DATA[key] = value
             if key == "source_address":
                 self.DATA["source_ip_version"] = "ipv" + str(ipaddress.ip_address(value).version)
+
             if key == "target_address":
                 self.DATA["target_ip_version"] = "ipv" + str(ipaddress.ip_address(value).version)
-                """ Add PublicIP check/rewrite here!"""
+                if ipaddress.ip_address(self.DATA['target_address']).is_private is True:
+                    self.DATA['target_address'] = self.ECFG['ip_ext']
         else:
             errormsg = f"[data] Unknow keyword {key} = {value}."
             print("=> ", errormsg)
@@ -296,7 +301,8 @@ class EAlert:
             else:
                 mytype = "string"
 
-            etree.SubElement(Alert, "AdditionalData", type=mytype, meaning=key).text = parse.quote(str(value).encode('ascii', 'ignore'))
+            #etree.SubElement(Alert, "AdditionalData", type=mytype, meaning=key).text = parse.quote(str(value).encode('ascii', 'ignore'))
+            etree.SubElement(Alert, "AdditionalData", type=mytype, meaning=key).text = str(value)
         return()
 
     def ewsWrite(self):
@@ -425,13 +431,20 @@ class EAlert:
             self.clearAlert()
             return(True)
 
+        """ Debug Mode """
+        if self.ECFG['a.debug'] is True:
+            print(etree.tostring(self.esm, pretty_print=True))
+
         """ When json = true write to json file """
         if self.ECFG["json"] is True:
             self.jsonWrite()
 
         """ Check if ECFG["hpfeed"] """
         if self.ECFG["hpfeed"] is True:
-            self.hpfeedsend()
+            if self.ECFG["hpfformat"].lower() == "json":
+                self.hpfeedsend('json')
+            else:
+                self.hpfeedsend('xml')
 
         """ Send via webservice or drop to spool """
         if self.ECFG["ews"] is True:
@@ -507,7 +520,7 @@ class EAlert:
         print(f"ADATA: {self.ADATA}\n")
         return()
 
-    def hpfeedsend(self, esm, eformat):
+    def hpfeedsend(self, eformat):
         """ workaround if hpfeeds broker is offline as otherwise hpfeeds lib will loop connection attempt """
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(2)

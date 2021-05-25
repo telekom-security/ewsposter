@@ -2,8 +2,6 @@
 
 from moduls.elog import logme
 import configparser
-import re
-import time
 import os
 import ipaddress
 from requests import get
@@ -11,58 +9,6 @@ import socket
 import random
 import string
 import sys
-
-
-def countme(Section, Item, Count, ECFG):
-
-    z = configparser.RawConfigParser()
-    z.read(ECFG["homedir"] + os.sep + "ews.idx")
-
-    if z.has_section(Section) is not True:
-        z.add_section(Section)
-
-    if z.has_option(Section, Item) is not True:
-        z.set(Section, Item, 0)
-
-    if Count >= 0:
-        z.set(Section, Item, Count)
-    elif Count == -2:
-        z.set(Section, Item, str(int(z.get(Section, Item)) + 1))
-    elif Count == -3:
-        z.set(Section, Item, 0)
-
-    with open(ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
-        z.write(countfile)
-        countfile.close
-
-    if Count == -1:
-        return(z.get(Section, Item))
-
-    return
-
-
-def calcminmax(MODUL, imin, imax, ECFG):
-
-    if (imax - imin) > int(ECFG["sendlimit"]):
-        logme(MODUL, "Need to send : " + str(imax - imin) + " limit is : " + str(ECFG["sendlimit"]) + ". Adapting to limit!", ("P1"), ECFG)
-        imax = imin + int(ECFG["sendlimit"])
-
-    return(imin, imax)
-
-
-def timestamp():
-    now = time.time()
-    localtime = time.localtime(now)
-    milliseconds = '%03d' % int((now - int(now)) * 1000)
-    return time.strftime('%Y%m%dT%H%M%ST', localtime) + milliseconds
-
-
-def ip4or6(ip):
-
-    if re.match("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$", ip):
-        return("4")
-    else:
-        return("6")
 
 
 def readcfg(MODUL, ITEMS, FILE):
@@ -75,34 +21,31 @@ def readcfg(MODUL, ITEMS, FILE):
     for item in ITEMS:
         if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
             result[item] = config.get(MODUL, item)
-        else:       
+        else:
             print(f'[ERROR] in Config MODUL [{MODUL}] parameter \'{item}\' didn\'t find or empty or not \'none\' in {FILE} config file. Abort !')
             sys.exit()
 
-    if "ip" in result:
-        result["ipv"] = ip4or6(result["ip"])
-
     return(result)
 
-def checkSECTIONcfg(MODUL,FILE):
-    
+def checkSECTIONcfg(MODUL, FILE):
+
     config = configparser.SafeConfigParser(os.environ)
     config.read(FILE)
 
     if config.has_section(MODUL):
-        return True  
-    else: 
-        return False
- 
-def checkITEMcfg(MODUL,ITEM,FILE):
+        return(True)
+    else:
+        return(False)
+
+def checkITEMcfg(MODUL, ITEM, FILE):
 
     config = configparser.SafeConfigParser(os.environ)
     config.read(FILE)
 
     if config.has_section(MODUL) and config.has_section(ITEM):
-        return True  
-    else: 
-        return False
+        return(True)
+    else:
+        return(False)
 
 
 def readonecfg(MODUL, item, FILE):
@@ -141,7 +84,6 @@ def getIP(MODUL, ECFG):
 
         else:
             logme(MODUL, "[ERROR] File ews.ip exist but not in an right format. Abort!", ("P1", "LOG", "EXIT"), ECFG)
-       
 
     """ Read Enviroment Variables """
     for item, envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
