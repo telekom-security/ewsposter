@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import socket
 import argparse
@@ -6,9 +7,12 @@ import os
 import ipaddress
 import sys
 import uuid
+import logging
+import moduls.elog
 
 from moduls.etoolbox import readcfg, getHostname, getIP
 
+logger = logging.getLogger('Einit')
 
 def ecfg(name, version):
 
@@ -17,7 +21,7 @@ def ecfg(name, version):
     ECFG['HONEYLIST'] = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
                          'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
                          'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt', 'ipphoney',
-                         'dicompot']
+                         'dicompot', 'medpot', 'honeypy']
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--configpath", help="Load configuration file from Path")
@@ -48,11 +52,15 @@ def ecfg(name, version):
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
-        print(f" => [ERROR] ConfigDir {ECFG['a.path']} from commandline argument -c/--configpath did not exist. Abort !")
+        msg = f"ConfigDir {ECFG['a.path']} from commandline argument -c/--configpath did not exist. Abort!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
 
     if ECFG["a.jsondir"] != "" and os.path.isdir(ECFG["a.jsondir"]) is False:
-        print(f" => [ERROR] JsonDir {ECFG['a.jsondir']} from commandline argument -j/--jsonpath did not exist. Abort !")
+        msg = f"JsonDir {ECFG['a.jsondir']} from commandline argument -j/--jsonpath did not exist. Abort!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
 
     """ say hello """
@@ -72,7 +80,9 @@ def ecfg(name, version):
         ECFG["path"] = ECFG["a.path"]
 
     if os.path.isfile(ECFG["path"] + os.sep + "ews.cfg") is False:
-        print(f" => [ERROR] Missing EWS Config {ECFG['path']}{os.sep}ews.cfg. Abort !")
+        msg = f"Missing EWS Config {ECFG['path']}{os.sep}ews.cfg. Abort!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
     else:
         ECFG["cfgfile"] = ECFG["path"] + os.sep + "ews.cfg"
@@ -81,7 +91,9 @@ def ecfg(name, version):
 
     if os.path.isfile(ECFG["path"] + os.sep + "ews.idx") is False:
         os.open(ECFG["path"] + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
-        print(f" => [INFO] Create ews.idx counterfile.")
+        msg = f"Create ews.idx counterfile."
+        print(f' => [INFO] {msg}')
+        logger.info(msg)
 
     """ Read Main Config Parameter """
 
@@ -92,19 +104,25 @@ def ecfg(name, version):
 
     """ home dir available ? """
     if os.path.isdir(MCFG["homedir"]) is False:
-        print(f" => [ERROR] Missing homedir {MCFG['homedir']}. Abort !")
+        msg = f"Missing homedir {MCFG['homedir']}. Abort!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
     else:
         os.chdir(MCFG["homedir"])
 
     """ spool dir available ? """
     if os.path.isdir(MCFG["spooldir"]) is False:
-        print(f" => [ERROR] Missing spooldir {MCFG['spooldir']}. Abort !")
+        msg = f"Missing spooldir {MCFG['spooldir']}. Abort!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
 
     """ log dir available ? """
     if os.path.isdir(MCFG["logdir"]) is False:
-        print(f" => [ERROR] missing logdir {MCFG['logdir']}. Abort !")
+        msg = f"missing logdir {MCFG['logdir']}. Abort!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
     else:
         MCFG["logfile"] = MCFG["logdir"] + os.sep + "ews.log"
@@ -126,13 +144,19 @@ def ecfg(name, version):
         MCFG["sendlimit"] = ECFG["a.sendlimit"]
 
     if int(MCFG["sendlimit"]) > 5000:
-        print(f" => [ERROR] Sendlimit {str(MCFG['sendlimit'])} to high. Max 500 !")
+        msg = f"Sendlimit {str(MCFG['sendlimit'])} to high. Max 5000!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
     elif int(MCFG["sendlimit"]) < 1:
-        print(f" = > [ERROR] Sendlimit {str(MCFG['sendlimit'])} to low. Min 1 !")
+        msg = f"Sendlimit {str(MCFG['sendlimit'])} to low. Min 1!"
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
     elif MCFG["sendlimit"] is None:
-        print(f" => [ERROR] Sendlimit {str(MCFG['sendlimit'])}. Must set between 1 and 500.")
+        msg = f"Sendlimit {str(MCFG['sendlimit'])}. Must set between 1 and 5000."
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         sys.exit(1)
 
     """ contact """
@@ -189,7 +213,9 @@ def ecfg(name, version):
 
         for index in ["host", "port", "channels", "ident", "secret"]:
             if HCFG[index] == "" and HCFG["hpfeed"] is True:
-                print(f" => [ERROR] Missing {index} in [HPFEED] config section. Abort !")
+                msg = f"Missing {index} in [HPFEED] config section. Abort!"
+                print(f' => [ERROR] {msg}')
+                logger.error(msg)
                 sys.exit(1)
 
         if HCFG["hpfformat"].lower() not in ("ews", "json"):
@@ -265,7 +291,9 @@ def ecfg(name, version):
                     ECFG[place] = IPCFG['connect_' + place]
                     """ ip from connection """
                     if ECFG[place] == "" or ECFG[place] == "none":
-                        print(f" => [ERROR] {place} is 'none' or empty. Abort !")
+                        msg = f"{place} is 'none' or empty. Abort!"
+                        print(f' => [ERROR] {msg}')
+                        logger.error(msg)
                         sys.exit(1)
 
     return(ECFG)
@@ -280,10 +308,14 @@ def locksocket(name):
 
     try:
         lock_socket.bind('\0' + name)
+        print(f" => Create lock socket successfull.")
         return(True)
     except socket.error:
         print(f" => [ERROR] Could not bind socket")
         return(False)
+    else:
+        print(" => Another Instance is running ! EWSrun finish.")
+        sys.exit()
 
 
 if __name__ == "__main__":

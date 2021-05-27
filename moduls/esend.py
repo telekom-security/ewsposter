@@ -7,6 +7,8 @@ import requests
 import sys
 import OpenSSL.SSL
 import re
+import logging
+import moduls.elog
 
 def ESend(ECFG):
 
@@ -56,12 +58,16 @@ def ESend(ECFG):
         for file in FILES:
             fileparts = file.split('.')
             if len(fileparts) == 4 and int(fileparts[2]) >= 10:
-                print(f'    -> Cleaning spooler dir: {spooldir} delete file: {file}. Reached max transmit counter !')
+                msg = f'Cleaning spooler dir: {spooldir} delete file: {file}. Reached max transmit counter !'
+                print(f'    -> {msg}')
+                logger.info(msg)
                 os.remove(spooldir + os.sep + file)
 
     def filelist(spooldir):
         if os.path.isdir(spooldir) is not True:
-            print(f'    -> Error missing spooldir {spooldir}. Abort!')
+            msg = f'Error missing spooldir {spooldir}. Abort!'
+            print(f'    -> {msg}')
+            logger.error(msg)
             sys.exit()
         else:
             return(os.listdir(spooldir))
@@ -104,22 +110,24 @@ def ESend(ECFG):
             return(True)
 
         except requests.exceptions.Timeout:
-            print("Timeout to remote host")
+            logger.warning(f'ewsWebservice Timeout to remote Host {host}')
             return(False)
 
         except requests.exceptions.ConnectionError:
-            print("Remote host didn't answer!")
+            logger.warning(f"ewsWebservice Remote Host {host} didn't answer!")
             return(False)
 
         except requests.exceptions.HTTPError:
-            print("HTTP Errorcode != 200")
+            logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200')
             return(False)
 
         except OpenSSL.SSL.WantWriteError:
-            print("OpenSSL Write Buffer too small")
+            logger.warning(f'ewsWebservice OpenSSL Write Buffer too small')
             return(False)
 
     """ Main instance for this Modul """
+    logger = logging.getLogger('esend')
+
     print(f' => ESend: checking spooldir and resend alert')
     clean_dir(ECFG["spooldir"])
     del_job(ECFG["spooldir"])

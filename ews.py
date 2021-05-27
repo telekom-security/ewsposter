@@ -8,9 +8,9 @@ import codecs
 import hashlib
 from datetime import datetime
 import glob
-from moduls.exml import ewsauth, ewsalert
 from moduls.einit import locksocket, ecfg
-from moduls.elog import logme
+import moduls.elog
+import logging
 from moduls.etoolbox import readonecfg
 from moduls.ealert import EAlert
 from moduls.esend import ESend
@@ -18,7 +18,7 @@ import base64
 from urllib import parse
 
 name = "EWS Poster"
-version = "v1.16"
+version = "v1.17"
 
 def ipphoney():
 
@@ -710,7 +710,7 @@ def glastopfv3():
 
         glastopfv3.adata('httpmethod', line['request_method']) if 'request_method' in line else None
         glastopfv3.adata('request_body', line['request_body']) if 'request_body' in line and len(line['request_body']) > 0 else None
-        glastopfv3.adata('host', str(re.search(r'Host: (\b.+\b)', line["request_raw"], re.M).group(1))) if 'request_raw' in line and len(line['request_raw']) > 0 else None
+        glastopfv3.adata('host', str(re.search(r'Host: (\b.+\b)', line["request_raw"], re.M).group(1))) if 'request_raw' in line and re.match(".*host:.*", line["request_raw"], re.I) else None
 
         if glastopfv3.buildAlert() == "sendlimit":
             break
@@ -927,7 +927,7 @@ def cowrie():
             cowrieSessions[sid]['input'] = line['input']
 
         if line['eventid'] == 'cowrie.client.version' and line['session'] in cowrieSessions:
-            cowrieSessions[sid]['client_version'] = line['version']
+            cowrieSessions[sid]['version'] = re.search(r"b'(.*)'", line["version"], re.M).group(1)
 
     """ second loop """
 
@@ -953,7 +953,7 @@ def cowrie():
         cowrie.adata('sessionid', session) if session else None
         cowrie.adata('logintime', f"{cowrieSessions[session]['timestamp_login'][0:10]} {cowrieSessions[session]['timestamp_login'][11:19]}") if 'timestamp_login' in cowrieSessions[session] else None
         cowrie.adata('endtimetime', f"{cowrieSessions[session]['timestamp_close'][0:10]} {cowrieSessions[session]['timestamp_close'][11:19]}") if 'timestamp_close' in cowrieSessions[session] else None
-        cowrie.adata('version', str(cowrieSessions[session]['client_version'])) if 'client_version' in cowrieSessions[session] else None
+        cowrie.adata('version', str(cowrieSessions[session]['version'])) if 'version' in cowrieSessions[session] else None
         cowrie.adata('login', cowrieSessions[session]['login']) if 'login' in cowrieSessions[session] else None
         cowrie.adata('username', cowrieSessions[session]['username']) if 'username' in cowrieSessions[session]else None
         cowrie.adata('password', cowrieSessions[session]['password']) if 'password' in cowrieSessions[session] else None
@@ -1015,24 +1015,98 @@ def suricata():
 
 
 def medpot():
-    pass
+
+    medpot = EAlert('medpot', ECFG)
+
+    ITEMS = ['medpot', 'nodeid', 'logfile']
+    HONEYPOT = (medpot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = medpot.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+
+        medpot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            medpot.data('timestamp', f"{line['timestamp'][0:10]} {line['timestamp'][11:19]}")
+            medpot.data("timezone", time.strftime('%z'))
+
+        medpot.data('source_address', line['src_ip']) if 'src_ip' in line else None
+        medpot.data('target_address', ECFG['ip_ext'])
+        medpot.data('source_port', line['src_port']) if 'src_port' in line else None
+        medpot.data('target_port', '2575')
+        medpot.data('source_protokoll', 'tcp')
+        medpot.data('target_protokoll', 'tcp')
+
+        medpot.request('description', 'Medpot Honeypot')
+
+        medpot.adata('hostname', ECFG['hostname'])
+        medpot.adata('externalIP', ECFG['ip_ext'])
+        medpot.adata('internalIP', ECFG['ip_int'])
+        medpot.adata('uuid', ECFG['uuid'])
+
+        if medpot.buildAlert() == "sendlimit":
+            break
+
+    medpot.finAlert()
+    return()
 
 
 def honeypy():
-    pass
+
+    honeypy = EAlert('honeypy', ECFG)
+
+    ITEMS = ['honeypy', 'nodeid', 'logfile']
+    HONEYPOT = (honeypy.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = honeypy.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+        if line['event_type'] != "CONNECT":
+            continue
+
+        honeypy.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            honeypy.data('timestamp', f"{line['timestamp'][0:10]} {line['timestamp'][11:19]}")
+            honeypy.data("timezone", time.strftime('%z'))
+
+        honeypy.data('source_address', line['src_ip']) if 'src_ip' in line else None
+        honeypy.data('target_address', line['dest_ip']) if 'dest_ip' in line else None
+        honeypy.data('source_port', line['src_port']) if 'src_port' in line else None
+        honeypy.data('target_port', line['dest_port']) if 'dest_port' in line else None
+        honeypy.data('source_protokoll', line['protocol'].lower()) if 'protocol' in line else None
+        honeypy.data('target_protokoll', line['protocol'].lower()) if 'protocol' in line else None
+
+        honeypy.request('description', 'Honeypy Honeypot')
+
+        honeypy.adata('hostname', ECFG['hostname'])
+        honeypy.adata('externalIP', ECFG['ip_ext'])
+        honeypy.adata('internalIP', ECFG['ip_int'])
+        honeypy.adata('uuid', ECFG['uuid'])
+
+        if honeypy.buildAlert() == "sendlimit":
+            break
+
+    honeypy.finAlert()
+    return()
 
 
 """ --- [ MAIN ] ------------------------------------------------------------------ """
 
 if __name__ == "__main__":
 
-    MODUL = "MAIN"
-
-    global ECFG
     ECFG = ecfg(name, version)
-
-    lock = locksocket(name)
-    print(" => Create lock socket successfull.") if lock is True else print(" => Another Instance is running ! EWSrun finish.")
+    locksocket(name)
+    logger = logging.getLogger('Main')
 
     while True:
 
@@ -1041,11 +1115,10 @@ if __name__ == "__main__":
 
         for honeypot in ECFG["HONEYLIST"]:
 
-            if ECFG["a.modul"]:
-                if ECFG["a.modul"] == honeypot:
-                    if readonecfg(honeypot.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
-                        eval(honeypot + '()')
-                        break
+            if ECFG["a.modul"] and ECFG["a.modul"] == honeypot:
+                if readonecfg(honeypot.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
+                    eval(honeypot + '()')
+                    break
                 else:
                     continue
 

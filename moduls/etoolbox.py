@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-from moduls.elog import logme
 import configparser
 import os
 import ipaddress
@@ -9,7 +9,10 @@ import socket
 import random
 import string
 import sys
+import moduls.elog
+import logging
 
+logger = logging.getLogger('Etoolbox')
 
 def readcfg(MODUL, ITEMS, FILE):
 
@@ -22,7 +25,9 @@ def readcfg(MODUL, ITEMS, FILE):
         if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
             result[item] = config.get(MODUL, item)
         else:
-            print(f'[ERROR] in Config MODUL [{MODUL}] parameter \'{item}\' didn\'t find or empty or not \'none\' in {FILE} config file. Abort !')
+            msg = f'[ERROR] in Config MODUL [{MODUL}] parameter \'{item}\' didn\'t find or empty or not \'none\' in {FILE} config file. Abort!'
+            print(f' => {msg}')
+            logger.error(msg)
             sys.exit()
 
     return(result)
@@ -83,7 +88,9 @@ def getIP(MODUL, ECFG):
             myIP['file_ip_ext'] = ipfile['ip']
 
         else:
-            logme(MODUL, "[ERROR] File ews.ip exist but not in an right format. Abort!", ("P1", "LOG", "EXIT"), ECFG)
+            msg = f'[ERROR] File ews.ip exist but not in an right format. Abort!'
+            print(f' => {msg}')
+            logger.error(msg)
 
     """ Read Enviroment Variables """
     for item, envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
@@ -92,7 +99,9 @@ def getIP(MODUL, ECFG):
             try:
                 ipaddress.ip_address(myIP[item])
             except (ipaddress.AddressValueError, ValueError) as e:
-                logme(MODUL, "Error IP Adress " + str(e) + " in Environment Variable is not an IPv4/IPv6 address " + " Abort !", ("P1"), ECFG)
+                msg = f"Error IP Adress {e} in Environment Variable is not an IPv4/IPv6 address Abort!"
+                print(f' => {msg}')
+                logger.error(msg)
 
     """ Get local IP via connection """
     try:
@@ -100,7 +109,9 @@ def getIP(MODUL, ECFG):
         connection.connect(("8.8.8.8", 53))
         myIP["connect_ip_int"] = connection.getsockname()[0]
     except:
-        logme(MODUL, "[ERROR] Could not determine a valid intern IP by Environment variable", ("P1", "LOG"), ECFG)
+        msg = f'Could not determine a valid intern IP by Environment variable'
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         myIP["connect_ip_int"] = ""
     finally:
         connection.close()
@@ -109,7 +120,9 @@ def getIP(MODUL, ECFG):
     try:
         myIP["connect_ip_ext"] = get('https://api.ipify.org', timeout=5).text
     except:
-        logme(MODUL, "[ERROR] Could not determine a valid public IP using external service", ("P1", "LOG"), ECFG)
+        msg = f'Could not determine a valid public IP using external service'
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
         myIP["connect_ip_ext"] = ""
     finally:
         connection.close()

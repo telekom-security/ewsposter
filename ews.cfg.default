@@ -137,3 +137,13 @@ logfile = /opt/ipphoney/log/ipphoney.log
 dicompot = false
 nodeid = <your unique analyzer id>
 logfile = /opt/dicompot/log/dicompot.log
+
+[MEDPOT]
+medpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/medpot/log/medpot.log
+
+[HONEYPY]
+honeypy = false
+nodeid = <your unique analyzer id>
+logfile = /opt/honeypy/log/json.log

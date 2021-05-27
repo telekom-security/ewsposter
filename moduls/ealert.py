@@ -4,7 +4,7 @@
 from datetime import datetime
 from lxml import etree
 import ipaddress
-from urllib import parse
+import moduls.elog
 import json
 import os
 import random
@@ -20,7 +20,6 @@ from collections import OrderedDict
 import sys
 import logging
 import sqlite3
-import pprint
 import base64
 
 class EAlert:
@@ -41,10 +40,7 @@ class EAlert:
         self.maxid = 0
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
-        logging.basicConfig(filename=f"{ECFG['logdir']}/ews.log",
-                            filemode="w",
-                            format='%(asctime)s - %(levelname)s - %(message)s',
-                            datefmt='%Y-%m-%d %H:%M:%S')
+        self.logger = logging.getLogger('ealert')
 
     def lineREAD(self, filename, format='json', linenumber=None, item='index'):
 
@@ -63,7 +59,7 @@ class EAlert:
                 jsonline = json.loads(lcache)
             except ValueError:
                 self.jsonfailcounter += 1
-                logging.warning(f"[lineREAD] Invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.")
+                self.logger.warning(f"[lineREAD] Invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.")
                 return('jsonfail')
             else:
                 return(jsonline)
@@ -133,7 +129,7 @@ class EAlert:
             else:
                 errormsg = f"[readCFG] Config parameter '{item}=' didn't find or empty in config file '{file}'. Abort!"
                 print("=> ", errormsg)
-                logging.error(errormsg)
+                self.logger.error(errormsg)
 
         return(returndic)
 
@@ -144,13 +140,13 @@ class EAlert:
         if key in files and os.path.isfile(value) is False:
             errormsg = f"[checkCFG] Mission File! {key} = {value}. Abort!"
             print("=> ", errormsg)
-            logging.error(errormsg)
+            self.logger.error(errormsg)
             sys.exit()
 
         if key in dirs and os.path.isdir(value) is False:
             errormsg = f"[checkCFG] Mission Directory! {key} = {value}. Abort!"
             print("=> ", errormsg)
-            logging.error(errormsg)
+            self.logger.error(errormsg)
             sys.exit()
 
         return(True)
@@ -237,7 +233,7 @@ class EAlert:
         else:
             errormsg = f"[data] Unknow keyword {key} = {value}."
             print("=> ", errormsg)
-            logging.error(errormsg)
+            self.logger.error(errormsg)
             return(False)
 
         return(True)
@@ -252,7 +248,7 @@ class EAlert:
             if keyword not in self.DATA:
                 errormsg = f"[dataCheck] missing keyword '{keyword}'. Alert skipt!"
                 print("=> ", errormsg)
-                logging.error(errormsg)
+                self.logger.error(errormsg)
                 return(False)
 
         if "cident" in self.DATA or "corigin" in self.DATA or "ctext" in self.DATA:
@@ -261,7 +257,7 @@ class EAlert:
             else:
                 errormsg = f"[dataCheck] Unkown ciden/corgin/ctext combination. Alert skipt!"
                 print("=> ", errormsg)
-                logging.error(errormsg)
+                self.logger.error(errormsg)
                 return(False)
         return(True)
 
@@ -301,7 +297,6 @@ class EAlert:
             else:
                 mytype = "string"
 
-            #etree.SubElement(Alert, "AdditionalData", type=mytype, meaning=key).text = parse.quote(str(value).encode('ascii', 'ignore'))
             etree.SubElement(Alert, "AdditionalData", type=mytype, meaning=key).text = str(value)
         return()
 
@@ -488,25 +483,25 @@ class EAlert:
             xmlresult = re.search('<StatusCode>(.*)</StatusCode>', webservice.text).groups()[0]
 
             if xmlresult != "OK":
-                logging.warning(f'[ewsWebservice] XML Result != ok ({xmlresult}) ({webservice.text})')
+                self.logger.warning(f'[ewsWebservice] XML Result != ok ({xmlresult}) ({webservice.text})')
                 return(False)
 
             return(True)
 
         except requests.exceptions.Timeout:
-            logging.warning(f'[ewsWebservice] Timeout to remote Host {host}')
+            self.logger.warning(f'ewsWebservice Timeout to remote Host {host}')
             return(False)
 
         except requests.exceptions.ConnectionError:
-            logging.warning(f"[ewsWebservice] Remote Host {host} didn't answer!")
+            self.logger.warning(f"ewsWebservice Remote Host {host} didn't answer!")
             return(False)
 
         except requests.exceptions.HTTPError:
-            logging.warning(f'[ewsWebservice] HTTP(S) Errorcode != 200')
+            self.logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200')
             return(False)
 
         except OpenSSL.SSL.WantWriteError:
-            logging.warning(f'[ewsWebservice] OpenSSL Write Buffer too small')
+            self.logger.warning(f'ewsWebservice OpenSSL Write Buffer too small')
             return(False)
 
     def ewsprint(self):
@@ -529,7 +524,7 @@ class EAlert:
 
         if result != 0:
             """ broker unavailable """
-            logging.warning(f"HPFEEDS broker is configured to {self.ECFG['host']}:{self.ECFG['port']} but is currently unavailable. Disabling hpfeeds submission for this round!")
+            self.logger.warning(f"HPFEEDS broker is configured to {self.ECFG['host']}:{self.ECFG['port']} but is currently unavailable. Disabling hpfeeds submission for this round!")
             return(False)
 
         try:
@@ -555,11 +550,11 @@ class EAlert:
 
             for i in range(0, len(self.esm)):
                 if eformat == "xml":
-                    hpc.publish(self.ECFG["channels"], etree.tostring(esm[i], pretty_print=False))
+                    hpc.publish(self.ECFG["channels"], etree.tostring(self.esm[i], pretty_print=False))
 
                 if eformat == "json":
                     bf = BadgerFish(dict_type=OrderedDict)
-                    hpc.publish(self.ECFG["channels"], json.dumps(bf.data(esm[i])))
+                    hpc.publish(self.ECFG["channels"], json.dumps(bf.data(self.esm[i])))
 
             return(True)
 
