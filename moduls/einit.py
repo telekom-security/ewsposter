@@ -24,17 +24,17 @@ def ecfg(name, version):
                          'dicompot', 'medpot', 'honeypy']
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--configpath", help="Load configuration file from Path")
+    parser.add_argument("-c", "--configpath", help="load configuration file from Path")
     parser.add_argument("-v", "--verbose", help="set output verbosity", action="store_true")
     parser.add_argument("-d", "--debug", help="set output debug", action="store_true")
-    parser.add_argument("-l", "--loop", help="Go in endless loop. Set {xx} for seconds to wait for next loop", type=int, default=0, action="store")
+    parser.add_argument("-l", "--loop", help="endless loop. Set {xx} for seconds to wait for next loop", type=int, default=0, action="store")
     parser.add_argument("-m", "--modul", help="only send alerts for this modul", choices=ECFG['HONEYLIST'], action="store")
     parser.add_argument("-s", "--silent", help="silent mode without output", action="store_true")
     parser.add_argument("-i", "--ignorecert", help="ignore certificate warnings", action="store_true")
     parser.add_argument("-S", "--sendonly", help="only send unsend alerts", action="store_true")
     parser.add_argument("-E", "--ewsonly", help="only generate ews alerts files", action="store_true")
-    parser.add_argument("-j", "--jsonpath", help="Write JSON output file to path")
-    parser.add_argument("-L", "--sendlimit", help="Set {xxx} for max alerts will send in one session", type=int, action="store")
+    parser.add_argument("-j", "--jsonpath", help="write JSON output file to path")
+    parser.add_argument("-L", "--sendlimit", help="set {xxx} for max alerts will send in one session", type=int, action="store")
     parser.add_argument("-V", "--version", help="show the EWS Poster Version", action="version", version=f"{name} {version}")
 
     args = parser.parse_args()
