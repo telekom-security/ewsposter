@@ -12,7 +12,7 @@ import moduls.elog
 
 from moduls.etoolbox import readcfg, getHostname, getIP
 
-logger = logging.getLogger('Einit')
+logger = logging.getLogger('einit')
 
 def ecfg(name, version):
 
@@ -35,7 +35,7 @@ def ecfg(name, version):
     parser.add_argument("-E", "--ewsonly", help="only generate ews alerts files", action="store_true")
     parser.add_argument("-j", "--jsonpath", help="Write JSON output file to path")
     parser.add_argument("-L", "--sendlimit", help="Set {xxx} for max alerts will send in one session", type=int, action="store")
-    parser.add_argument("-V", "--version", help="show the EWS Poster Version", action="version", version=name + " " + version)
+    parser.add_argument("-V", "--version", help="show the EWS Poster Version", action="version", version=f"{name} {version}")
 
     args = parser.parse_args()
 
@@ -120,7 +120,7 @@ def ecfg(name, version):
 
     """ log dir available ? """
     if os.path.isdir(MCFG["logdir"]) is False:
-        msg = f"missing logdir {MCFG['logdir']}. Abort!"
+        msg = f"Missing logdir {MCFG['logdir']}. Abort!"
         print(f' => [ERROR] {msg}')
         logger.error(msg)
         sys.exit(1)
@@ -170,14 +170,18 @@ def ecfg(name, version):
         try:
             ipaddress.ip_address(MCFG["ip_int"])
         except (ipaddress.AddressValueError, ValueError) as e:
-            print(f" => [ERROR] ip_int Adress {str(e)} in [EWS] is not an IPv4/IPv6 address. Abort !")
+            msg = f"ip_int Adress {str(e)} in [EWS] is not an IPv4/IPv6 address. Abort!"
+            print(f' => [ERROR] {msg}')
+            logger.error(msg)
             sys.exit(1)
 
     if MCFG["ip_ext"] != "" and MCFG["ip_ext"].lower() != "none":
         try:
             ipaddress.ip_address(MCFG["ip_ext"])
         except (ipaddress.AddressValueError, ValueError) as e:
-            print(f" => [ERROR] ip_ext Adress {str(e)} in [EWS] config section is not an IPv4/IPv6 address. Abort !")
+            msg = f"ip_ext Adress {str(e)} in [EWS] config section is not an IPv4/IPv6 address. Abort!"
+            print(f' => [ERROR] {msg}')
+            logger.error(msg)
             sys.exit(1)
 
     """ Read EWS Config Parameter """
@@ -192,7 +196,10 @@ def ecfg(name, version):
 
     for index in ["username", "token", "rhost_first", "rhost_second"]:
         if EWSCFG[index] == "" and EWSCFG["ews"] is True:
-            print(f" => [ERROR] Missing {index} in [EWS] config section. Abort !")
+            msg = f"Missing {index} in [EWS] config section. Abort!"
+            print(f' => [ERROR] {msg}')
+            logger.error(msg)
+            sys.exit(1)
 
     if ECFG["a.ignorecert"] is True:
         EWSCFG["ignorecert"] = True
@@ -247,8 +254,11 @@ def ecfg(name, version):
         if os.path.isdir(EWSJSON["jsondir"]) is True:
             EWSJSON["jsondir"] = EWSJSON["jsondir"] + os.sep + "ews.json"
         else:
-            print(f" => [ERROR] Missing jsondir {EWSJSON['jsondir']} in [EWSJSON]. Abort !")
+            msg = f"Missing jsondir {EWSJSON['jsondir']} in [EWSJSON]. Abort!"
+            print(f' => [ERROR] {msg}')
+            logger.error(msg)
             sys.exit(1)
+
     else:
         EWSJSON["json"] = False
 
@@ -311,8 +321,10 @@ def locksocket(name):
         print(f" => Create lock socket successfull.")
         return(True)
     except socket.error:
-        print(f" => [ERROR] Another Instance is running! EWSrun finish.")
-        sys.exit()
+        msg = f"Another Instance is running! EWSrun finish."
+        print(f' => [ERROR] {msg}')
+        logger.error(msg)
+        sys.exit(1)
         return(False)
 
 

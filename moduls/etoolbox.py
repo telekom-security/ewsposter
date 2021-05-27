@@ -12,7 +12,7 @@ import sys
 import moduls.elog
 import logging
 
-logger = logging.getLogger('Etoolbox')
+logger = logging.getLogger('etoolbox')
 
 def readcfg(MODUL, ITEMS, FILE):
 

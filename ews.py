@@ -1106,7 +1106,7 @@ if __name__ == "__main__":
 
     ECFG = ecfg(name, version)
     locksocket(name)
-    logger = logging.getLogger('Main')
+    logger = logging.getLogger('ews')
 
     while True:
 
