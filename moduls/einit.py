@@ -311,11 +311,9 @@ def locksocket(name):
         print(f" => Create lock socket successfull.")
         return(True)
     except socket.error:
-        print(f" => [ERROR] Could not bind socket")
-        return(False)
-    else:
-        print(" => Another Instance is running ! EWSrun finish.")
+        print(f" => [ERROR] Another Instance is running! EWSrun finish.")
         sys.exit()
+        return(False)
 
 
 if __name__ == "__main__":
