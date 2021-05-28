@@ -7,12 +7,8 @@ import os
 import ipaddress
 import sys
 import uuid
-import logging
-import moduls.elog
-
-from moduls.etoolbox import readcfg, getHostname, getIP
-
-logger = logging.getLogger('einit')
+from moduls.elog import ELog
+from moduls.etoolbox import readcfg, getHostname, getIP, readonecfg
 
 def ecfg(name, version):
 
@@ -21,7 +17,7 @@ def ecfg(name, version):
     ECFG['HONEYLIST'] = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
                          'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
                          'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt', 'ipphoney',
-                         'dicompot', 'medpot', 'honeypy']
+                         'dicompot', 'medpot', 'honeypy', 'citrix']
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--configpath", help="load configuration file from Path")
@@ -50,6 +46,17 @@ def ecfg(name, version):
     ECFG["a.modul"] = (args.modul if args.modul and args.modul in ECFG['HONEYLIST'] else "")
     ECFG["a.path"] = (args.configpath if args.configpath else "")
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
+
+    if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is True:
+        logdir = readonecfg('MAIN', 'logdir', f"{ECFG['a.path']}/ews.cfg")
+    else:
+        logdir = readonecfg('MAIN', 'logdir', f"{os.path.dirname(os.path.abspath(__file__)).replace('/moduls', '')}/ews.cfg")
+
+    if os.path.isdir(logdir):
+        logger = ELog('EInit', logdir)
+    else:
+        print(f" => [ERROR] Logdir {logdir} didn't found. Abort!")
+        sys.exit(1)
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
         msg = f"ConfigDir {ECFG['a.path']} from commandline argument -c/--configpath did not exist. Abort!"
@@ -291,16 +298,16 @@ def ecfg(name, version):
 
     for place in ['ip_int', 'ip_ext']:
         """ ip in ews.cfg """
-        if ECFG[place] == "" or ECFG[place] == "none":
+        if ECFG[place] == "" or ECFG[place].lower() == "none":
             ECFG[place] = IPCFG['env_' + place]
             """ ip in env """
-            if ECFG[place] == "" or ECFG[place] == "none":
+            if ECFG[place] == "" or ECFG[place].lower() == "none":
                 ECFG[place] = IPCFG['file_' + place]
                 """ ip in ews.ip """
-                if ECFG[place] == "" or ECFG[place] == "none":
+                if ECFG[place] == "" or ECFG[place].lower() == "none":
                     ECFG[place] = IPCFG['connect_' + place]
                     """ ip from connection """
-                    if ECFG[place] == "" or ECFG[place] == "none":
+                    if ECFG[place] == "" or ECFG[place].lower() == "none":
                         msg = f"{place} is 'none' or empty. Abort!"
                         print(f' => [ERROR] {msg}')
                         logger.error(msg)
@@ -309,11 +316,12 @@ def ecfg(name, version):
     return(ECFG)
 
 
-def locksocket(name):
+def locksocket(name, logdir):
     """ create lock socket """
 
     global lock_socket
 
+    logger = ELog('Locksocket', logdir)
     lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 
     try:

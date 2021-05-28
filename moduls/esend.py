@@ -7,8 +7,7 @@ import requests
 import sys
 import ssl
 import re
-import logging
-import moduls.elog
+from moduls.elog import ELog
 
 def ESend(ECFG):
 
@@ -126,7 +125,7 @@ def ESend(ECFG):
             return(False)
 
     """ Main instance for this Modul """
-    logger = logging.getLogger('esend')
+    logger = ELog('ESend', ECFG['logdir'])
 
     print(f' => ESend: checking spooldir and resend alert')
     clean_dir(ECFG["spooldir"])

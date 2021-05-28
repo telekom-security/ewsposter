@@ -1,0 +1,25 @@
+FROM alpine:latest
+
+RUN apk -U --no-cache add \
+    python3 \
+    py3-pip \
+    py3-requests \
+    py3-lxml \
+    git && \
+    git clone https://github.com/telekom-security/ewsposter /opt/ewsposter && \
+    cd /opt/ewsposter && \
+    mkdir -p spool log json && \
+    git checkout develop && \
+    pip install --no-cache-dir hpfeeds3 xmljson && \
+    adduser --disabled-password --shell /bin/ash --uid 2021 ews && \
+    chown -R ews:ews /opt/ewsposter && \
+    apk del git
+
+ADD --chown=ews:ews ews.cfg.docker /opt/ewsposter/ews.cfg
+
+STOPSIGNAL SIGKILL
+
+USER ews:ews
+WORKDIR /opt/ewsposter
+
+CMD ews.py -l 30

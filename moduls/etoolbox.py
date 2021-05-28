@@ -9,10 +9,9 @@ import socket
 import random
 import string
 import sys
-import moduls.elog
-import logging
+from moduls.elog import ELog
 
-logger = logging.getLogger('etoolbox')
+logger = ELog('Etoolbox', "/work2/ewsposter/log")
 
 def readcfg(MODUL, ITEMS, FILE):
 
@@ -73,9 +72,8 @@ def getIP(MODUL, ECFG):
 
     """ Read ip from ews.ip file if exist """
     if os.path.isfile(ECFG["path"] + os.sep + "ews.ip"):
-        if checkSECTIONcfg("EWSIP", "ews.ip"):
-            ipfile = dict(readcfg('EWSIP', ('ip_int', 'ip_ext'), 'ews.ip'))
-
+        if checkSECTIONcfg("EWSIP", ECFG['path'] + os.sep + "ews.ip"):
+            ipfile = dict(readcfg('EWSIP', ('ip_int', 'ip_ext'), ECFG["path"] + os.sep + "ews.ip"))
             for dic in ipfile:
                 if ipfile[dic] != "" and ipfile[dic] is not None:
                     myIP['file_' + dic] = ipfile[dic]
@@ -83,30 +81,35 @@ def getIP(MODUL, ECFG):
                     myIP['file_' + dic] = ""
 
         elif checkSECTIONcfg("MAIN", "ews.ip"):
-            ipfile = dict(readcfg('MAIN', ('ip',), 'ews.ip'))
+            ipfile = dict(readcfg('MAIN', ('ip',), ECFG['path'] + os.sep + "ews.ip"))
             myIP['file_ip_int'] = ""
             myIP['file_ip_ext'] = ipfile['ip']
 
         else:
-            msg = f'[ERROR] File ews.ip exist but not in an right format. Abort!'
+            myIP['file_ip_int'] = ""
+            myIP['file_ip_ext'] = ""
+            msg = f'[ERROR] File ews.ip exist but not in an right format. Set to zero!'
             print(f' => {msg}')
             logger.error(msg)
 
     """ Read Enviroment Variables """
     for item, envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
-        if os.environ.get(envvar) is not None:
+        if len(os.environ.get(envvar)) > 0:
             myIP[item] = os.environ.get(envvar)
             try:
                 ipaddress.ip_address(myIP[item])
             except (ipaddress.AddressValueError, ValueError) as e:
+                myIP[item] = ""
                 msg = f"Error IP Adress {e} in Environment Variable is not an IPv4/IPv6 address Abort!"
                 print(f' => {msg}')
                 logger.error(msg)
+        else:
+            myIP[item] = ""
 
     """ Get local IP via connection """
     try:
         connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        connection.connect(("8.8.8.8", 53))
+        connection.connect(("9.9.9.9", 53))
         myIP["connect_ip_int"] = connection.getsockname()[0]
     except:
         msg = f'Could not determine a valid intern IP by Environment variable'

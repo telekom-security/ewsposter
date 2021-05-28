@@ -4,7 +4,7 @@
 from datetime import datetime
 from lxml import etree
 import ipaddress
-import moduls.elog
+from moduls.elog import ELog
 import json
 import os
 import random
@@ -18,7 +18,6 @@ import socket
 from xmljson import BadgerFish
 from collections import OrderedDict
 import sys
-import logging
 import sqlite3
 import base64
 
@@ -40,7 +39,7 @@ class EAlert:
         self.maxid = 0
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
-        self.logger = logging.getLogger('ealert')
+        self.logger = ELog('EAlert', ECFG['logdir'])
 
     def lineREAD(self, filename, format='json', linenumber=None, item='index'):
 

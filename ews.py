@@ -9,16 +9,16 @@ import hashlib
 from datetime import datetime
 import glob
 from moduls.einit import locksocket, ecfg
-import moduls.elog
-import logging
+from moduls.elog import ELog
 from moduls.etoolbox import readonecfg
 from moduls.ealert import EAlert
 from moduls.esend import ESend
 import base64
 from urllib import parse
+import sys
 
 name = "EWS Poster"
-version = "v1.17"
+version = "v1.18"
 
 def ipphoney():
 
@@ -1099,14 +1099,55 @@ def honeypy():
     honeypy.finAlert()
     return()
 
+def citrix():
+
+    citrix = EAlert('citrix', ECFG)
+
+    ITEMS = ['citrix', 'nodeid', 'logfile']
+    HONEYPOT = (citrix.readCFG(ITEMS, ECFG['cfgfile']))
+
+    while True:
+        line = citrix.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+
+        citrix.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'asctime' in line:
+            citrix.data('timestamp', f"{line['asctime'][0:10]} {line['asctime'][11:19]}")
+            citrix.data("timezone", time.strftime('%z'))
+
+        citrix.data('source_address', re.search(r"\((.*)\).*", line['message'], re.M).group(1).split(":")[0]) if 'message' in line else None
+        citrix.data('target_address', ECFG['ip_ext'])
+        citrix.data('source_port', re.search(r"\((.*)\).*", line['message'], re.M).group(1).split(":")[1]) if 'message' in line else None
+        citrix.data('target_port', '80')
+        citrix.data('source_protokoll', 'tcp')
+        citrix.data('target_protokoll', 'tcp')
+
+        citrix.request('description', 'Citrix Honeypot')
+
+        citrix.adata('hostname', ECFG['hostname'])
+        citrix.adata('externalIP', ECFG['ip_ext'])
+        citrix.adata('internalIP', ECFG['ip_int'])
+        citrix.adata('uuid', ECFG['uuid'])
+
+        if citrix.buildAlert() == "sendlimit":
+            break
+
+    citrix.finAlert()
+    return()
+
 
 """ --- [ MAIN ] ------------------------------------------------------------------ """
 
 if __name__ == "__main__":
 
     ECFG = ecfg(name, version)
-    locksocket(name)
-    logger = logging.getLogger('ews')
+    locksocket(name, ECFG['logdir'])
+    logger = ELog('MAIN', ECFG['logdir'])
 
     while True:
 
