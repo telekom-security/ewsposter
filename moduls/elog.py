@@ -4,9 +4,14 @@
 import logging
 from moduls.etoolbox import readonecfg
 import os
+import sys
 
 ecfgfile = os.path.dirname(os.path.abspath(__file__)).replace("/moduls", "") + os.sep + "ews.cfg"
 logdir = readonecfg('MAIN', 'logdir', ecfgfile)
+
+if logdir == "FALSE":
+    print(f" => [ERROR] Logdir not exists or not configured in ews.cfg")
+    sys.exit(1)
 
 logging.basicConfig(filename=f"{logdir}/ews.log",
                     filemode="a",
