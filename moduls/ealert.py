@@ -12,7 +12,7 @@ import requests
 import re
 import configparser
 import linecache
-import OpenSSL.SSL
+import ssl
 import hpfeeds
 import socket
 from xmljson import BadgerFish
@@ -500,7 +500,7 @@ class EAlert:
             self.logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200')
             return(False)
 
-        except OpenSSL.SSL.WantWriteError:
+        except ssl.WantWriteError:
             self.logger.warning(f'ewsWebservice OpenSSL Write Buffer too small')
             return(False)
 

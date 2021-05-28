@@ -5,7 +5,7 @@ import os
 import random
 import requests
 import sys
-import OpenSSL.SSL
+import ssl
 import re
 import logging
 import moduls.elog
@@ -121,7 +121,7 @@ def ESend(ECFG):
             logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200')
             return(False)
 
-        except OpenSSL.SSL.WantWriteError:
+        except ssl.WantWriteError:
             logger.warning(f'ewsWebservice OpenSSL Write Buffer too small')
             return(False)
 
