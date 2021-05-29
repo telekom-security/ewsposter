@@ -1,0 +1,24 @@
+version: '3.6'
+
+services:
+  ewsposter:
+    container_name: ewsposter
+    restart: always
+    build: .
+    networks:
+      - ewsposter_local
+    environment:
+      - EWS_HPFEEDS_ENABLE=${HPF_ENABLE}
+      - EWS_HPFEEDS_HOST=${HPF_HOST}
+      - EWS_HPFEEDS_PORT=${HPF_PORT}
+      - EWS_HPFEEDS_CHANNELS=${HPF_CHANNELS}
+      - EWS_HPFEEDS_IDENT=${HPF_IDENT}
+      - EWS_HPFEEDS_SECRET=${HPF_SECRET}
+      - EWS_HPFEEDS_TLSCERT=${HPF_TLSCERT}
+      - EWS_HPFEEDS_FORMAT=${HPF_FORMAT}
+    image: ${USERNAME}/${NAME}:${TAG}
+    volumes:
+      - /data:/data
+
+networks:
+  ewsposter_local:
