@@ -22,4 +22,4 @@ STOPSIGNAL SIGKILL
 USER ews:ews
 WORKDIR /opt/ewsposter
 
-CMD ews.py -l 30
+CMD python3 ews.py -l 30

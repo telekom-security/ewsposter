@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import configparser
-import os
-import ipaddress
+from moduls.elog import ELog
 from requests import get
-import socket
+import configparser
+import ipaddress
+import os
 import random
+import socket
 import string
 import sys
-from moduls.elog import ELog
 
-logger = ELog('Etoolbox', "/work2/ewsposter/log")
+#logger = ELog('Etoolbox', "/work2/ewsposter/log")  
 
 def readcfg(MODUL, ITEMS, FILE):
 
@@ -26,7 +26,7 @@ def readcfg(MODUL, ITEMS, FILE):
         else:
             msg = f'[ERROR] in Config MODUL [{MODUL}] parameter \'{item}\' didn\'t find or empty or not \'none\' in {FILE} config file. Abort!'
             print(f' => {msg}')
-            logger.error(msg)
+            #logger.error(msg)
             sys.exit()
 
     return(result)
@@ -60,11 +60,11 @@ def readonecfg(MODUL, item, FILE):
     if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
         return config.get(MODUL, item)
     elif config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) == 0:
-        return "NULL"
+        return('NULL')
     elif config.has_option(MODUL, item) is False:
-        return "FALSE"
+        return('FALSE')
     else:
-        return "UNKNOW"
+        return ('UNKNOW')
 
 
 def getIP(MODUL, ECFG):
@@ -90,7 +90,7 @@ def getIP(MODUL, ECFG):
             myIP['file_ip_ext'] = ""
             msg = f'[ERROR] File ews.ip exist but not in an right format. Set to zero!'
             print(f' => {msg}')
-            logger.error(msg)
+            #logger.error(msg)
 
     """ Read Enviroment Variables """
     for item, envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
@@ -102,7 +102,7 @@ def getIP(MODUL, ECFG):
                 myIP[item] = ""
                 msg = f"Error IP Adress {e} in Environment Variable is not an IPv4/IPv6 address Abort!"
                 print(f' => {msg}')
-                logger.error(msg)
+                #logger.error(msg)
         else:
             myIP[item] = ""
 
@@ -114,7 +114,7 @@ def getIP(MODUL, ECFG):
     except:
         msg = f'Could not determine a valid intern IP by Environment variable'
         print(f' => [ERROR] {msg}')
-        logger.error(msg)
+        #logger.error(msg)
         myIP["connect_ip_int"] = ""
     finally:
         connection.close()
@@ -125,7 +125,7 @@ def getIP(MODUL, ECFG):
     except:
         msg = f'Could not determine a valid public IP using external service'
         print(f' => [ERROR] {msg}')
-        logger.error(msg)
+        #logger.error(msg)
         myIP["connect_ip_ext"] = ""
     finally:
         connection.close()
