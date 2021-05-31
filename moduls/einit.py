@@ -8,7 +8,9 @@ import ipaddress
 import sys
 import uuid
 from moduls.elog import ELog
-from moduls.etoolbox import readcfg, getHostname, getIP, readonecfg
+from moduls.etoolbox import readcfg, getHostname, getIP
+
+logger = ELog('Einit')
 
 def ecfg(name, version):
 
@@ -46,17 +48,6 @@ def ecfg(name, version):
     ECFG["a.modul"] = (args.modul if args.modul and args.modul in ECFG['HONEYLIST'] else "")
     ECFG["a.path"] = (args.configpath if args.configpath else "")
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
-
-    if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is True:
-        logdir = readonecfg('MAIN', 'logdir', f"{ECFG['a.path']}/ews.cfg")
-    else:
-        logdir = readonecfg('MAIN', 'logdir', f"{os.path.dirname(os.path.abspath(__file__)).replace('/moduls', '')}/ews.cfg")
-
-    if os.path.isdir(logdir):
-        logger = ELog('EInit', logdir)
-    else:
-        print(f" => [ERROR] Logdir {logdir} didn't found. Abort!")
-        sys.exit(1)
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
         msg = f"ConfigDir {ECFG['a.path']} from commandline argument -c/--configpath did not exist. Abort!"
@@ -320,8 +311,6 @@ def locksocket(name, logdir):
     """ create lock socket """
 
     global lock_socket
-
-    logger = ELog('Locksocket', logdir)
     lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 
     try:

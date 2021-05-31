@@ -39,7 +39,7 @@ class EAlert:
         self.maxid = 0
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
-        self.logger = ELog('EAlert', ECFG['logdir'])
+        self.logger = ELog('EAlert')
 
     def lineREAD(self, filename, format='json', linenumber=None, item='index'):
 

@@ -125,7 +125,7 @@ def ESend(ECFG):
             return(False)
 
     """ Main instance for this Modul """
-    logger = ELog('ESend', ECFG['logdir'])
+    logger = ELog('ESend')
 
     print(f' => ESend: checking spooldir and resend alert')
     clean_dir(ECFG["spooldir"])

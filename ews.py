@@ -1147,7 +1147,7 @@ if __name__ == "__main__":
 
     ECFG = ecfg(name, version)
     locksocket(name, ECFG['logdir'])
-    logger = ELog('MAIN', ECFG['logdir'])
+    logger = ELog('MAIN')
 
     while True:
 
