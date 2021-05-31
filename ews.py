@@ -1098,6 +1098,7 @@ def honeypy():
     honeypy.finAlert()
     return()
 
+
 def citrix():
 
     citrix = EAlert('citrix', ECFG)

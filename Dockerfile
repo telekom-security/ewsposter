@@ -11,7 +11,7 @@ RUN apk -U --no-cache add \
     mkdir -p spool log json && \
     git checkout develop && \
     pip install --no-cache-dir hpfeeds3 xmljson && \
-    adduser --disabled-password --shell /bin/ash --uid 2021 ews && \
+    adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     chown -R ews:ews /opt/ewsposter && \
     apk del git
 
