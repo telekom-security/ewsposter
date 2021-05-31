@@ -9,7 +9,7 @@ import uuid
 from moduls.elog import ELog
 from moduls.etoolbox import readcfg, getHostname, getIP
 
-logger = ELog('Einit')
+logger = ELog('EInit')
 
 
 def ecfg(name, version):

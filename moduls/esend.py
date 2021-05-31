@@ -4,7 +4,6 @@
 import os
 import random
 import requests
-import sys
 import ssl
 import re
 from moduls.elog import ELog
