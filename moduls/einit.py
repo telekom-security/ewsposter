@@ -271,7 +271,7 @@ def locksocket(name, logdir):
         print(f" => Create lock socket successfull.")
         return(True)
     except socket.error:
-        logger.error(f"Another Instance is running! EWSrun finish.")
+        logger.error(f"Another Instance is running! EWSrun finish.", '1E')
         return(False)
 
 

@@ -57,24 +57,21 @@ def getIP(MODUL, ECFG):
     myIP = {}
 
     """ Read ip from ews.ip file if exist """
+    myIP['file_ip_int'] = ""
+    myIP['file_ip_ext'] = ""
     if os.path.isfile(ECFG["path"] + os.sep + "ews.ip"):
         if checkSECTIONcfg("EWSIP", ECFG['path'] + os.sep + "ews.ip"):
             ipfile = dict(readcfg('EWSIP', ('ip_int', 'ip_ext'), ECFG["path"] + os.sep + "ews.ip"))
             for dic in ipfile:
                 if ipfile[dic] != "" and ipfile[dic] is not None:
                     myIP['file_' + dic] = ipfile[dic]
-                else:
-                    myIP['file_' + dic] = ""
 
         elif checkSECTIONcfg("MAIN", "ews.ip"):
             ipfile = dict(readcfg('MAIN', ('ip',), ECFG['path'] + os.sep + "ews.ip"))
-            myIP['file_ip_int'] = ""
             myIP['file_ip_ext'] = ipfile['ip']
 
         else:
-            myIP['file_ip_int'] = ""
-            myIP['file_ip_ext'] = ""
-            logger.warning(f"File ews.ip exist but not in an right format. Set to zero!", '1')
+            logger.info(f"File ews.ip exist but not in an right format. Set to zero!", '1')
 
     """ Read Enviroment Variables """
     for item, envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
