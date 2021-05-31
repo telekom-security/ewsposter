@@ -19,7 +19,6 @@ import requests
 import socket
 import sqlite3
 import ssl
-import sys
 
 class EAlert:
 
@@ -58,7 +57,7 @@ class EAlert:
                 jsonline = json.loads(lcache)
             except ValueError:
                 self.jsonfailcounter += 1
-                self.logger.warning(f"[lineREAD] Invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.")
+                self.logger.warning(f"lineREAD invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.", '2')
                 return('jsonfail')
             else:
                 return(jsonline)
@@ -126,9 +125,7 @@ class EAlert:
                     returndic[item] = None
                 self.checkCFG(item, returndic[item])
             else:
-                errormsg = f"[readCFG] Config parameter '{item}=' didn't find or empty in config file '{file}'. Abort!"
-                print("=> ", errormsg)
-                self.logger.error(errormsg)
+                self.logger.error(f"[readCFG] Config parameter '{item}=' didn't find or empty in config file '{file}'. Abort!", '1E')
 
         return(returndic)
 
@@ -137,16 +134,10 @@ class EAlert:
         dirs = ["payloaddir", "malwaredir", "jsondir", "homedir", "spooldir", "logdir"]
 
         if key in files and os.path.isfile(value) is False:
-            errormsg = f"[checkCFG] Mission File! {key} = {value}. Abort!"
-            print("=> ", errormsg)
-            self.logger.error(errormsg)
-            sys.exit()
+            self.logger.error(f"checkCFG mission File! {key} = {value}. Abort!", '1E')
 
         if key in dirs and os.path.isdir(value) is False:
-            errormsg = f"[checkCFG] Mission Directory! {key} = {value}. Abort!"
-            print("=> ", errormsg)
-            self.logger.error(errormsg)
-            sys.exit()
+            self.logger.error(f"checkCFG mission Directory! {key} = {value}. Abort!", '1E')
 
         return(True)
 
@@ -230,9 +221,7 @@ class EAlert:
                 if ipaddress.ip_address(self.DATA['target_address']).is_private is True:
                     self.DATA['target_address'] = self.ECFG['ip_ext']
         else:
-            errormsg = f"[data] Unknow keyword {key} = {value}."
-            print("=> ", errormsg)
-            self.logger.error(errormsg)
+            self.logger.error(f"Unknow keyword in data {key} = {value}.", '1E')
             return(False)
 
         return(True)
@@ -245,18 +234,14 @@ class EAlert:
 
         for keyword in keywords:
             if keyword not in self.DATA:
-                errormsg = f"[dataCheck] missing keyword '{keyword}'. Alert skipt!"
-                print("=> ", errormsg)
-                self.logger.error(errormsg)
+                self.logger.error(f"Missing keyword  in dataCheck '{keyword}'. Alert skipt!", '2')
                 return(False)
 
         if "cident" in self.DATA or "corigin" in self.DATA or "ctext" in self.DATA:
             if "cident" in self.DATA and "corigin" in self.DATA and "ctext" in self.DATA:
                 return(True)
             else:
-                errormsg = f"[dataCheck] Unkown ciden/corgin/ctext combination. Alert skipt!"
-                print("=> ", errormsg)
-                self.logger.error(errormsg)
+                self.logger.error(f"Unkown ciden/corgin/ctext in dataCheck combination. Alert skipt!", '2')
                 return(False)
         return(True)
 
@@ -482,25 +467,25 @@ class EAlert:
             xmlresult = re.search('<StatusCode>(.*)</StatusCode>', webservice.text).groups()[0]
 
             if xmlresult != "OK":
-                self.logger.warning(f'[ewsWebservice] XML Result != ok ({xmlresult}) ({webservice.text})')
+                self.logger.warning(f'ewsWebservice XML Result != ok ({xmlresult}) ({webservice.text})', '2')
                 return(False)
 
             return(True)
 
         except requests.exceptions.Timeout:
-            self.logger.warning(f'ewsWebservice Timeout to remote Host {host}')
+            self.logger.warning(f'ewsWebservice Timeout to remote Host {host}', '2')
             return(False)
 
         except requests.exceptions.ConnectionError:
-            self.logger.warning(f"ewsWebservice Remote Host {host} didn't answer!")
+            self.logger.warning(f"ewsWebservice Remote Host {host} didn't answer!", '2')
             return(False)
 
         except requests.exceptions.HTTPError:
-            self.logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200')
+            self.logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200', '2')
             return(False)
 
         except ssl.WantWriteError:
-            self.logger.warning(f'ewsWebservice OpenSSL Write Buffer too small')
+            self.logger.warning(f'ewsWebservice SSL Write Buffer too small', '2')
             return(False)
 
     def ewsprint(self):
@@ -523,7 +508,7 @@ class EAlert:
 
         if result != 0:
             """ broker unavailable """
-            self.logger.warning(f"HPFEEDS broker is configured to {self.ECFG['host']}:{self.ECFG['port']} but is currently unavailable. Disabling hpfeeds submission for this round!")
+            self.logger.warning(f"HPFEEDS broker is configured to {self.ECFG['host']}:{self.ECFG['port']} but is currently unavailable. Disabling hpfeeds submission for this round!", '2')
             return(False)
 
         try:
@@ -558,14 +543,16 @@ class EAlert:
             return(True)
 
         except hpfeeds.FeedException as e:
-            print(f'HPFeeds Error ({e})')
+            self.logger.error(f"HPFeeds Error ({e})", '2')
             return(False)
 
     def malwarecheck(self, malwaredir, malwarefile, localremove, md5filechecksum=None):
         if not os.path.isdir(malwaredir):
+            self.logger.warning(f"Malwaredir {malwaredir} does not exist!", '2')
             return(False, f"[ERROR] Malwaredir {malwaredir} does not exist!", None)
 
         if self.md5malware(md5filechecksum) is False:
+            self.logger.warning(f"MD5File {md5filechecksum} already submitted.", '2')
             return(False, f"[ERROR] MD5File {md5filechecksum} already submitted.", None)
 
         if os.path.isfile(malwaredir + os.sep + malwarefile) is True:
@@ -575,8 +562,10 @@ class EAlert:
                     os.remove(malwaredir + os.sep + malwarefile)
                 return(True, f'payload', base64.b64encode(payload))
             else:
+                self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 5 MB! Not send.", '2')
                 return(False, f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 5 MB! Not send.", None)
         else:
+            self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", '2')
             return(False, f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", None)
 
     def md5malware(self, md5filechecksum):

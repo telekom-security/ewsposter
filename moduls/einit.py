@@ -5,12 +5,12 @@ import socket
 import argparse
 import os
 import ipaddress
-import sys
 import uuid
 from moduls.elog import ELog
 from moduls.etoolbox import readcfg, getHostname, getIP
 
 logger = ELog('Einit')
+
 
 def ecfg(name, version):
 
@@ -50,16 +50,10 @@ def ecfg(name, version):
     ECFG["a.jsondir"] = (args.jsonpath if args.jsonpath else "")
 
     if ECFG["a.path"] != "" and os.path.isdir(ECFG["a.path"]) is False:
-        msg = f"ConfigDir {ECFG['a.path']} from commandline argument -c/--configpath did not exist. Abort!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"ConfigDir {ECFG['a.path']} from commandline argument -c/--configpath did not exist. Abort!", '1E')
 
     if ECFG["a.jsondir"] != "" and os.path.isdir(ECFG["a.jsondir"]) is False:
-        msg = f"JsonDir {ECFG['a.jsondir']} from commandline argument -j/--jsonpath did not exist. Abort!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"JsonDir {ECFG['a.jsondir']} from commandline argument -j/--jsonpath did not exist. Abort!", '1E')
 
     """ say hello """
 
@@ -78,10 +72,7 @@ def ecfg(name, version):
         ECFG["path"] = ECFG["a.path"]
 
     if os.path.isfile(ECFG["path"] + os.sep + "ews.cfg") is False:
-        msg = f"Missing EWS Config {ECFG['path']}{os.sep}ews.cfg. Abort!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Missing EWS Config {ECFG['path']}{os.sep}ews.cfg. Abort!", '1E')
     else:
         ECFG["cfgfile"] = ECFG["path"] + os.sep + "ews.cfg"
 
@@ -89,9 +80,7 @@ def ecfg(name, version):
 
     if os.path.isfile(ECFG["path"] + os.sep + "ews.idx") is False:
         os.open(ECFG["path"] + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
-        msg = f"Create ews.idx counterfile."
-        print(f' => [INFO] {msg}')
-        logger.info(msg)
+        logger.info(f"Create ews.idx counterfile.", '1')
 
     """ Read Main Config Parameter """
 
@@ -102,26 +91,17 @@ def ecfg(name, version):
 
     """ home dir available ? """
     if os.path.isdir(MCFG["homedir"]) is False:
-        msg = f"Missing homedir {MCFG['homedir']}. Abort!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Missing homedir {MCFG['homedir']}. Abort!", '1E')
     else:
         os.chdir(MCFG["homedir"])
 
     """ spool dir available ? """
     if os.path.isdir(MCFG["spooldir"]) is False:
-        msg = f"Missing spooldir {MCFG['spooldir']}. Abort!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Missing spooldir {MCFG['spooldir']}. Abort!", '1E')
 
     """ log dir available ? """
     if os.path.isdir(MCFG["logdir"]) is False:
-        msg = f"Missing logdir {MCFG['logdir']}. Abort!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Missing logdir {MCFG['logdir']}. Abort!", '1E')
     else:
         MCFG["logfile"] = MCFG["logdir"] + os.sep + "ews.log"
 
@@ -142,20 +122,11 @@ def ecfg(name, version):
         MCFG["sendlimit"] = ECFG["a.sendlimit"]
 
     if int(MCFG["sendlimit"]) > 5000:
-        msg = f"Sendlimit {str(MCFG['sendlimit'])} to high. Max 5000!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Sendlimit {str(MCFG['sendlimit'])} to high. Max 5000!", '1E')
     elif int(MCFG["sendlimit"]) < 1:
-        msg = f"Sendlimit {str(MCFG['sendlimit'])} to low. Min 1!"
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Sendlimit {str(MCFG['sendlimit'])} to low. Min 1!", '1E')
     elif MCFG["sendlimit"] is None:
-        msg = f"Sendlimit {str(MCFG['sendlimit'])}. Must set between 1 and 5000."
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Sendlimit {str(MCFG['sendlimit'])}. Must set between 1 and 5000.", '1E')
 
     """ contact """
 
@@ -168,19 +139,13 @@ def ecfg(name, version):
         try:
             ipaddress.ip_address(MCFG["ip_int"])
         except (ipaddress.AddressValueError, ValueError) as e:
-            msg = f"ip_int Adress {str(e)} in [EWS] is not an IPv4/IPv6 address. Abort!"
-            print(f' => [ERROR] {msg}')
-            logger.error(msg)
-            sys.exit(1)
+            logger.error(f"ip_int Address {str(e)} in [EWS] is not an IPv4/IPv6 address. Abort!", '1E')
 
     if MCFG["ip_ext"] != "" and MCFG["ip_ext"].lower() != "none":
         try:
             ipaddress.ip_address(MCFG["ip_ext"])
         except (ipaddress.AddressValueError, ValueError) as e:
-            msg = f"ip_ext Adress {str(e)} in [EWS] config section is not an IPv4/IPv6 address. Abort!"
-            print(f' => [ERROR] {msg}')
-            logger.error(msg)
-            sys.exit(1)
+            logger.error(f"ip_ext Address {str(e)} in [EWS] config section is not an IPv4/IPv6 address. Abort!", '1E')
 
     """ Read EWS Config Parameter """
 
@@ -194,10 +159,7 @@ def ecfg(name, version):
 
     for index in ["username", "token", "rhost_first", "rhost_second"]:
         if EWSCFG[index] == "" and EWSCFG["ews"] is True:
-            msg = f"Missing {index} in [EWS] config section. Abort!"
-            print(f' => [ERROR] {msg}')
-            logger.error(msg)
-            sys.exit(1)
+            logger.error(f"Missing {index} in [EWS] config section. Abort!", '1E')
 
     if ECFG["a.ignorecert"] is True:
         EWSCFG["ignorecert"] = True
@@ -218,10 +180,7 @@ def ecfg(name, version):
 
         for index in ["host", "port", "channels", "ident", "secret"]:
             if HCFG[index] == "" and HCFG["hpfeed"] is True:
-                msg = f"Missing {index} in [HPFEED] config section. Abort!"
-                print(f' => [ERROR] {msg}')
-                logger.error(msg)
-                sys.exit(1)
+                logger.error(f"Missing {index} in [HPFEED] config section. Abort!", '1E')
 
         if HCFG["hpfformat"].lower() not in ("ews", "json"):
             HCFG["hpfformat"] = "ews"
@@ -229,10 +188,10 @@ def ecfg(name, version):
         if HCFG["tlscert"].lower() == "none" or HCFG["tlscert"] == "false":
             HCFG["tlscert"] = "none"
         elif os.path.isfile(HCFG["tlscert"]) is False:
-            print(f" => [ERROR] Missing TLS cert {HCFG['tlscert']}. Use tlscert = none")
+            logger.error(f"Missing TLS cert {HCFG['tlscert']}. Use tlscert = none", '1')
             HCFG["tlscert"] = "none"
         else:
-            print(f" => [INFO] Use TLS cert {HCFG['tlscert']} for HPFeed transfer.")
+            logger.info(f"Use TLS cert {HCFG['tlscert']} for HPFeed transfer.", '1')
 
     else:
         HCFG["hpfeed"] = False
@@ -252,10 +211,7 @@ def ecfg(name, version):
         if os.path.isdir(EWSJSON["jsondir"]) is True:
             EWSJSON["jsondir"] = EWSJSON["jsondir"] + os.sep + "ews.json"
         else:
-            msg = f"Missing jsondir {EWSJSON['jsondir']} in [EWSJSON]. Abort!"
-            print(f' => [ERROR] {msg}')
-            logger.error(msg)
-            sys.exit(1)
+            logger.error(f"Missing jsondir {EWSJSON['jsondir']} in [EWSJSON]. Abort!", '1E')
 
     else:
         EWSJSON["json"] = False
@@ -299,10 +255,7 @@ def ecfg(name, version):
                     ECFG[place] = IPCFG['connect_' + place]
                     """ ip from connection """
                     if ECFG[place] == "" or ECFG[place].lower() == "none":
-                        msg = f"{place} is 'none' or empty. Abort!"
-                        print(f' => [ERROR] {msg}')
-                        logger.error(msg)
-                        sys.exit(1)
+                        logger.error(f"{place} is 'none' or empty. Abort!", '1E')
 
     return(ECFG)
 
@@ -318,10 +271,7 @@ def locksocket(name, logdir):
         print(f" => Create lock socket successfull.")
         return(True)
     except socket.error:
-        msg = f"Another Instance is running! EWSrun finish."
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
-        sys.exit(1)
+        logger.error(f"Another Instance is running! EWSrun finish.")
         return(False)
 
 

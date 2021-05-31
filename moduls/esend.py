@@ -17,17 +17,17 @@ def ESend(ECFG):
         for file in FILES:
             if ".ews" not in file:
                 os.remove(spooldir + os.sep + file)
-                print(f'    -> Cleaning spooler dir: {spooldir} delete file: {file}')
+                logger.info(f"Cleaning spooler dir: {spooldir} delete file: {file}", '2')
         return()
 
     def check_job(spooldir):
         FILES = filelist(spooldir)
 
         if len(FILES) < 1:
-            print(f'    -> No jobs to send in spooldir: {spooldir}.')
+            logger.info(f"No jobs to send in spooldir: {spooldir}.", '2')
             return(False)
         else:
-            print(f'    -> There {str(len(FILES))} jobs to send in spooldir: {spooldir}')
+            logger.info(f"There {str(len(FILES))} jobs to send in spooldir: {spooldir}", '2')
             return(True)
 
     def send_job(spooldir):
@@ -57,17 +57,12 @@ def ESend(ECFG):
         for file in FILES:
             fileparts = file.split('.')
             if len(fileparts) == 4 and int(fileparts[2]) >= 10:
-                msg = f'Cleaning spooler dir: {spooldir} delete file: {file}. Reached max transmit counter !'
-                print(f'    -> {msg}')
-                logger.info(msg)
+                logger.info(f'Cleaning spooler dir: {spooldir} delete file: {file}. Reached max transmit counter !', '2')
                 os.remove(spooldir + os.sep + file)
 
     def filelist(spooldir):
         if os.path.isdir(spooldir) is not True:
-            msg = f'Error missing spooldir {spooldir}. Abort!'
-            print(f'    -> {msg}')
-            logger.error(msg)
-            sys.exit()
+            logger.error(f'Error missing spooldir {spooldir}. Abort!', '2E')
         else:
             return(os.listdir(spooldir))
 
@@ -103,25 +98,25 @@ def ESend(ECFG):
             xmlresult = re.search('<StatusCode>(.*)</StatusCode>', webservice.text).groups()[0]
 
             if xmlresult != "OK":
-                print("XML Result != ok ( %s) (%s)" % (xmlresult, webservice.text))
+                logger.info('XML Result != ok ({xmlresult}) ({webservice.text})', '2')
                 return(False)
 
             return(True)
 
         except requests.exceptions.Timeout:
-            logger.warning(f'ewsWebservice Timeout to remote Host {host}')
+            logger.warning(f'ewsWebservice Timeout to remote Host {host}', '2')
             return(False)
 
         except requests.exceptions.ConnectionError:
-            logger.warning(f"ewsWebservice Remote Host {host} didn't answer!")
+            logger.warning(f"ewsWebservice Remote Host {host} didn't answer!", '2')
             return(False)
 
         except requests.exceptions.HTTPError:
-            logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200')
+            logger.warning(f'ewsWebservice HTTP(S) Errorcode != 200', '2')
             return(False)
 
         except ssl.WantWriteError:
-            logger.warning(f'ewsWebservice OpenSSL Write Buffer too small')
+            logger.warning(f'ewsWebservice SSL Write Buffer too small', '2')
             return(False)
 
     """ Main instance for this Modul """

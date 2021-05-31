@@ -4,7 +4,6 @@
 import logging
 import os
 import configparser
-import pprint
 import sys
 import argparse
 
@@ -13,12 +12,12 @@ class ELog:
     def __init__(self, modul):
         self.modul = modul
         self.init()
-        self.logger = logging.getLogger(self.modul)
         logging.basicConfig(filename=f"{self.logdir}/ews.log",
                             filemode="a",
                             format='%(asctime)s - [%(levelname)s] [%(name)s] - %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S',
                             level=logging.DEBUG)
+        self.logger = logging.getLogger(self.modul)
 
     def init(self):
         parser = argparse.ArgumentParser()
@@ -47,14 +46,28 @@ class ELog:
             print(f" => [ERROR] Logdir Path {self.logdir} didn't exist. Abort!")
             sys.exit(1)
 
-    def debug(self, msg):
-        self.logger.debug(msg)
+    def debug(self, msg, handles=''):
+        self.handle('debug', msg, handles)
 
-    def info(self, msg):
-        self.logger.info(msg)
+    def info(self, msg, handles=''):
+        self.handle('info', msg, handles)
 
-    def warning(self, msg):
-        self.logger.warning(msg)
+    def warning(self, msg, handles=''):
+        self.handle('warning', msg, handles)
 
-    def error(self, msg):
-        self.logger.error(msg)
+    def error(self, msg, handles=''):
+        self.handle('error', msg, handles)
+
+    def handle(self, level, msg, handles):
+        myerror = ''
+        myerror = '[DEBUG] ' if level == 'debug' else None
+        myerror = '[INFO] ' if level == 'info' else None
+        myerror = '[WARNING] ' if level == 'warninig' else None
+        myerror = '[ERROR] ' if level == 'error' else None
+        print(f' => {myerror}{msg}') if '1' in handles else None
+        print(f'    -> {myerror}{msg}') if '2' in handles else None
+        self.logger.debug(msg) if level == 'debug' else None
+        self.logger.info(msg) if level == 'info' else None
+        self.logger.warning(msg) if level == 'warning' else None
+        self.logger.error(msg) if level == 'error' else None
+        sys.exit(1) if 'E' in handles else None

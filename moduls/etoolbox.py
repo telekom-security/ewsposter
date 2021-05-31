@@ -24,10 +24,7 @@ def readcfg(MODUL, ITEMS, FILE):
         if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
             result[item] = config.get(MODUL, item)
         else:
-            msg = f'[ERROR] in Config MODUL [{MODUL}] parameter \'{item}\' didn\'t find or empty or not \'none\' in {FILE} config file. Abort!'
-            print(f' => {msg}')
-            logger.error(msg)
-            sys.exit()
+            logger.error(f"Config MODUL [{MODUL}] parameter '{item}' didn't find or empty or not 'none' in {FILE} config file. Abort!", '1E')
 
     return(result)
 
@@ -77,9 +74,7 @@ def getIP(MODUL, ECFG):
         else:
             myIP['file_ip_int'] = ""
             myIP['file_ip_ext'] = ""
-            msg = f'[ERROR] File ews.ip exist but not in an right format. Set to zero!'
-            print(f' => {msg}')
-            logger.error(msg)
+            logger.warning(f"File ews.ip exist but not in an right format. Set to zero!", '1')
 
     """ Read Enviroment Variables """
     for item, envvar in [['env_ip_int', 'MY_INTIP'], ['env_ip_ext', 'MY_EXTIP']]:
@@ -89,9 +84,7 @@ def getIP(MODUL, ECFG):
                 ipaddress.ip_address(myIP[item])
             except (ipaddress.AddressValueError, ValueError) as e:
                 myIP[item] = ""
-                msg = f"Error IP Adress {e} in Environment Variable is not an IPv4/IPv6 address Abort!"
-                print(f' => {msg}')
-                logger.error(msg)
+                logger.error(f"Error IP Adress {e} in Environment Variable is not an IPv4/IPv6 address Abort!", '1')
         else:
             myIP[item] = ""
 
@@ -101,9 +94,7 @@ def getIP(MODUL, ECFG):
         connection.connect(("9.9.9.9", 53))
         myIP["connect_ip_int"] = connection.getsockname()[0]
     except:
-        msg = f'Could not determine a valid intern IP by Environment variable'
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
+        logger.error(f'Could not determine a valid intern IP by Environment variable', '1')
         myIP["connect_ip_int"] = ""
     finally:
         connection.close()
@@ -112,9 +103,7 @@ def getIP(MODUL, ECFG):
     try:
         myIP["connect_ip_ext"] = get('https://api.ipify.org', timeout=5).text
     except:
-        msg = f'Could not determine a valid public IP using external service'
-        print(f' => [ERROR] {msg}')
-        logger.error(msg)
+        logger.error(f'Could not determine a valid public IP using external service', '1')
         myIP["connect_ip_ext"] = ""
     finally:
         connection.close()
