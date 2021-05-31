@@ -9,7 +9,6 @@ import os
 import random
 import socket
 import string
-import sys
 
 logger = ELog('Etoolbox')
 
@@ -90,8 +89,8 @@ def getIP(MODUL, ECFG):
         connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         connection.connect(("9.9.9.9", 53))
         myIP["connect_ip_int"] = connection.getsockname()[0]
-    except:
-        logger.error(f'Could not determine a valid intern IP by Environment variable', '1')
+    except socket.error as e:
+        logger.error(f'Could not determine a valid intern IP by socket connection {e}', '1')
         myIP["connect_ip_int"] = ""
     finally:
         connection.close()
@@ -99,8 +98,8 @@ def getIP(MODUL, ECFG):
     """ get external IP via connection """
     try:
         myIP["connect_ip_ext"] = get('https://api.ipify.org', timeout=5).text
-    except:
-        logger.error(f'Could not determine a valid public IP using external service', '1')
+    except get.exceptions.HTTPError as e:
+        logger.error(f'Could not determine a valid public IP using external service {e}', '1')
         myIP["connect_ip_ext"] = ""
     finally:
         connection.close()

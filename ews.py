@@ -15,7 +15,6 @@ from moduls.ealert import EAlert
 from moduls.esend import ESend
 import base64
 from urllib import parse
-import sys
 
 name = "EWS Poster"
 version = "v1.19"
