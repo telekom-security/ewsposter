@@ -18,7 +18,7 @@ from urllib import parse
 import sys
 
 name = "EWS Poster"
-version = "v1.18"
+version = "v1.19"
 
 def ipphoney():
 
