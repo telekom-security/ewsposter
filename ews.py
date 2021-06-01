@@ -621,7 +621,7 @@ def conpot():
 
     for logfile in logfiles:
         index = ''
-        for indexsearch in ['IEC104', 'guardian_ast', 'ipmi', 'kamstrup_382']
+        for indexsearch in ['IEC104', 'guardian_ast', 'ipmi', 'kamstrup_382']:
             if indexsearch in logfile:
                 index = indexsearch
         while True:
