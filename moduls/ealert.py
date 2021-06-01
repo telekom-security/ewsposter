@@ -133,6 +133,9 @@ class EAlert:
         files = ["logfile", "attackerfile", "sqlitedb"]
         dirs = ["payloaddir", "malwaredir", "jsondir", "homedir", "spooldir", "logdir"]
 
+        if key in files and re.search('.*\*.*', value, re.M):
+            return(True)
+
         if key in files and os.path.isfile(value) is False:
             self.logger.error(f"checkCFG mission File! {key} = {value}. Abort!", '1E')
 

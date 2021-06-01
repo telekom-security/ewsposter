@@ -15,6 +15,7 @@ from moduls.ealert import EAlert
 from moduls.esend import ESend
 import base64
 from urllib import parse
+import sys
 
 name = "EWS Poster"
 version = "v1.19"
@@ -548,8 +549,8 @@ def heralding():
 
         heralding.request("description", "Heralding Honeypot")
 
-        heralding.data('hostname', ECFG['hostname'])
-        heralding.data('externalIP', ECFG['ip_ext'])
+        heralding.adata('hostname', ECFG['hostname'])
+        heralding.adata('externalIP', ECFG['ip_ext'])
         heralding.adata('internalIP', ECFG['ip_int'])
         heralding.adata('uuid', ECFG['uuid'])
         heralding.adata('protocol', str(line.split(',')[7])) if str(line.split(',')[7]) != "" else None
@@ -594,8 +595,8 @@ def mailoney():
 
         mailoney.request("description", "Mail Honeypot mailoney")
 
-        mailoney.data('hostname', ECFG['hostname'])
-        mailoney.data('externalIP', ECFG['ip_ext'])
+        mailoney.adata('hostname', ECFG['hostname'])
+        mailoney.adata('externalIP', ECFG['ip_ext'])
         mailoney.adata('internalIP', ECFG['ip_int'])
         mailoney.adata('uuid', ECFG['uuid'])
 
@@ -619,19 +620,18 @@ def conpot():
         return()
 
     for logfile in logfiles:
+        index = ''
+        for indexsearch in ['IEC104', 'guardian_ast', 'ipmi', 'kamstrup_382']
+            if indexsearch in logfile:
+                index = indexsearch
         while True:
-            index = ''
-            for indexsearch in ['IEC104', 'guardian_ast', 'ipmi', 'kampstrup_382']:
-                if 'indexsearch' in logfile:
-                    index = indexsearch
-
             line = conpot.lineREAD(logfile, 'json', None, index)
 
             if len(line) == 0:
                 break
             if line == 'jsonfail':
                 continue
-            if 'NEW_CONNECTION' not in line['event_type']:
+            if line['event_type'] != 'NEW_CONNECTION':
                 continue
 
             conpot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
@@ -649,8 +649,8 @@ def conpot():
             conpot.request('description', 'Conpot Honeypot')
             conpot.request('request', line['request']) if 'request' in line and line['request'] != "" else None
 
-            conpot.data('hostname', ECFG['hostname'])
-            conpot.data('externalIP', ECFG['ip_ext'])
+            conpot.adata('hostname', ECFG['hostname'])
+            conpot.adata('externalIP', ECFG['ip_ext'])
             conpot.adata('internalIP', ECFG['ip_int'])
             conpot.adata('uuid', ECFG['uuid'])
             conpot.adata('conpot_data_type', line['data_type'])
