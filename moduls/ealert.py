@@ -36,6 +36,7 @@ class EAlert:
         self.jsonfailcounter = 0
         self.sqlite3connect = False
         self.maxid = 0
+        self.malwareindex = []
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
         print(f' => Starting {self.MODUL} Honeypot Modul.')
         self.logger = ELog('EAlert')
@@ -572,17 +573,21 @@ class EAlert:
             return(False, f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", None)
 
     def md5malware(self, md5filechecksum):
-        with open(self.ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
 
-            if os.stat(self.ECFG["homedir"] + os.sep + "malware.md5").st_size == 0:
+        if os.path.isfile(self.ECFG["homedir"] + os.sep + "malware.md5") is False:
+            with open(self.ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
+                malwarefile.close()
+
+        if len(self.malwareindex) == 0:
+            with open(self.ECFG["homedir"] + os.sep + "malware.md5", "r", newline=None) as malwarefile:
+                self.malwareindex = list(filter(None, [md5filechecksum.rstrip("\n") for line in malwarefile]))
+                malwarefile.close()
+
+        if md5filechecksum in self.malwareindex:
+            return(False)
+        else:
+            with open(self.ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
                 malwarefile.write(f'{md5filechecksum}\n')
                 malwarefile.close()
-                return(True)
-
-            if md5filechecksum in open(self.ECFG["homedir"] + os.sep + "malware.md5", "r").read():
-                malwarefile.close()
-                return(False)
-            else:
-                malwarefile.write(f'{md5filechecksum}\n')
-                malwarefile.close()
-                return(True)
+            self.malwareindex.append(md5filechecksum)
+            return(True)

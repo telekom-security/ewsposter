@@ -15,7 +15,6 @@ from moduls.ealert import EAlert
 from moduls.esend import ESend
 import base64
 from urllib import parse
-import sys
 
 name = "EWS Poster"
 version = "v1.19"
@@ -239,7 +238,7 @@ def elasticpot():
 
     elasticpot = EAlert('elasticpot', ECFG)
 
-    ITEMS = ['elasticport', 'nodeid', 'logfile']
+    ITEMS = ['elasticpot', 'nodeid', 'logfile']
     HONEYPOT = (elasticpot.readCFG(ITEMS, ECFG['cfgfile']))
 
     while True:
@@ -824,6 +823,8 @@ def honeytrap():
                 filein = HONEYPOT["payloaddir"] + os.sep + index
                 os.rename(filein, filein + "_md5_" + hashlib.md5(open(filein, 'rb').read()).hexdigest())
 
+    payloadfilelist = os.listdir(HONEYPOT["payloaddir"])
+
     while True:
         line = honeytrap.lineREAD(HONEYPOT['attackerfile'], 'simple')
 
@@ -854,7 +855,7 @@ def honeytrap():
         honeytrap.request('description', 'NetworkHoneypot Honeytrap v1.1')
 
         if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
-            for matchfile in os.listdir(HONEYPOT["payloaddir"]):
+            for matchfile in payloadfilelist:
                 if re.findall(f'.*{md5}*', matchfile):
                     error, message, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], matchfile, False, md5)
                     honeytrap.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
