@@ -34,6 +34,14 @@ hpfformat = ews
 json = false
 jsondir = /opt/ewsposter/json
 
+[INFLUXDB]
+influxdb = false
+host = http://influxdb
+port = 8086
+token = none
+bucket = alerts
+org = tpot
+
 [GLASTOPFV3]
 glastopfv3 = false
 nodeid = <your unique analyzer id>

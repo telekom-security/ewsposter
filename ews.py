@@ -304,7 +304,7 @@ def glutton():
         glutton.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
         if 'ts' in line:
-            glutton.data('timestamp', datetime.fromtimestamp(float(line['ts']))).strftime('%Y-%m-%d %H:%M:%S')
+            glutton.data('timestamp', datetime.fromtimestamp(float(line['ts'])).strftime('%Y-%m-%d %H:%M:%S'))
             glutton.data("timezone", time.strftime('%z'))
 
         glutton.data('source_address', line['src_ip']) if 'src_ip' in line else None
@@ -552,9 +552,9 @@ def heralding():
         heralding.adata('externalIP', ECFG['ip_ext'])
         heralding.adata('internalIP', ECFG['ip_int'])
         heralding.adata('uuid', ECFG['uuid'])
-        heralding.adata('protocol', str(line.split(',')[7])) if str(line.split(',')[7]) != "" else None
-        heralding.adata('username', str(line.split(',')[8])) if str(line.split(',')[8]) != "" else None
-        heralding.adata('password', str(line.split(',')[9])) if str(line.split(',')[9]) != "" else None
+        heralding.adata('protocol', re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', str(line.split(',')[7]))) if str(line.split(',')[7]) != "" else None
+        heralding.adata('username', re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', str(line.split(',')[8]))) if str(line.split(',')[8]) != "" else None
+        heralding.adata('password', re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', str(line.split(',')[9]))) if str(line.split(',')[9]) != "" else None
 
         if heralding.buildAlert() == "sendlimit":
             break
@@ -855,11 +855,9 @@ def honeytrap():
         honeytrap.request('description', 'NetworkHoneypot Honeytrap v1.1')
 
         if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
-            for matchfile in payloadfilelist:
-                if re.findall(f'.*{md5}*', matchfile):
-                    error, message, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], matchfile, False, md5)
-                    honeytrap.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
-                    break
+            if md5 in payloadfilelist:
+                error, message, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], re.findall(f'.*{md5}*', payloadfilelist), False, md5)
+                honeytrap.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
 
         honeytrap.adata('hostname', ECFG['hostname'])
         honeytrap.adata('externalIP', ECFG['ip_ext'])
@@ -1121,9 +1119,13 @@ def citrix():
             citrix.data('timestamp', f"{line['asctime'][0:10]} {line['asctime'][11:19]}")
             citrix.data("timezone", time.strftime('%z'))
 
-        citrix.data('source_address', re.search(r"\((.*)\).*", line['message'], re.M).group(1).split(":")[0]) if 'message' in line else None
+        try:
+            citrix.data('source_address', re.search(r"\((.*)\).*", line['message'], re.M).group(1).split(":")[0]) if 'message' in line else None
+            citrix.data('source_port', re.search(r"\((.*)\).*", line['message'], re.M).group(1).split(":")[1]) if 'message' in line else None
+        except AttributeError:
+            continue
+
         citrix.data('target_address', ECFG['ip_ext'])
-        citrix.data('source_port', re.search(r"\((.*)\).*", line['message'], re.M).group(1).split(":")[1]) if 'message' in line else None
         citrix.data('target_port', '80')
         citrix.data('source_protokoll', 'tcp')
         citrix.data('target_protokoll', 'tcp')
@@ -1157,10 +1159,11 @@ if __name__ == "__main__":
 
         for honeypot in ECFG["HONEYLIST"]:
 
-            if ECFG["a.modul"] and ECFG["a.modul"] == honeypot:
-                if readonecfg(honeypot.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
-                    eval(honeypot + '()')
-                    break
+            if ECFG["a.modul"]:
+                if ECFG["a.modul"] == honeypot:
+                    if readonecfg(honeypot.upper(), honeypot, ECFG["cfgfile"]).lower() == "true":
+                        eval(honeypot + '()')
+                        break
                 else:
                     continue
 

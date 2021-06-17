@@ -2,3 +2,4 @@ hpfeeds3
 lxml
 requests
 xmljson
+influxdb-client[ciso]

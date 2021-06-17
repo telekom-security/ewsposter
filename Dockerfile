@@ -10,7 +10,7 @@ RUN apk -U --no-cache add \
     cd /opt/ewsposter && \
     mkdir -p spool log json && \
     git checkout develop && \
-    pip install --no-cache-dir hpfeeds3 xmljson && \
+    pip install --no-cache-dir hpfeeds3 xmljson influxdb-client[ciso] && \
     adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     chown -R ews:ews /opt/ewsposter && \
     apk del git

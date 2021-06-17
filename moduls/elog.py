@@ -50,6 +50,7 @@ class ELog:
         self.handle('debug', msg, handles)
 
     def info(self, msg, handles=''):
+
         self.handle('info', msg, handles)
 
     def warning(self, msg, handles=''):
@@ -60,12 +61,11 @@ class ELog:
 
     def handle(self, level, msg, handles):
         myerror = ''
-        myerror = '[DEBUG] ' if level == 'debug' else None
-        myerror = '[INFO] ' if level == 'info' else None
-        myerror = '[WARNING] ' if level == 'warninig' else None
-        myerror = '[ERROR] ' if level == 'error' else None
-        print(f' => {myerror}{msg}') if '1' in handles else None
-        print(f'    -> {myerror}{msg}') if '2' in handles else None
+        for index in ['debug', 'info', 'warning', 'error']:
+            if level == index:
+                myerror = f"[{level.upper()}]"
+        print(f' => {myerror} {msg}') if '1' in handles else None
+        print(f'    -> {myerror} {msg}') if '2' in handles else None
         self.logger.debug(msg) if level == 'debug' else None
         self.logger.info(msg) if level == 'info' else None
         self.logger.warning(msg) if level == 'warning' else None

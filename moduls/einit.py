@@ -216,6 +216,22 @@ def ecfg(name, version):
     else:
         EWSJSON["json"] = False
 
+    """ Read INFLUX Config Parameter """
+
+    ITEMS = ('influxdb', 'host', 'port', 'token', 'bucket', 'org')
+    ICFG = readcfg("INFLUXDB", ITEMS, ECFG["cfgfile"])
+
+    if ICFG['influxdb'].lower() == "true":
+        ICFG['influxdb'] = True
+
+    for index in ['host', 'port', 'token', 'bucket', 'org']:
+        if ICFG[index] == '' and ICFG["influxdb"] is True:
+            logger.error(f"Missing {index} in [INFLUXDB] config section. Abort!", '1E')
+        else:
+            ICFG['influx_' + index] = ICFG[index]
+            ICFG[index] = ''
+
+    ECFG.update(ICFG)
     ECFG.update(MCFG)
     ECFG.update(EWSCFG)
     ECFG.update(HCFG)

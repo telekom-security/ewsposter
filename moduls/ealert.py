@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from influxdb_client import InfluxDBClient, WriteOptions
 from collections import OrderedDict
 from datetime import datetime
 from lxml import etree
@@ -31,6 +32,7 @@ class EAlert:
         self.ECFG = ECFG
         self.esm = ""
         self.jesm = ""
+        self.iesm = []
         self.counter = 0
         self.hcounter = 0
         self.jsonfailcounter = 0
@@ -255,7 +257,7 @@ class EAlert:
 
     def adata(self, key, value):
         self.ADATA[key] = value
-        return (True)
+        return(True)
 
     def ewsAuth(self, username, token):
         self.esm = etree.Element("EWS-SimpleMessage", version="3.0")
@@ -293,6 +295,41 @@ class EAlert:
             file.write(etree.tostring(self.esm, pretty_print=True))
             file.close
             return()
+
+    def influxAlert(self):
+        iAlert = {}
+        iAlert['measurement'] = self.MODUL.lower()
+        iAlert['tags'] = dict(analyzer_id=self.DATA['analyzer_id'])
+        iAlert['time'] = f"{self.DATA['timestamp'][0:10]}T{self.DATA['timestamp'][11:19]}{self.DATA['timezone']}"
+        iAlert['fields'] = dict(source_address=self.DATA['source_address'],
+                                source_port=self.DATA['source_port'],
+                                source_protokoll=self.DATA['source_protokoll'],
+                                target_address=self.DATA['target_address'],
+                                target_port=self.DATA['target_port'],
+                                target_protokoll=self.DATA['target_port']
+                                )
+        for index in ['cident', 'corigin', 'ctext']:
+            if index in self.DATA:
+                iAlert['fields'] = dict(index=self.DATA[index])
+
+        self.iesm.append(iAlert)
+        return()
+
+    def influxWrite(self):
+        with InfluxDBClient(url=f"{self.ECFG['influx_host']}:{self.ECFG['influx_port']}",
+                            token=self.ECFG['influx_token'], org=self.ECFG['infux_org']) as c:
+
+            with c.write_api(write_options=WriteOptions(batch_size=500,
+                                                        flush_interval=10_000,
+                                                        jitter_interval=2_000,
+                                                        retry_interval=5_000,
+                                                        max_retries=5,
+                                                        max_retry_delay=30_000,
+                                                        exponential_base=2)) as wc:
+
+                wc.write(self.ECFG['influx_bucket'], self.ECFG['influx_org'], self.iesm)
+                self.iesm.clear()
+                return()
 
     def ewsVerbose(self):
         print(f'--------------- {self.MODUL} ---------------')
@@ -368,9 +405,10 @@ class EAlert:
             self.clearandcount()
             return(False)
 
-        """ Create ews and json alert """
-        self.ewsAlert()
-        self.jsonAlert()
+        """ Create ews and json and influx alert """
+        self.ewsAlert() if self.ECFG['ews'] is True else None
+        self.jsonAlert() if self.ECFG['json'] is True else None
+        self.influxAlert() if self.ECFG['influxdb'] is True else None
 
         """ View Alert details if ARG Verbose is on """
         if self.ECFG['a.verbose'] is True:
@@ -418,18 +456,22 @@ class EAlert:
         if self.ECFG['a.debug'] is True:
             print(etree.tostring(self.esm, pretty_print=True))
 
-        """ When json = true write to json file """
+        """ Check Json write """
         if self.ECFG["json"] is True:
             self.jsonWrite()
 
-        """ Check if ECFG["hpfeed"] """
+        """ Check HpFeed write """
         if self.ECFG["hpfeed"] is True:
             if self.ECFG["hpfformat"].lower() == "json":
                 self.hpfeedsend('json')
             else:
                 self.hpfeedsend('xml')
 
-        """ Send via webservice or drop to spool """
+        """ Check InfluxDB write """
+        if self.ECFG['influxdb'] is True:
+            self.influxWrite()
+
+        """ Check Ews and send via webservice or drop to spool """
         if self.ECFG["ews"] is True:
             if self.ewsWebservice() is False:
                 self.ewsWrite()

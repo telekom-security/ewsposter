@@ -34,6 +34,14 @@ hpfformat = json
 json = false
 jsondir = /opt/ewsposter/json
 
+[INFLUXDB]
+influxdb = false
+host = influxdb
+port = 8086
+token = None
+bucket = alerts
+org = tpot
+
 [GLASTOPFV3]
 glastopfv3 = false
 nodeid = glastopfv3-community-01
