@@ -7,7 +7,6 @@ import configparser
 import sys
 import argparse
 
-
 class ELog:
     def __init__(self, modul):
         self.modul = modul
@@ -50,7 +49,6 @@ class ELog:
         self.handle('debug', msg, handles)
 
     def info(self, msg, handles=''):
-
         self.handle('info', msg, handles)
 
     def warning(self, msg, handles=''):
