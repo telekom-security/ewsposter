@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from influxdb_client import InfluxDBClient, WriteOptions
+from influxdb import InfluxDBClient
 from collections import OrderedDict
 from datetime import datetime
 from lxml import etree
@@ -297,39 +297,43 @@ class EAlert:
             return()
 
     def influxAlert(self):
+        if self.DATA["source_port"] == "":
+            self.DATA["source_port"] = "0"
+
+        if self.DATA["target_port"] == "":
+            self.DATA["target_port"] = "0"
+
         iAlert = {}
-        iAlert['measurement'] = self.MODUL.lower()
-        iAlert['tags'] = dict(analyzer_id=self.DATA['analyzer_id'])
-        iAlert['time'] = f"{self.DATA['timestamp'][0:10]}T{self.DATA['timestamp'][11:19]}{self.DATA['timezone']}"
-        iAlert['fields'] = dict(source_address=self.DATA['source_address'],
+        iAlert["measurement"] = self.MODUL.lower()
+        iAlert["tags"] = dict(analyzer_id=self.DATA['analyzer_id'])
+        iAlert["time"] = f"{self.DATA['timestamp'][0:10]}T{self.DATA['timestamp'][11:19]}{self.DATA['timezone']}"
+        iAlert["fields"] = dict(source_address=self.DATA['source_address'],
                                 source_port=self.DATA['source_port'],
                                 source_protokoll=self.DATA['source_protokoll'],
                                 target_address=self.DATA['target_address'],
                                 target_port=self.DATA['target_port'],
-                                target_protokoll=self.DATA['target_port']
+                                target_protokoll=self.DATA['target_protokoll']
                                 )
+        """ append cident, corigin, ctext """
         for index in ['cident', 'corigin', 'ctext']:
             if index in self.DATA:
-                iAlert['fields'] = dict(index=self.DATA[index])
+                iAlert['fields'][index] = self.DATA[index]
+
+        """ append additional data """
+        for key, value in self.ADATA.items():
+            if key in ['host', 'externalIP', 'internalIP', 'uuid']:
+                continue
+            else:
+                iAlert['fields'][key] = value
 
         self.iesm.append(iAlert)
+
         return()
 
     def influxWrite(self):
-        with InfluxDBClient(url=f"{self.ECFG['influx_host']}:{self.ECFG['influx_port']}",
-                            token=self.ECFG['influx_token'], org=self.ECFG['infux_org']) as c:
-
-            with c.write_api(write_options=WriteOptions(batch_size=500,
-                                                        flush_interval=10_000,
-                                                        jitter_interval=2_000,
-                                                        retry_interval=5_000,
-                                                        max_retries=5,
-                                                        max_retry_delay=30_000,
-                                                        exponential_base=2)) as wc:
-
-                wc.write(self.ECFG['influx_bucket'], self.ECFG['influx_org'], self.iesm)
-                self.iesm.clear()
-                return()
+        client = InfluxDBClient(self.ECFG['influx_host'], self.ECFG['influx_port'], self.ECFG['influx_username'], self.ECFG['influx_password'], self.ECFG['influx_bucket'])
+        client.write_points(self.iesm)
+        self.iesm.clear()
 
     def ewsVerbose(self):
         print(f'--------------- {self.MODUL} ---------------')

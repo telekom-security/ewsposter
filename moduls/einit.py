@@ -218,13 +218,13 @@ def ecfg(name, version):
 
     """ Read INFLUX Config Parameter """
 
-    ITEMS = ('influxdb', 'host', 'port', 'token', 'bucket', 'org')
+    ITEMS = ('influxdb', 'host', 'port', 'username', 'password','token', 'bucket', 'org')
     ICFG = readcfg("INFLUXDB", ITEMS, ECFG["cfgfile"])
 
     if ICFG['influxdb'].lower() == "true":
         ICFG['influxdb'] = True
 
-    for index in ['host', 'port', 'token', 'bucket', 'org']:
+    for index in ['host', 'port', 'username', 'password', 'token', 'bucket', 'org']:
         if ICFG[index] == '' and ICFG["influxdb"] is True:
             logger.error(f"Missing {index} in [INFLUXDB] config section. Abort!", '1E')
         else:

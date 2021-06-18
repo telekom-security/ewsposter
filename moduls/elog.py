@@ -19,12 +19,16 @@ class ELog:
         self.logger = logging.getLogger(self.modul)
 
     def init(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("-c", "--configpath")
-        args, _ = parser.parse_known_args()
 
-        if args.configpath:
-            ewsconfig = f'{args.configpath}/ews.cfg'
+        if '-c' in sys.argv:
+            configpath = sys.argv[sys.argv.index('-c') + 1]
+        elif'--configpath' in sys.argv:
+            configpath = sys.argv[sys.argv.index('--configpath') + 1]
+        else:
+            configpath = ''
+
+        if configpath:
+            ewsconfig = f'{configpath}/ews.cfg'
         else:
             ewsconfig = f"{os.path.dirname(os.path.abspath(__file__)).replace('/moduls', '')}/ews.cfg"
 
