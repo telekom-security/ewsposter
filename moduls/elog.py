@@ -5,7 +5,6 @@ import logging
 import os
 import configparser
 import sys
-import argparse
 
 class ELog:
     def __init__(self, modul):

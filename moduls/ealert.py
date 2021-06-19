@@ -147,7 +147,7 @@ class EAlert:
 
         return(True)
 
-    def alertCount(self, section, counting, item='index'):
+    def alertCount(self, section, counting, item='index', setto=1):
 
         count = configparser.ConfigParser()
         count.read(self.ECFG["homedir"] + os.sep + "ews.idx")
@@ -167,8 +167,11 @@ class EAlert:
         elif isinstance(counting, str) and counting == "add_counter":
             count.set(section, item, str(int(count.get(section, item)) + 1))
 
+        elif isinstance(counting, str) and counting == "set_counter":
+            count.set(section, item, str(setto))
+
         elif isinstance(counting, str) and counting == "reset_counter":
-            count.set(section, item, str(1))
+            count.set(section, item, str(setto))
 
         with open(self.ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
             count.write(countfile)
@@ -297,21 +300,17 @@ class EAlert:
             return()
 
     def influxAlert(self):
-        if self.DATA["source_port"] == "":
-            self.DATA["source_port"] = "0"
-
-        if self.DATA["target_port"] == "":
-            self.DATA["target_port"] = "0"
-
         iAlert = {}
-        iAlert["measurement"] = self.MODUL.lower()
-        iAlert["tags"] = dict(analyzer_id=self.DATA['analyzer_id'])
+        iAlert["measurement"] = "honeypots"
+        iAlert["tags"] = dict(honeypot=self.MODUL.lower()
+                              )
         iAlert["time"] = f"{self.DATA['timestamp'][0:10]}T{self.DATA['timestamp'][11:19]}{self.DATA['timezone']}"
-        iAlert["fields"] = dict(source_address=self.DATA['source_address'],
-                                source_port=self.DATA['source_port'],
+        iAlert["fields"] = dict(analyzer_id=self.DATA['analyzer_id'],
+                                source_address=self.DATA['source_address'],
+                                source_port=int(self.DATA['source_port']),
                                 source_protokoll=self.DATA['source_protokoll'],
                                 target_address=self.DATA['target_address'],
-                                target_port=self.DATA['target_port'],
+                                target_port=int(self.DATA['target_port']),
                                 target_protokoll=self.DATA['target_protokoll']
                                 )
         """ append cident, corigin, ctext """
@@ -361,12 +360,6 @@ class EAlert:
         return()
 
     def jsonAlert(self):
-        if self.DATA["source_port"] == "":
-            self.DATA["source_port"] = "0"
-
-        if self.DATA["target_port"] == "":
-            self.DATA["target_port"] = "0"
-
         myjson = {}
         myjson['timestamp'] = ("%sT%s.000000" % (self.DATA["timestamp"][0:10], self.DATA["timestamp"][11:19]))
         myjson['event_type'] = "alert"

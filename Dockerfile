@@ -5,12 +5,13 @@ RUN apk -U --no-cache add \
     py3-pip \
     py3-requests \
     py3-lxml \
+    py3-influxdb \
     git && \
     git clone https://github.com/telekom-security/ewsposter /opt/ewsposter && \
     cd /opt/ewsposter && \
     mkdir -p spool log json && \
     git checkout develop && \
-    pip install --no-cache-dir hpfeeds3 xmljson influxdb-client[ciso] && \
+    pip install --no-cache-dir hpfeeds3 xmljson influxdb-client && \
     adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     chown -R ews:ews /opt/ewsposter && \
     apk del git

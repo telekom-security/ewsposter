@@ -218,7 +218,7 @@ def ecfg(name, version):
 
     """ Read INFLUX Config Parameter """
 
-    ITEMS = ('influxdb', 'host', 'port', 'username', 'password','token', 'bucket', 'org')
+    ITEMS = ('influxdb', 'host', 'port', 'username', 'password', 'token', 'bucket', 'org')
     ICFG = readcfg("INFLUXDB", ITEMS, ECFG["cfgfile"])
 
     if ICFG['influxdb'].lower() == "true":

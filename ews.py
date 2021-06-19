@@ -641,7 +641,7 @@ def conpot():
             conpot.data('source_address', line['src_ip']) if 'src_ip' in line else None
             conpot.data('target_address', line['dst_ip']) if 'dst_ip' in line else None
             conpot.data('source_port', str(line['src_port'])) if 'src_port' in line else None
-            conpot.data('target_port', str(line['dst_ip'])) if 'dst_ip' in line else None
+            conpot.data('target_port', str(line['dst_port'])) if 'dst_ip' in line else None
             conpot.data('source_protokoll', "tcp")
             conpot.data('target_protokoll', "tcp")
 
