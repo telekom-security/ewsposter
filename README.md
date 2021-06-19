@@ -1,10 +1,6 @@
 # EWSPOSTER
 
-ews.py is a tool, written in Python, to **collect** log and alerts from
-different honeypots (eg Glastopf, Honeytrap, Dionaea, Cowrie, Kippo, eMobility,
-Conpot, Elasticpot, Mailoney, RDPY, VNClowPot, Heralding, Ciscoasa, Tanner and
-Clutton ) and transmit them to Peba.
-
+**EWSPoster** is a tool, written in Python to, to **collect logs** and **alers** from differents honeypots (eq [Glastopf v3](https://github.com/mushorg/glastopf), [Dionaea](https://github.com/DinoTools/dionaea), [Honeytrap](https://github.com/tillmannw/honeytrap), [eMobility](https://github.com/telekom-security/emobility), [Conpot](https://github.com/mushorg/conpot), [Cowrie](https://github.com/cowrie/cowrie), [Elasticpot](https://gitlab.com/bontchev/elasticpot), [Rdpy](https://github.com/citronneur/rdpy), [Mailoney](https://github.com/awhitehatter/mailoney), [Vnclowpot](https://github.com/magisterquis/vnclowpot), [Heralding](https://github.com/johnnykv/heralding), [Ciscoasa](https://github.com/Cymmetria/ciscoasa_honeypot), [Tanner](https://github.com/mushorg/tanner), [Snare](https://github.com/mushorg/snare), [Glutton](https://github.com/mushorg/glutton), [Honeysap](https://github.com/SecureAuthCorp/HoneySAP), [Adbhoney](https://github.com/huuck/ADBHoney), [Ipphoney](https://gitlab.com/bontchev/ipphoney), [Dicompot](https://github.com/nsmfoo/dicompot), [Medpot](https://github.com/schmalle/medpot), [Honeypy](https://github.com/foospidy/HoneyPy), [Citrixhoneypot](https://github.com/MalwareTech/CitrixHoneypot)) also network IDS (eg [Suricata](https://github.com/OISF/suricata), [Fatt](https://github.com/0x4D31/fatt)) and transmit them to InfluxDb, Json or an Honeypot backend (eg [Peba](https://github.com/telekom-security/PEBA) or Geba).
 
 # Requirements
 You need to install the libarys list in requirements.txt
@@ -49,7 +45,4 @@ Take a look at the example **ews.cfg.default** and copy it via
 
     cp ews.cfg.default ews.cfg
 
-# TODO's
-
-# Usefull Links
 
