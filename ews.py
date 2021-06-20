@@ -267,7 +267,7 @@ def elasticpot():
 
         for element in ['user_agent', 'request', 'payload', 'content_type', 'accept_language']:
             if element in line:
-                elasticpot.request(element, str(line[element]))
+                elasticpot.adata(element, str(line[element]))
 
         elasticpot.adata('hostname', ECFG['hostname'])
         elasticpot.adata('externalIP', ECFG['ip_ext'])
@@ -698,7 +698,7 @@ def glastopfv3():
             glastopfv3.request('raw', base64.encodebytes(line['request_raw'].encode('ascii', 'ignore')).decode())
 
         if 'filename' in line and line['filename'] is not None and ECFG['send_malware'] is True:
-            error, message, payload = glastopfv3.malwarecheck(HONEYPOT["malwaredir"], str(line["filename"]), ECFG["del_malware_after_send"], str(line["filename"]))
+            error, payload = glastopfv3.malwarecheck(HONEYPOT["malwaredir"], str(line["filename"]), ECFG["del_malware_after_send"], str(line["filename"]))
             glastopfv3.request("binary", payload.decode('utf-8')) if error is True and len(payload) > 0 else None
 
         glastopfv3.adata('hostname', ECFG['hostname'])
@@ -793,7 +793,7 @@ def dionaea():
         dionaea.request('description', 'Network Honeyport Dionaea v0.1.0')
 
         if 'download_md5_hash' in download and ECFG['send_malware'] is True:
-            error, message, payload = dionaea.malwarecheck(HONEYPOT['malwaredir'], str(download['download_md5_hash']), ECFG['del_malware_after_send'], str(download['download_md5_hash']))
+            error, payload = dionaea.malwarecheck(HONEYPOT['malwaredir'], str(download['download_md5_hash']), ECFG['del_malware_after_send'], str(download['download_md5_hash']))
             dionaea.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
 
         dionaea.adata('hostname', ECFG['hostname'])
@@ -856,7 +856,7 @@ def honeytrap():
 
         if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
             if md5 in payloadfilelist:
-                error, message, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], re.findall(f'.*{md5}*', payloadfilelist), False, md5)
+                error, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], re.findall(f'.*{md5}*', payloadfilelist), False, md5)
                 honeytrap.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
 
         honeytrap.adata('hostname', ECFG['hostname'])
@@ -1153,7 +1153,6 @@ if __name__ == "__main__":
     logger = ELog('EMain')
 
     while True:
-
         if ECFG["a.ewsonly"] is False:
             ESend(ECFG)
 

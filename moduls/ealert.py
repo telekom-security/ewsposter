@@ -22,9 +22,7 @@ import sqlite3
 import ssl
 
 class EAlert:
-
     def __init__(self, MODUL, ECFG):
-
         self.MODUL = MODUL.upper()
         self.DATA = {}
         self.REQUEST = {}
@@ -44,7 +42,6 @@ class EAlert:
         self.logger = ELog('EAlert')
 
     def lineREAD(self, filename, format='json', linenumber=None, item='index'):
-
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter', item))
         else:
@@ -71,7 +68,6 @@ class EAlert:
             return()
 
     def lineSQLITE(self, filename, linenumber=None, item='index'):
-
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter', item))
         else:
@@ -114,7 +110,6 @@ class EAlert:
         return()
 
     def readCFG(self, items, file):
-
         config = configparser.ConfigParser()
         config.read(file)
 
@@ -148,7 +143,6 @@ class EAlert:
         return(True)
 
     def alertCount(self, section, counting, item='index', setto=1):
-
         count = configparser.ConfigParser()
         count.read(self.ECFG["homedir"] + os.sep + "ews.idx")
 
@@ -180,7 +174,6 @@ class EAlert:
         return()
 
     def fileIndex(self, filename, action, content=None):
-
         filename = self.ECFG['homedir'] + os.sep + filename
 
         """ check if file exist, else create file """
@@ -216,7 +209,6 @@ class EAlert:
         return()
 
     def data(self, key, value):
-
         keywords = ("source_address", "target_address", "source_port", "target_port", "source_protokoll",
                     "target_protokoll", "timestamp", "timezone", "analyzer_id", "cident", "corigin", "ctext")
 
@@ -236,7 +228,6 @@ class EAlert:
         return(True)
 
     def dataCheck(self):
-
         keywords = ("source_address", "target_address", "source_port", "target_port", "source_protokoll",
                     "target_protokoll", "source_ip_version", "target_ip_version", "timestamp", "timezone",
                     "analyzer_id")
@@ -255,6 +246,8 @@ class EAlert:
         return(True)
 
     def request(self, key, value):
+        keywords = ("description", 'url', 'binary', 'request', 'raw', 'payload')
+
         self.REQUEST[key] = value
         return(True)
 
@@ -437,7 +430,6 @@ class EAlert:
 
     def sendAlert(self):
         """ Print Counter """
-
         if self.hcounter >= 1 and self.counter == 0:
             print(f'    -> Send {100*self.hcounter:3d} {self.MODUL} alert(s) to EWS Backend.')
         if self.counter > 0:
@@ -479,7 +471,7 @@ class EAlert:
                 return(True)
 
     def ewsWebservice(self):
-        headers = {'User-Agent': self.ECFG['name'] + " " + self.ECFG['version'],
+        headers = {'User-Agent': f"{self.ECFG['name']} {self.ECFG['version']}",
                    'Content-type': 'text/xml',
                    'SOAPAction': '',
                    'Charset': 'UTF-8',
@@ -592,11 +584,11 @@ class EAlert:
     def malwarecheck(self, malwaredir, malwarefile, localremove, md5filechecksum=None):
         if not os.path.isdir(malwaredir):
             self.logger.warning(f"Malwaredir {malwaredir} does not exist!", '2')
-            return(False, f"[ERROR] Malwaredir {malwaredir} does not exist!", None)
+            return(False, None)
 
         if self.md5malware(md5filechecksum) is False:
             self.logger.warning(f"MD5File {md5filechecksum} already submitted.", '2')
-            return(False, f"[ERROR] MD5File {md5filechecksum} already submitted.", None)
+            return(False, None)
 
         if os.path.isfile(malwaredir + os.sep + malwarefile) is True:
             if os.path.getsize(malwaredir + os.sep + malwarefile) <= 5 * 1024 * 1024:
@@ -606,13 +598,12 @@ class EAlert:
                 return(True, f'payload', base64.b64encode(payload))
             else:
                 self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 5 MB! Not send.", '2')
-                return(False, f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 5 MB! Not send.", None)
+                return(False, None)
         else:
             self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", '2')
-            return(False, f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", None)
+            return(False, None)
 
     def md5malware(self, md5filechecksum):
-
         if os.path.isfile(self.ECFG["homedir"] + os.sep + "malware.md5") is False:
             with open(self.ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
                 malwarefile.close()
