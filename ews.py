@@ -673,7 +673,7 @@ def glastopfv3():
     while True:
         line = glastopfv3.lineSQLITE(HONEYPOT['sqlitedb'])
 
-        if len(line) == 0:
+        if len(line) == 0 or line == 'false':
             break
         if line["request_url"] == "/" or line["request_url"] == "/index.do?hash=DEADBEEF&activate=1":
             continue
@@ -768,7 +768,7 @@ def dionaea():
     while True:
         line, download = dionaea.lineSQLITE(HONEYPOT['sqlitedb'])
 
-        if len(line) == 0:
+        if len(line) == 0 or (line == 'false' and download == 'false'):
             break
         if line['remote_host'] == "":
             continue

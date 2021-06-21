@@ -82,7 +82,11 @@ class EAlert:
 
         if self.MODUL == 'GLASTOPFV3' and self.sqlite3connect is True:
             if self.maxid == 0:
-                self.c.execute("SELECT max(id) from events;")
+                try:
+                    self.c.execute("SELECT max(id) from events;")
+                except sqlite3.OperationalError as e:
+                    self.logger.warning(f'SQLite3 Error on Glastopf Database {e}', '2')
+                    return('false')
                 self.maxid = self.c.fetchone()["max(id)"]
 
             if self.maxid >= linecounter:
@@ -94,7 +98,11 @@ class EAlert:
 
         if self.MODUL == 'DIONAEA' and self.sqlite3connect is True:
             if self.maxid == 0:
-                self.c.execute("SELECT max(connection) from connections;")
+                try:
+                    self.c.execute("SELECT max(connection) from connections;")
+                except sqlite3.OperationalError as e:
+                    self.logger.warning(f'SQLite3 Error on Dionaea Database {e}', '2')
+                    return('false', 'false')
                 self.maxid = self.c.fetchone()["max(connection)"]
 
             if self.maxid >= linecounter:
