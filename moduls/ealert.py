@@ -21,6 +21,7 @@ import socket
 import sqlite3
 import ssl
 
+
 class EAlert:
     def __init__(self, MODUL, ECFG):
         self.MODUL = MODUL.upper()
@@ -283,7 +284,7 @@ class EAlert:
             else:
                 mytype = "string"
 
-            etree.SubElement(Alert, "AdditionalData", type=mytype, meaning=key).text = str(value)
+            etree.SubElement(Alert, "AdditionalData", type=mytype, meaning=key).text = re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', str(value))
         return()
 
     def ewsWrite(self):

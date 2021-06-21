@@ -552,9 +552,9 @@ def heralding():
         heralding.adata('externalIP', ECFG['ip_ext'])
         heralding.adata('internalIP', ECFG['ip_int'])
         heralding.adata('uuid', ECFG['uuid'])
-        heralding.adata('protocol', re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', str(line.split(',')[7]))) if str(line.split(',')[7]) != "" else None
-        heralding.adata('username', re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', str(line.split(',')[8]))) if str(line.split(',')[8]) != "" else None
-        heralding.adata('password', re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', str(line.split(',')[9]))) if str(line.split(',')[9]) != "" else None
+        heralding.adata('protocol', str(line.split(',')[7])) if str(line.split(',')[7]) != "" else None
+        heralding.adata('username', str(line.split(',')[8])) if str(line.split(',')[8]) != "" else None
+        heralding.adata('password', str(line.split(',')[9])) if str(line.split(',')[9]) != "" else None
 
         if heralding.buildAlert() == "sendlimit":
             break
