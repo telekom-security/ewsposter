@@ -596,7 +596,7 @@ class EAlert:
                 payload = open(malwaredir + os.sep + malwarefile, "rb").read()
                 if localremove is True:
                     os.remove(malwaredir + os.sep + malwarefile)
-                return(True, f'payload', base64.b64encode(payload))
+                return(True, base64.b64encode(payload))
             else:
                 self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 5 MB! Not send.", '2')
                 return(False, None)
