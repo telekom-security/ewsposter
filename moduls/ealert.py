@@ -84,10 +84,10 @@ class EAlert:
             if self.maxid == 0:
                 try:
                     self.c.execute("SELECT max(id) from events;")
+                    self.maxid = self.c.fetchone()["max(id)"]
                 except sqlite3.OperationalError as e:
                     self.logger.warning(f'SQLite3 Error on Glastopf Database {e}', '2')
                     return('false')
-                self.maxid = self.c.fetchone()["max(id)"]
 
             if self.maxid >= linecounter:
                 self.c.execute("SELECT * from events where id = ?", (str(linecounter),))
@@ -100,10 +100,10 @@ class EAlert:
             if self.maxid == 0:
                 try:
                     self.c.execute("SELECT max(connection) from connections;")
+                    self.maxid = self.c.fetchone()["max(connection)"]
                 except sqlite3.OperationalError as e:
                     self.logger.warning(f'SQLite3 Error on Dionaea Database {e}', '2')
                     return('false', 'false')
-                self.maxid = self.c.fetchone()["max(connection)"]
 
             if self.maxid >= linecounter:
                 data = self.c.execute("SELECT * from connections where connection = ?;", (str(linecounter),)).fetchone()

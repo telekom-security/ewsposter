@@ -19,6 +19,9 @@ services:
     image: ${USERNAME}/${NAME}:${TAG}
     volumes:
       - /data:/data
+      - /data/ews/config/ews.ip:/opt/ewsposter/ews.ip
+      - /data/ews/config/ews.cfg:/opt/ewsposter/ews.cfg
+      - /data/ews/log:/opt/ewsposter/log
 
 networks:
   ewsposter_local:
