@@ -161,4 +161,4 @@ logfile = /data/honeypy/log/json.log
 [CITRIX]
 citrix = true
 nodeid = citrix-community-01
-logfile = /data/citrixhoneypot/log/server.log
+logfile = /data/citrixhoneypot/logs/server.log

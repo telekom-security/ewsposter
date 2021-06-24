@@ -161,4 +161,4 @@ logfile = /opt/honeypy/log/json.log
 [CITRIX]
 citrix = false
 nodeid = <your unique analyzer id>
-logfile = /opt/citrixhoneypot/log/server.log
+logfile = /opt/citrixhoneypot/logs/server.log

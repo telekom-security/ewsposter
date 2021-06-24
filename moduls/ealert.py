@@ -119,7 +119,7 @@ class EAlert:
                 self.alertCount(self.MODUL, "add_counter", item)
                 return(dict(data), dict(download))
             else:
-                return('', '')
+                return('false', 'false')
 
         self.con.close()
         return()
