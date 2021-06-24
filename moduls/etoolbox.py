@@ -98,7 +98,7 @@ def getIP(MODUL, ECFG):
     """ get external IP via connection """
     try:
         myIP["connect_ip_ext"] = get('https://api.ipify.org', timeout=5).text
-    except get.exceptions.HTTPError as e:
+    except requests.exceptions.HTTPError as e:
         logger.error(f'Could not determine a valid public IP using external service {e}', '1')
         myIP["connect_ip_ext"] = ""
     finally:
