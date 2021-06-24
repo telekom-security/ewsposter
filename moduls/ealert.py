@@ -85,6 +85,9 @@ class EAlert:
                 try:
                     self.c.execute("SELECT max(id) from events;")
                     self.maxid = self.c.fetchone()["max(id)"]
+                    if self.maxid is None:
+                        self.maxid = 0
+                        return('false')
                 except sqlite3.OperationalError as e:
                     self.logger.warning(f'SQLite3 Error on Glastopf Database {e}', '2')
                     return('false')
@@ -101,6 +104,9 @@ class EAlert:
                 try:
                     self.c.execute("SELECT max(connection) from connections;")
                     self.maxid = self.c.fetchone()["max(connection)"]
+                    if self.maxid is None:
+                        self.maxid = 0
+                        return('false')
                 except sqlite3.OperationalError as e:
                     self.logger.warning(f'SQLite3 Error on Dionaea Database {e}', '2')
                     return('false', 'false')
