@@ -160,5 +160,5 @@ logfile = /data/honeypy/log/json.log
 
 [CITRIX]
 citrix = true
-nodeid = honeypy-community-01
+nodeid = citrix-community-01
 logfile = /data/citrixhoneypot/log/server.log
