@@ -59,7 +59,7 @@ class EAlert:
             except ValueError:
                 self.jsonfailcounter += 1
                 self.logger.warning(f"lineREAD invalid json entry found '{lcache.rstrip()}' in {filename} line {linecounter}. Skipping line.", '2')
-                return('jsonfail')
+                return("jsonfail")
             else:
                 return(jsonline)
         elif lcache != '' and format == "simple":

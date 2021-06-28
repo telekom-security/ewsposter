@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from moduls.elog import ELog
-from requests import get
+import requests
 import configparser
 import ipaddress
 import os
@@ -97,10 +97,20 @@ def getIP(MODUL, ECFG):
 
     """ get external IP via connection """
     try:
-        myIP["connect_ip_ext"] = get('https://api.ipify.org', timeout=5).text
-    except requests.exceptions.HTTPError as e:
-        logger.error(f'Could not determine a valid public IP using external service {e}', '1')
+        myIP["connect_ip_ext"] = requests.get('https://api.ipify.org', timeout=10).text
+    except requests.exceptions.Timeout:
+        logger.error(f'Timeout to get extern IP via https://api.ipify.org!', '1')
         myIP["connect_ip_ext"] = ""
+    except requests.exceptions.TooManyRedirects:
+        logger.error(f'TooManyRedirects to get extern IP via https://api.ipify.org!', '1')
+        myIP["connect_ip_ext"] = ""
+    except requests.exceptions.HTTPError:
+        logger.error(f'Could not determine a valid public IP using external service', '1')
+        myIP["connect_ip_ext"] = ""
+    except requests.exceptions.RequestException as e:
+        logger.error(f'RequestException to get extern IP via https://api.ipify.org!', '1')
+        myIP["connect_ip_ext"] = ""
+        raise SystemExit(e)
     finally:
         connection.close()
 

@@ -887,6 +887,8 @@ def cowrie():
     while True:
         line = cowrie.lineREAD(HONEYPOT['logfile'], 'json')
 
+        if isinstance(line, int):
+            break
         if len(line) == 0:
             break
         if line == 'jsonfail':
