@@ -9,7 +9,7 @@ RUN apk -U --no-cache add \
     git clone https://github.com/telekom-security/ewsposter /opt/ewsposter && \
     cd /opt/ewsposter && \
     mkdir -p spool log json && \
-    git checkout develop && \
+    #git checkout develop && \
     pip install --no-cache-dir hpfeeds3 xmljson influxdb-client influxdb && \
     adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     chown -R ews:ews /opt/ewsposter && \

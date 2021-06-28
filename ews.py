@@ -17,7 +17,7 @@ import base64
 from urllib import parse
 
 name = "EWS Poster"
-version = "v1.19"
+version = "v1.20"
 
 def ipphoney():
 
