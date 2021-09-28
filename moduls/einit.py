@@ -7,7 +7,7 @@ import os
 import ipaddress
 import uuid
 from moduls.elog import ELog
-from moduls.etoolbox import readcfg, getHostname, getIP
+from moduls.etoolbox import readcfg, getHostname, getIP, readcfg2
 
 logger = ELog('EInit')
 
@@ -219,17 +219,23 @@ def ecfg(name, version):
     """ Read INFLUX Config Parameter """
 
     ITEMS = ('influxdb', 'host', 'port', 'username', 'password', 'token', 'bucket', 'org')
-    ICFG = readcfg("INFLUXDB", ITEMS, ECFG["cfgfile"])
+    ICFG = readcfg2("INFLUXDB", ITEMS, ECFG["cfgfile"])
 
-    if ICFG['influxdb'].lower() == "true":
+    if 'influxdb' not in ICFG:
+        ICFG['influxdb'] = False
+    elif ICFG['influxdb'].lower() == "true":
         ICFG['influxdb'] = True
+    else:
+        ICFG['influxdb'] = False
 
-    for index in ['host', 'port', 'username', 'password', 'token', 'bucket', 'org']:
-        if ICFG[index] == '' and ICFG["influxdb"] is True:
-            logger.error(f"Missing {index} in [INFLUXDB] config section. Abort!", '1E')
-        else:
-            ICFG['influx_' + index] = ICFG[index]
-            ICFG[index] = ''
+    if ICFG['influxdb'] is True:
+        for index in ['host', 'port', 'username', 'password', 'token', 'bucket', 'org']:
+
+            if ICFG[index] == '' and ICFG["influxdb"] is True:
+                logger.error(f"Missing {index} in [INFLUXDB] config section. Abort!", '1E')
+            else:
+                ICFG['influx_' + index] = ICFG[index]
+                ICFG[index] = ''
 
     ECFG.update(ICFG)
     ECFG.update(MCFG)

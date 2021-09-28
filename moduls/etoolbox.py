@@ -28,6 +28,18 @@ def readcfg(MODUL, ITEMS, FILE):
     return(result)
 
 
+def readcfg2(MODUL, ITEMS, FILE):
+    result = {}
+
+    config = configparser.SafeConfigParser(os.environ)
+    config.read(FILE)
+
+    for item in ITEMS:
+        if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
+            result[item] = config.get(MODUL, item)
+    return(result)
+
+
 def checkSECTIONcfg(MODUL, FILE):
     config = configparser.SafeConfigParser(os.environ)
     config.read(FILE)

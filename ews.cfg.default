@@ -81,7 +81,7 @@ logfile = /opt/conpot/conpot.json
 [ELASTICPOT]
 elasticpot = false
 nodeid = <your unique analyzer id>
-logfile = /opt/elasticpot/log/elasticpot.log
+logfile = /opt/elasticpot/log/elasticpot.json
 
 [SURICATA]
 suricata = false

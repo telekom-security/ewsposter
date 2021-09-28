@@ -81,7 +81,7 @@ logfile = /data/conpot/log/conpot_*.json
 [ELASTICPOT]
 elasticpot = true
 nodeid = elasticpot-community-01
-logfile = /data/elasticpot/log/elasticpot.log
+logfile = /data/elasticpot/log/elasticpot.json
 
 [SURICATA]
 suricata = false
