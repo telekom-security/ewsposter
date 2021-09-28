@@ -927,7 +927,7 @@ def cowrie():
             cowrieSessions[sid]['input'] = line['input']
 
         if line['eventid'] == 'cowrie.client.version' and line['session'] in cowrieSessions:
-            if "b'" in cowrieSessions[sid]['version']:
+            if "b'" in line["version"]:
                 cowrieSessions[sid]['version'] = re.search(r"b'(.*)'", line["version"], re.M).group(1)
             else:
                 cowrieSessions[sid]['version'] = line["version"]
