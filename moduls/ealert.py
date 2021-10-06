@@ -411,7 +411,7 @@ class EAlert:
             return(False)
 
         """ Create ews and json and influx alert """
-        self.ewsAlert() if self.ECFG['ews'] is True else None
+        self.ewsAlert() if self.ECFG['ews'] is True or self.ECFG["hpfeed"] is True else None
         self.jsonAlert() if self.ECFG['json'] is True else None
         self.influxAlert() if self.ECFG['influxdb'] is True else None
 
@@ -481,9 +481,9 @@ class EAlert:
                 self.ewsWrite()
                 self.clearAlert()
                 return(False)
-            else:
-                self.clearAlert()
-                return(True)
+
+        self.clearAlert()
+        return(True)
 
     def ewsWebservice(self):
         headers = {'User-Agent': f"{self.ECFG['name']} {self.ECFG['version']}",
