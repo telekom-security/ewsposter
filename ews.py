@@ -26,6 +26,10 @@ def ipphoney():
     ITEMS = ['ipphoney', 'nodeid', 'logfile']
     HONEYPOT = (ipphoney.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = ipphoney.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -68,6 +72,10 @@ def fatt():
     ITEMS = ['fatt', 'nodeid', 'logfile']
     HONEYPOT = (fatt.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = fatt.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -109,6 +117,10 @@ def adbhoney():
 
     ITEMS = ['adbhoney', 'nodeid', 'logfile']
     HONEYPOT = (adbhoney.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line = adbhoney.lineREAD(HONEYPOT['logfile'], 'json')
@@ -154,6 +166,10 @@ def honeysap():
     ITEMS = ['honeysap', 'nodeid', 'logfile']
     HONEYPOT = (honeysap.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = honeysap.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -196,6 +212,10 @@ def dicompot():
 
     ITEMS = ['dicompot', 'nodeid', 'logfile']
     HONEYPOT = (dicompot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line = dicompot.lineREAD(HONEYPOT['logfile'], 'json')
@@ -240,6 +260,10 @@ def elasticpot():
 
     ITEMS = ['elasticpot', 'nodeid', 'logfile']
     HONEYPOT = (elasticpot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line = elasticpot.lineREAD(HONEYPOT['logfile'], 'json')
@@ -289,6 +313,10 @@ def glutton():
     ITEMS = ['glutton', 'nodeid', 'logfile']
     HONEYPOT = (glutton.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = glutton.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -336,6 +364,10 @@ def ciscoasa():
     ITEMS = ['ciscoasa', 'nodeid', 'logfile']
     HONEYPOT = (ciscoasa.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = ciscoasa.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -380,6 +412,10 @@ def tanner():
 
     ITEMS = ['tanner', 'nodeid', 'logfile']
     HONEYPOT = (tanner.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line = tanner.lineREAD(HONEYPOT['logfile'], 'json')
@@ -446,6 +482,10 @@ def rdpy():
     ITEMS = ['rdpy', 'nodeid', 'logfile']
     HONEYPOT = (rdpy.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = rdpy.lineREAD(HONEYPOT['logfile'], 'simple')
 
@@ -487,6 +527,10 @@ def vnclowpot():
     ITEMS = ['vnclowpot', 'nodeid', 'logfile']
     HONEYPOT = (vnclowpot.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = vnclowpot.lineREAD(HONEYPOT['logfile'], 'simple')
 
@@ -525,6 +569,10 @@ def heralding():
 
     ITEMS = ['heralding', 'nodeid', 'logfile']
     HONEYPOT = (heralding.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line = heralding.lineREAD(HONEYPOT['logfile'], 'simple')
@@ -570,6 +618,10 @@ def mailoney():
     ITEMS = ['mailoney', 'nodeid', 'logfile']
     HONEYPOT = (mailoney.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = mailoney.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -612,6 +664,10 @@ def conpot():
 
     ITEMS = ['conpot', 'nodeid', 'logfile']
     HONEYPOT = (conpot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     logfiles = glob.glob(HONEYPOT['logfile'])
     if len(logfiles) < 1:
@@ -670,6 +726,10 @@ def glastopfv3():
     ITEMS = ['glastopfv3', 'nodeid', 'sqlitedb', 'malwaredir']
     HONEYPOT = (glastopfv3.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = glastopfv3.lineSQLITE(HONEYPOT['sqlitedb'])
 
@@ -724,6 +784,10 @@ def emobility():
     ITEMS = ['emobility', 'nodeid', 'logfile']
     HONEYPOT = (emobility.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = emobility.lineREAD(HONEYPOT['logfile'], 'simple')
 
@@ -764,6 +828,10 @@ def dionaea():
 
     ITEMS = ['dionaea', 'nodeid', 'sqlitedb', 'malwaredir']
     HONEYPOT = (dionaea.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line, download = dionaea.lineSQLITE(HONEYPOT['sqlitedb'])
@@ -815,6 +883,10 @@ def honeytrap():
 
     ITEMS = ['honeytrap', 'nodeid', 'attackerfile', 'payloaddir', 'newversion']
     HONEYPOT = (honeytrap.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     if HONEYPOT["newversion"].lower() == "true":
         print("    -> Calculate MD5Sum for payload files and rename files.")
@@ -878,6 +950,10 @@ def cowrie():
 
     ITEMS = ['cowrie', 'nodeid', 'logfile']
     HONEYPOT = (cowrie.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     cowrieSessionIDs = cowrie.fileIndex('cowrie.session', 'read')
     cowrieSessions = {}
@@ -982,6 +1058,10 @@ def suricata():
     ITEMS = ['suricata', 'nodeid', 'logfile']
     HONEYPOT = (suricata.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = suricata.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -1024,6 +1104,10 @@ def medpot():
     ITEMS = ['medpot', 'nodeid', 'logfile']
     HONEYPOT = (medpot.readCFG(ITEMS, ECFG['cfgfile']))
 
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
     while True:
         line = medpot.lineREAD(HONEYPOT['logfile'], 'json')
 
@@ -1065,6 +1149,10 @@ def honeypy():
 
     ITEMS = ['honeypy', 'nodeid', 'logfile']
     HONEYPOT = (honeypy.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line = honeypy.lineREAD(HONEYPOT['logfile'], 'json')
@@ -1109,6 +1197,10 @@ def citrix():
 
     ITEMS = ['citrix', 'nodeid', 'logfile']
     HONEYPOT = (citrix.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
 
     while True:
         line = citrix.lineREAD(HONEYPOT['logfile'], 'json')

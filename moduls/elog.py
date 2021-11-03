@@ -35,7 +35,7 @@ class ELog:
             print(f" => [ERROR] Configfile {ewsconfig} didn't exist. Abort!")
             sys.exit(1)
 
-        config = configparser.SafeConfigParser(os.environ)
+        config = configparser.ConfigParser(os.environ)
         config.read(ewsconfig)
 
         if config.has_option('MAIN', 'logdir') is True:

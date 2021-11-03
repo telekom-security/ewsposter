@@ -125,6 +125,9 @@ class EAlert:
         return()
 
     def readCFG(self, items, file):
+        files = ["logfile", "attackerfile", "sqlitedb"]
+        dirs = ["payloaddir", "malwaredir", "jsondir", "homedir", "spooldir", "logdir"]
+
         config = configparser.ConfigParser()
         config.read(file)
 
@@ -136,26 +139,25 @@ class EAlert:
                     returndic[item] = config.get(self.MODUL, item)
                 elif len(config.get(self.MODUL, item)) == 0:
                     returndic[item] = None
-                self.checkCFG(item, returndic[item])
+
+                # Conpot exception for Conpot
+                if item in files and re.search('.*\*.*', returndic[item], re.M):
+                    continue
+
+                if item in files and os.path.isfile(returndic[item]) is False:
+                    returndic['error_files'] = False
+                    returndic['error_files_msg'] = f"Mission File! {item} = {returndic[item]}"
+                    # self.logger.error(f"checkCFG mission File! {item} = {returndic[item]}. Abort!", '1E')
+
+                if item in dirs and os.path.isdir(returndic[item]) is False:
+                    returndic['error_dirs'] = False
+                    returndic['error_dirs_msg'] = f"checkCFG mission Directory! {item} = {returndic[item]}. Abort!"
+                    # self.logger.error(f"checkCFG mission Directory! {item} = {returndic[item]}. Abort!", '1E')
+
             else:
                 self.logger.error(f"[readCFG] Config parameter '{item}=' didn't find or empty in config file '{file}'. Abort!", '1E')
 
         return(returndic)
-
-    def checkCFG(self, key, value):
-        files = ["logfile", "attackerfile", "sqlitedb"]
-        dirs = ["payloaddir", "malwaredir", "jsondir", "homedir", "spooldir", "logdir"]
-
-        if key in files and re.search('.*\*.*', value, re.M):
-            return(True)
-
-        if key in files and os.path.isfile(value) is False:
-            self.logger.error(f"checkCFG mission File! {key} = {value}. Abort!", '1E')
-
-        if key in dirs and os.path.isdir(value) is False:
-            self.logger.error(f"checkCFG mission Directory! {key} = {value}. Abort!", '1E')
-
-        return(True)
 
     def alertCount(self, section, counting, item='index', setto=1):
         count = configparser.ConfigParser()
