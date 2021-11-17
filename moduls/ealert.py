@@ -39,7 +39,7 @@ class EAlert:
         self.maxid = 0
         self.malwareindex = []
         self.ewsAuth(self.ECFG["username"], self.ECFG["token"])
-        print(f' => Starting {self.MODUL} Honeypot Modul.')
+        print(f' => Starting {self.MODUL.title()} Honeypot Modul.')
         self.logger = ELog('EAlert')
 
     def lineREAD(self, filename, format='json', linenumber=None, item='index'):

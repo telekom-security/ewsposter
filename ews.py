@@ -1053,6 +1053,9 @@ def cowrie():
 
 def suricata():
 
+    # MS 2021-11-17 temporarily disabled 
+    return()
+
     suricata = EAlert('suricata', ECFG)
 
     ITEMS = ['suricata', 'nodeid', 'logfile']

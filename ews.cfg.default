@@ -116,7 +116,7 @@ logfile = /opt/ciscoasa/log/ciscoasa.log
 [TANNER]
 tanner = false
 nodeid = <your unique analyzer id>
-logfile = /opt/tanner/log/tanner.log
+logfile = /opt/tanner/log/tanner_report.json
 
 [GLUTTON]
 glutton = false
