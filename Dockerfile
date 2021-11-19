@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.15
 
 RUN apk -U --no-cache add \
     python3 \
@@ -10,7 +10,7 @@ RUN apk -U --no-cache add \
     cd /opt/ewsposter && \
     mkdir -p spool log json && \
     #git checkout develop && \
-    pip install --no-cache-dir hpfeeds3 xmljson influxdb-client influxdb influxdb-client[ciso] && \
+    pip install --no-cache-dir hpfeeds3 xmljson influxdb-client influxdb && \
     adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     chown -R ews:ews /opt/ewsposter && \
     apk del git
