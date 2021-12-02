@@ -33,7 +33,7 @@ jobs:
       id: lasttag
       uses: oprypin/find-latest-tag@v1
       with:
-        repository: armedpot/mailoney
+        repository: armedpot/ewsposter
 
     - name: Docker meta
       id: meta
