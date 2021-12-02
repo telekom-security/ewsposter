@@ -1,5 +1,16 @@
 FROM alpine:3.15
 
+ARG VERSION TITLE DESCRIPTION LICENSES URL CREATED REVISION
+
+LABEL org.opencontainers.image.version="$VERSION" \
+      org.opencontainers.image.authors="armedpot <armedpot@norad.de>" \
+      org.opencontainers.image.title="$TITLE" \
+      org.opencontainers.image.description="$DESCRIPTION" \
+      org.opencontainers.image.licenses="$LICENSES" \
+      org.opencontainers.image.url="$URL" \
+      org.opencontainers.image.created="$CREATED" \
+      org.opencontainers.image.revision="$REVISION"
+      
 RUN apk -U --no-cache add \
     python3 \
     py3-pip \
@@ -22,4 +33,4 @@ STOPSIGNAL SIGKILL
 USER ews:ews
 WORKDIR /opt/ewsposter
 
-CMD python3 ews.py -l 30
+CMD [ "python3", "ews.py", "-l 0" ]
