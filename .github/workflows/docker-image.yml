@@ -1,4 +1,4 @@
-name: Docker Image CI mailoney
+name: Docker Image CI ewsposter
 
 on:
   push:
