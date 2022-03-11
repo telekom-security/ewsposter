@@ -161,4 +161,14 @@ logfile = /opt/honeypy/log/json.log
 [CITRIX]
 citrix = false
 nodeid = <your unique analyzer id>
-logfile = /opt/citrixhoneypot/logs/server.log
+logfile = /opt/citrixhoneypot/log/server.log
+
+[REDISHONEYPOT]
+redishoneypot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/redishoneypot/log/redishoneypot.log
+
+[ENDLESSH]
+endlessh = false
+nodeid = <your unique analyzer id>
+logfile = /opt/endlessh/log/endlessh.log
