@@ -172,3 +172,8 @@ logfile = /opt/redishoneypot/log/redishoneypot.log
 endlessh = false
 nodeid = <your unique analyzer id>
 logfile = /opt/endlessh/log/endlessh.log
+
+[SENTRYPEER]
+sentrypeer = false
+nodeid = <your unique analyzer id>
+logfile = /opt/sentrypeer/log/sentrypeer.json
