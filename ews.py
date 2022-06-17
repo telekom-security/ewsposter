@@ -999,9 +999,12 @@ def cowrie():
         if line['eventid'] == 'cowrie.session.closed' and line['session'] in cowrieSessions:
             cowrieSessions[sid]['timestamp_close'] = line['timestamp']
 
-        if line['eventid'] == 'cowrieSession.command.input' and line['session'] in cowrieSessions:
-            cowrieSessions[sid]['input'] = line['input']
-
+        if line['eventid'] == 'cowrie.command.input' and line['session'] in cowrieSessions:
+            try:
+                cowrieSessions[sid]['input'].append(line['input'])
+            except:
+                cowrieSessions[sid]['input'] = [line['input']]
+                
         if line['eventid'] == 'cowrie.client.version' and line['session'] in cowrieSessions:
             if "b'" in line["version"]:
                 cowrieSessions[sid]['version'] = re.search(r"b'(.*)'", line["version"], re.M).group(1)
