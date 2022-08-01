@@ -177,3 +177,8 @@ logfile = /opt/endlessh/log/endlessh.log
 sentrypeer = false
 nodeid = <your unique analyzer id>
 logfile = /opt/sentrypeer/log/sentrypeer.json
+
+[LOG4POT]
+log4pot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/log4pot/log/log4pot.log
