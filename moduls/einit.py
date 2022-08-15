@@ -20,7 +20,7 @@ def ecfg(name, version):
                          'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
                          'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt', 'ipphoney',
                          'dicompot', 'medpot', 'honeypy', 'citrix', 'redishoneypot', 'endlessh', 
-                         'portsentry', 'log4pot']
+                         'sentrypeer', 'log4pot']
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--configpath", help="load configuration file from Path")

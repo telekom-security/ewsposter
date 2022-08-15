@@ -1267,8 +1267,8 @@ def redishoneypot():
 
         redishoneypot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
-        if 'timestamp' in line:
-            redishoneypot.data('time', f"{line['time']}")
+        if 'time' in line:
+            redishoneypot.data('timestamp', line['time'])
             redishoneypot.data("timezone", time.strftime('%z'))
 
         redishoneypot.data('source_address', line['addr'].split(':')[0]) if 'addr' in line else None
@@ -1312,10 +1312,8 @@ def endlessh():
             continue
 
         endlessh.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
-
-        if 'timestamp' in line:
-            endlessh.data('time', f"{line.split(' ')[0][0:10]} {line.split(' ')[0][11:8]}")
-            endlessh.data("timezone", time.strftime('%z'))
+        endlessh.data('timestamp', f"{line.split(' ')[0][0:10]} {line.split(' ')[0][11:19]}")
+        endlessh.data("timezone", time.strftime('%z'))
 
         endlessh.data('source_address', line.split(' ')[2].replace('host=', ''))
         endlessh.data('target_address', ECFG['ip_ext'])
@@ -1402,7 +1400,7 @@ def log4pot():
             break
         if line == 'jsonfail':
             continue
-        if line['type'] != "request":
+        if line['reason'] != "request":
             continue
 
         log4pot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
@@ -1411,12 +1409,12 @@ def log4pot():
             log4pot.data('timestamp', f"{line['timestamp'][0:10]} {line['timestamp'][11:19]}")
             log4pot.data("timezone", time.strftime('%z'))
 
-        log4pot.data('source_address', line['client']) if 'client' in line else None
+        log4pot.data('source_address', str(line['client'])) if 'client' in line else None
         log4pot.data('target_address', ECFG['ip_ext'])
         log4pot.data('source_port', '5060')
         log4pot.data('target_port', '5060')
-        log4pot.data('source_protokoll', line['port']) if 'port' in line else None
-        log4pot.data('target_protokoll', line['server_port']) if 'server_port' in line else None
+        log4pot.data('source_protokoll', str(line['port'])) if 'port' in line else None
+        log4pot.data('target_protokoll', str(line['server_port'])) if 'server_port' in line else None
 
         log4pot.request('description', 'Log4pot Honeypot')
 
