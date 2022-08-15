@@ -19,7 +19,8 @@ def ecfg(name, version):
     ECFG['HONEYLIST'] = ['glastopfv3', 'dionaea', 'honeytrap', 'emobility', 'conpot', 'cowrie',
                          'elasticpot', 'suricata', 'rdpy', 'mailoney', 'vnclowpot', 'heralding',
                          'ciscoasa', 'tanner', 'glutton', 'honeysap', 'adbhoney', 'fatt', 'ipphoney',
-                         'dicompot', 'medpot', 'honeypy', 'citrix']
+                         'dicompot', 'medpot', 'honeypy', 'citrix', 'redishoneypot', 'endlessh', 
+                         'sentrypeer', 'log4pot']
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--configpath", help="load configuration file from Path")

@@ -31,7 +31,7 @@ Take a look at the usage text.
                    ciscoasa, tanner, glutton,
                    honeysap, adbhoney, fatt,
                    ipphoney, dicompot, medpot,
-                   honeypy}
+                   honeypy, redishoneypot, endlessh}
        -s, --silent                                silent mode without output
        -i, --ignorecert                            ignore certificate warnings
        -S, --sendonly                              only send unsend alerts

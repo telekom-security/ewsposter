@@ -17,7 +17,7 @@ import base64
 from urllib import parse
 
 name = "EWS Poster"
-version = "v1.21"
+version = "v1.22"
 
 def ipphoney():
 
@@ -1244,6 +1244,194 @@ def citrix():
             break
 
     citrix.finAlert()
+    return()
+
+
+def redishoneypot():
+
+    redishoneypot = EAlert('redishoneypot', ECFG)
+
+    ITEMS = ['redishoneypot', 'nodeid', 'logfile']
+    HONEYPOT = (redishoneypot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
+    while True:
+        line = redishoneypot.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+        if line['action'] != "NewConnect":
+            continue
+
+        redishoneypot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'time' in line:
+            redishoneypot.data('timestamp', line['time'])
+            redishoneypot.data("timezone", time.strftime('%z'))
+
+        redishoneypot.data('source_address', line['addr'].split(':')[0]) if 'addr' in line else None
+        redishoneypot.data('target_address', ECFG['ip_ext'])
+        redishoneypot.data('source_port', line['addr'].split(':')[1]) if 'addr' in line else None
+        redishoneypot.data('target_port', '6379')
+        redishoneypot.data('source_protokoll', 'tcp')
+        redishoneypot.data('target_protokoll', 'tcp')
+
+        redishoneypot.request('description', 'Redis Honeypot')
+
+        redishoneypot.adata('hostname', ECFG['hostname'])
+        redishoneypot.adata('externalIP', ECFG['ip_ext'])
+        redishoneypot.adata('internalIP', ECFG['ip_int'])
+        redishoneypot.adata('uuid', ECFG['uuid'])
+
+        if redishoneypot.buildAlert() == "sendlimit":
+            break
+
+    redishoneypot.finAlert()
+    return()
+
+
+def endlessh():
+
+    endlessh = EAlert('endlessh', ECFG)
+
+    ITEMS = ['endlessh', 'nodeid', 'logfile']
+    HONEYPOT = (endlessh.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
+    while True:
+        line = endlessh.lineREAD(HONEYPOT['logfile'], 'simple')
+
+        if len(line) == 0:
+            break
+        if line.split(' ')[1] != "ACCEPT":
+            continue
+
+        endlessh.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+        endlessh.data('timestamp', f"{line.split(' ')[0][0:10]} {line.split(' ')[0][11:19]}")
+        endlessh.data("timezone", time.strftime('%z'))
+
+        endlessh.data('source_address', line.split(' ')[2].replace('host=', ''))
+        endlessh.data('target_address', ECFG['ip_ext'])
+        endlessh.data('source_port', line.split(' ')[3].replace('port=', '')) 
+        endlessh.data('target_port', '22')
+        endlessh.data('source_protokoll', 'tcp')
+        endlessh.data('target_protokoll', 'tcp')
+
+        endlessh.request('description', 'Endlessh Honeypot')
+
+        endlessh.adata('hostname', ECFG['hostname'])
+        endlessh.adata('externalIP', ECFG['ip_ext'])
+        endlessh.adata('internalIP', ECFG['ip_int'])
+        endlessh.adata('uuid', ECFG['uuid'])
+
+        if endlessh.buildAlert() == "sendlimit":
+            break
+
+    endlessh.finAlert()
+    return()    
+
+
+def sentrypeer():
+
+    sentrypeer = EAlert('sentrypeer', ECFG)
+
+    ITEMS = ['sentrypeer', 'nodeid', 'logfile']
+    HONEYPOT = (sentrypeer.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
+    while True:
+        line = sentrypeer.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+
+        sentrypeer.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'event_timestamp' in line:
+            sentrypeer.data('timestamp', f"{line['event_timestamp'][0:19]}")
+            sentrypeer.data("timezone", time.strftime('%z'))
+
+        sentrypeer.data('source_address', line['source_ip']) if 'source_ip' in line else None
+        sentrypeer.data('target_address', line['destination_ip']) if 'destination_ip' in line else None
+        sentrypeer.data('source_port', '5060') 
+        sentrypeer.data('target_port', '5060') 
+        sentrypeer.data('source_protokoll', line['transport_type'].lower()) if 'transport_type' in line else None
+        sentrypeer.data('target_protokoll', line['transport_type'].lower()) if 'transport_type' in line else None
+
+        sentrypeer.request('description', 'Sentrypeer Honeypot')
+
+        sentrypeer.adata('hostname', ECFG['hostname'])
+        sentrypeer.adata('externalIP', ECFG['ip_ext'])
+        sentrypeer.adata('internalIP', ECFG['ip_int'])
+        sentrypeer.adata('uuid', ECFG['uuid'])
+
+        if sentrypeer.buildAlert() == "sendlimit":
+            break
+
+    sentrypeer.finAlert()
+    return()    
+
+
+def log4pot():
+
+    log4pot = EAlert('log4pot', ECFG)
+
+    ITEMS = ['log4pot', 'nodeid', 'logfile']
+    HONEYPOT = (log4pot.readCFG(ITEMS, ECFG['cfgfile']))
+
+    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
+        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+        return()
+
+    while True:
+        line = log4pot.lineREAD(HONEYPOT['logfile'], 'json')
+
+        if len(line) == 0:
+            break
+        if line == 'jsonfail':
+            continue
+        if line['reason'] != "request":
+            continue
+
+        log4pot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+
+        if 'timestamp' in line:
+            log4pot.data('timestamp', f"{line['timestamp'][0:10]} {line['timestamp'][11:19]}")
+            log4pot.data("timezone", time.strftime('%z'))
+
+        log4pot.data('source_address', str(line['client'])) if 'client' in line else None
+        log4pot.data('target_address', ECFG['ip_ext'])
+        log4pot.data('source_port', '5060')
+        log4pot.data('target_port', '5060')
+        log4pot.data('source_protokoll', str(line['port'])) if 'port' in line else None
+        log4pot.data('target_protokoll', str(line['server_port'])) if 'server_port' in line else None
+
+        log4pot.request('description', 'Log4pot Honeypot')
+
+        log4pot.request("request", line['request']) if line['request'] != "" else None
+
+        log4pot.adata('hostname', ECFG['hostname'])
+        log4pot.adata('externalIP', ECFG['ip_ext'])
+        log4pot.adata('internalIP', ECFG['ip_int'])
+        log4pot.adata('uuid', ECFG['uuid'])
+
+        if log4pot.buildAlert() == "sendlimit":
+            break
+
+    log4pot.finAlert()
     return()
 
 
