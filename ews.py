@@ -17,7 +17,7 @@ import base64
 from urllib import parse
 
 name = "EWS Poster"
-version = "v1.22"
+version = "v1.23"
 
 def ipphoney():
 
@@ -1004,7 +1004,7 @@ def cowrie():
                 cowrieSessions[sid]['input'].append(line['input'])
             except:
                 cowrieSessions[sid]['input'] = [line['input']]
-                
+
         if line['eventid'] == 'cowrie.client.version' and line['session'] in cowrieSessions:
             if "b'" in line["version"]:
                 cowrieSessions[sid]['version'] = re.search(r"b'(.*)'", line["version"], re.M).group(1)
@@ -1056,7 +1056,7 @@ def cowrie():
 
 def suricata():
 
-    # MS 2021-11-17 temporarily disabled 
+    # MS 2021-11-17 temporarily disabled
     return()
 
     suricata = EAlert('suricata', ECFG)
@@ -1320,7 +1320,7 @@ def endlessh():
 
         endlessh.data('source_address', line.split(' ')[2].replace('host=', ''))
         endlessh.data('target_address', ECFG['ip_ext'])
-        endlessh.data('source_port', line.split(' ')[3].replace('port=', '')) 
+        endlessh.data('source_port', line.split(' ')[3].replace('port=', ''))
         endlessh.data('target_port', '22')
         endlessh.data('source_protokoll', 'tcp')
         endlessh.data('target_protokoll', 'tcp')
@@ -1336,7 +1336,7 @@ def endlessh():
             break
 
     endlessh.finAlert()
-    return()    
+    return()
 
 
 def sentrypeer():
@@ -1366,8 +1366,8 @@ def sentrypeer():
 
         sentrypeer.data('source_address', line['source_ip']) if 'source_ip' in line else None
         sentrypeer.data('target_address', line['destination_ip']) if 'destination_ip' in line else None
-        sentrypeer.data('source_port', '5060') 
-        sentrypeer.data('target_port', '5060') 
+        sentrypeer.data('source_port', '5060')
+        sentrypeer.data('target_port', '5060')
         sentrypeer.data('source_protokoll', line['transport_type'].lower()) if 'transport_type' in line else None
         sentrypeer.data('target_protokoll', line['transport_type'].lower()) if 'transport_type' in line else None
 
@@ -1382,7 +1382,7 @@ def sentrypeer():
             break
 
     sentrypeer.finAlert()
-    return()    
+    return()
 
 
 def log4pot():

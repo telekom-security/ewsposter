@@ -164,16 +164,21 @@ nodeid = citrix-community-01
 logfile = /data/citrixhoneypot/log/server.log
 
 [REDISHONEYPOT]
-redishoneypot = false
-nodeid = <your unique analyzer id>
-logfile = /opt/redishoneypot/log/redishoneypot.log
+redishoneypot = true
+nodeid = redishoneypot-community-01
+logfile = /data/redishoneypot/log/redishoneypot.log
 
 [ENDLESSH]
-endlessh = false
-nodeid = <your unique analyzer id>
-logfile = /opt/endlessh/log/endlessh.log
+endlessh = true
+nodeid = endlessh-community-01
+logfile = /data/endlessh/log/endlessh.log
 
 [SENTRYPEER]
-sentrypeer = false
-nodeid = <your unique analyzer id>
-logfile = /opt/sentrypeer/log/sentrypeer.json
+sentrypeer = true
+nodeid = sentrypeer-community-01
+logfile = /data/sentrypeer/log/sentrypeer.json
+
+[LOG4POT]
+log4pot = true
+nodeid = log4pot-community-01
+logfile = /data/log4pot/log/log4pot.log
