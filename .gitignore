@@ -20,4 +20,5 @@ ews.cfg_all
 **/*.py.orig
 ews.cfg_single
 *.sublime*
+.mypy_cache/*
 
