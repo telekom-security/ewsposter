@@ -19,6 +19,7 @@ from urllib import parse
 name = "EWS Poster"
 version = "v1.23"
 
+
 def ipphoney():
 
     ipphoney = EAlert('ipphoney', ECFG)

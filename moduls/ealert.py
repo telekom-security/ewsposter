@@ -260,12 +260,18 @@ class EAlert:
             else:
                 self.logger.error(f"Unkown ciden/corgin/ctext in dataCheck combination. Alert skipt!", '2')
                 return(False)
+
         return(True)
 
     def request(self, key, value):
         keywords = ("description", 'url', 'binary', 'request', 'raw', 'payload')
 
-        self.REQUEST[key] = value
+        if key in keywords:
+            self.REQUEST[key] = value
+        else:
+            self.logger.error(f"Unknow keyword in request {key} = {value}.", '1E')
+            return(False)
+
         return(True)
 
     def adata(self, key, value):
@@ -293,9 +299,9 @@ class EAlert:
             etree.SubElement(Alert, "Request", type=key).text = value
 
         for key, value in list(self.ADATA.items()):
-            if type(value) is int:
+            if isinstance(value, int):
                 mytype = "integer"
-            elif type(value) is str:
+            elif isinstance(value, str):
                 mytype = "string"
             else:
                 mytype = "string"

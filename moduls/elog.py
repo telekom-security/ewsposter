@@ -6,6 +6,7 @@ import os
 import configparser
 import sys
 
+
 class ELog:
     def __init__(self, modul):
         self.modul = modul
