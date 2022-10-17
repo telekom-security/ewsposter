@@ -927,10 +927,13 @@ def honeytrap():
 
         honeytrap.request('description', 'NetworkHoneypot Honeytrap v1.1')
 
-        if HONEYPOT["newversion"].lower() == "true" and ECFG["send_malware"] is True:
-            if md5 in payloadfilelist:
-                error, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], re.findall(f'.*{md5}*', payloadfilelist), False, md5)
-                honeytrap.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
+        if (HONEYPOT["newversion"].lower() == "true") and (md5 in payloadfilelist):
+            error, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], re.findall(f'.*{md5}*', payloadfilelist), False, md5)
+
+            if (error is True) and (len(payload) <= 5 * 1024):
+                honeytrap.request('binary', payload.decode('utf-8'))
+            elif (error is True) and (ECFG["send_malware"] is True):
+                honeytrap.request('binary', payload.decode('utf-8'))
 
         honeytrap.adata('hostname', ECFG['hostname'])
         honeytrap.adata('externalIP', ECFG['ip_ext'])

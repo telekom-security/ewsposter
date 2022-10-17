@@ -258,7 +258,7 @@ class EAlert:
             if "cident" in self.DATA and "corigin" in self.DATA and "ctext" in self.DATA:
                 return(True)
             else:
-                self.logger.error(f"Unkown ciden/corgin/ctext in dataCheck combination. Alert skipt!", '2')
+                self.logger.error(f"Unkown cident/corgin/ctext in dataCheck combination. Alert skipt!", '2')
                 return(False)
 
         return(True)
