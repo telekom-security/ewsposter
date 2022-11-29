@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from influxdb import InfluxDBClient
+from influxdb_client import InfluxDBClient 
+#from influxdb import InfluxDBClient
 from collections import OrderedDict
 from datetime import datetime
 from lxml import etree
@@ -258,7 +259,7 @@ class EAlert:
             if "cident" in self.DATA and "corigin" in self.DATA and "ctext" in self.DATA:
                 return(True)
             else:
-                self.logger.error(f"Unkown cident/corgin/ctext in dataCheck combination. Alert skipt!", '2')
+                self.logger.error(f"Unknow cident/corgin/ctext in dataCheck combination. Alert skipt!", '2')
                 return(False)
 
         return(True)
@@ -614,13 +615,13 @@ class EAlert:
             return(False, None)
 
         if os.path.isfile(malwaredir + os.sep + malwarefile) is True:
-            if os.path.getsize(malwaredir + os.sep + malwarefile) <= 5 * 1024 * 1024:
+            if os.path.getsize(malwaredir + os.sep + malwarefile) <= 10 * 1024 * 1024:
                 payload = open(malwaredir + os.sep + malwarefile, "rb").read()
                 if localremove is True:
                     os.remove(malwaredir + os.sep + malwarefile)
                 return(True, base64.b64encode(payload))
             else:
-                self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 5 MB! Not send.", '2')
+                self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 10 MB! Not send.", '2')
                 return(False, None)
         else:
             self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", '2')

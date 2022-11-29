@@ -863,7 +863,10 @@ def dionaea():
 
         if 'download_md5_hash' in download and ECFG['send_malware'] is True:
             error, payload = dionaea.malwarecheck(HONEYPOT['malwaredir'], str(download['download_md5_hash']), ECFG['del_malware_after_send'], str(download['download_md5_hash']))
-            dionaea.request('binary', payload.decode('utf-8')) if error is True and len(payload) > 0 else None
+            if (error is True) and (len(payload) <= 5 * 1024) and (len(payload) > 0):
+                dionaea.request('binary', payload.decode('utf-8'))
+            elif (error is True) and (ECFG["send_malware"] is True) and (len(payload) > 0):
+                dionaea.request('largepayload', payload.decode('utf-8'))
 
         dionaea.adata('hostname', ECFG['hostname'])
         dionaea.adata('externalIP', ECFG['ip_ext'])
@@ -930,10 +933,10 @@ def honeytrap():
         if (HONEYPOT["newversion"].lower() == "true") and (md5 in payloadfilelist):
             error, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], re.findall(f'.*{md5}*', payloadfilelist), False, md5)
 
-            if (error is True) and (len(payload) <= 5 * 1024):
+            if (error is True) and (len(payload) <= 5 * 1024) and (len(payload) > 0):
                 honeytrap.request('binary', payload.decode('utf-8'))
-            elif (error is True) and (ECFG["send_malware"] is True):
-                honeytrap.request('binary', payload.decode('utf-8'))
+            elif (error is True) and (ECFG["send_malware"] is True) and (len(payload) > 0):
+                honeytrap.request('largepayload', payload.decode('utf-8'))
 
         honeytrap.adata('hostname', ECFG['hostname'])
         honeytrap.adata('externalIP', ECFG['ip_ext'])
@@ -1422,6 +1425,15 @@ def log4pot():
         log4pot.data('target_port', '5060')
         log4pot.data('source_protokoll', str(line['port'])) if 'port' in line else None
         log4pot.data('target_protokoll', str(line['server_port'])) if 'server_port' in line else None
+
+        if len(line['headers']) > 0:
+            generateRequest = ""
+            generateRequest += f"{line['request']}\r\n"
+
+            for index in line['headers']:
+                generateRequest += f"{index}: {line['headers'][index]}\r\n"
+
+            log4pot.request("raw", base64.encodebytes(generateRequest.encode('ascii', 'ignore')).decode())
 
         log4pot.request('description', 'Log4pot Honeypot')
 
