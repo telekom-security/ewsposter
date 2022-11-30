@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from influxdb_client import InfluxDBClient 
+from influxdb_client import InfluxDBClient
 #from influxdb import InfluxDBClient
 from collections import OrderedDict
 from datetime import datetime
@@ -265,7 +265,7 @@ class EAlert:
         return(True)
 
     def request(self, key, value):
-        keywords = ("description", 'url', 'binary', 'request', 'raw', 'payload')
+        keywords = ("description", 'url', 'binary', 'request', 'raw', 'payload', 'largepayload')
 
         if key in keywords:
             self.REQUEST[key] = value
