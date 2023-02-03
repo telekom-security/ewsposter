@@ -113,15 +113,19 @@ def fatt():
 
 
 def adbhoney():
-
     adbhoney = EAlert('adbhoney', ECFG)
 
-    ITEMS = ['adbhoney', 'nodeid', 'logfile']
+    ITEMS = ['adbhoney', 'nodeid', 'logfile', 'malwaredir']
     HONEYPOT = (adbhoney.readCFG(ITEMS, ECFG['cfgfile']))
 
     if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
         print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
         return()
+
+    adbhoneySessionIDs = adbhoney.fileIndex('adbhoney.session', 'read')
+    adbhoneySessions = {}
+
+    adbhoney.alertCount('ADBHONEY', 'reset_counter')
 
     while True:
         line = adbhoney.lineREAD(HONEYPOT['logfile'], 'json')
@@ -130,28 +134,65 @@ def adbhoney():
             break
         if line == 'jsonfail':
             continue
-        if line['eventid'] != "adbhoney.session.connect":
+        if not line['session'] or line['session'] in adbhoneySessionIDs:
             continue
 
+        sid = line['session']
+
+        if line['eventid'] == 'adbhoney.session.connect' and line['session'] not in adbhoneySessions:
+            adbhoneySessions[sid] = {}
+            adbhoneySessions[sid]['timestamp'] = line['timestamp']
+            adbhoneySessions[sid]['source_ip'] = line['src_ip']
+            adbhoneySessions[sid]['source_port'] = line['src_port']
+            adbhoneySessions[sid]['target_ip'] = line['dest_ip']
+            adbhoneySessions[sid]['target_port'] = line['dest_port']
+            adbhoneySessions[sid]['session'] = line['session']
+
+        if line['eventid'] == 'adbhoney.session.closed' and line['session'] in adbhoneySessions:
+            adbhoneySessions[sid]['duration'] = line['duration']
+
+        if line['eventid'] == 'adbhoney.command.input' and line['session'] in adbhoneySessions:
+            try:
+                adbhoneySessions[sid]['input'].append(line['input'] + "\n")
+            except:
+                adbhoneySessions[sid]['input'] = line['input'] + "\n"
+                               
+        if line['eventid'] == 'adbhoney.session.file_upload' and line['session'] in adbhoneySessions:
+            adbhoneySessions[sid]['shasum'] = line['shasum']
+            adbhoneySessions[sid]['outfile'] = line['outfile'][3:]  # remove "dl/"
+            adbhoneySessions[sid]['filename'] = line['filename']
+
+    for session in adbhoneySessions:
         adbhoney.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
-        if 'timestamp' in line:
-            adbhoney.data('timestamp', line['timestamp'][0:10] + " " + line['timestamp'][11:19])
+        if adbhoneySessions[session]['timestamp']:
+            adbhoney.data('timestamp', f"{adbhoneySessions[session]['timestamp'][0:10]} {adbhoneySessions[session]['timestamp'][11:19]}")
             adbhoney.data("timezone", time.strftime('%z'))
 
-        adbhoney.data('source_address', line['src_ip']) if 'src_ip' in line else None
+        adbhoney.data('source_address', adbhoneySessions[session]['source_ip']) if adbhoneySessions[session]['source_ip'] else None
         adbhoney.data('target_address', ECFG['ip_ext'])
-        adbhoney.data('source_port', str(line['src_port'])) if 'src_port' in line else None
-        adbhoney.data('target_port', str(line['dest_port'])) if 'dest_port' in line else None
+        adbhoney.data('source_port', str(adbhoneySessions[session]['source_port'])) if adbhoneySessions[session]['source_port'] else None
+        adbhoney.data('target_port', str(adbhoneySessions[session]['target_port'])) if adbhoneySessions[session]['target_port'] else None
         adbhoney.data('source_protokoll', "tcp")
         adbhoney.data('target_protokoll', "tcp")
 
         adbhoney.request("description", "ADBHoney Honeypot")
 
+        if 'outfile' in adbhoneySessions[session] and ECFG['send_malware'] is True:
+            error, payload = adbhoney.malwarecheck(HONEYPOT['malwaredir'], adbhoneySessions[session]['outfile'], ECFG['del_malware_after_send'], str(adbhoneySessions[session]['shasum']))
+            if (error is True) and (len(payload) <= 5 * 1024) and (len(payload) > 0):
+                adbhoney.request('binary', payload.decode('utf-8'))
+            elif (error is True) and (ECFG["send_malware"] is True) and (len(payload) > 0):
+                adbhoney.request('largepayload', payload.decode('utf-8'))
+
+        adbhoney.adata('duration', adbhoneySessions[session]['duration']) if 'duration' in adbhoneySessions[session] else None
+        adbhoney.adata('input', adbhoneySessions[session]['input']) if 'input' in adbhoneySessions[session] else None
         adbhoney.adata('hostname', ECFG['hostname'])
         adbhoney.adata('externalIP', ECFG['ip_ext'])
         adbhoney.adata('internalIP', ECFG['ip_int'])
         adbhoney.adata('uuid', ECFG['uuid'])
+
+        adbhoney.fileIndex('adbhoney.session', 'write', session)
 
         if adbhoney.buildAlert() == "sendlimit":
             break

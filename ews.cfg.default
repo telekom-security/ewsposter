@@ -132,6 +132,7 @@ logfile = /opt/honeysap/log/honeysap-external.log
 adbhoney = false
 nodeid = <your unique analyzer id>
 logfile = /opt/adbhoney/log/adbhoney.json
+malwaredir = /data/adbhoney/downloads
 
 [FATT]
 fatt = false

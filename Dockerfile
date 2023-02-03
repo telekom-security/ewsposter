@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3.16
 
 ARG VERSION TITLE DESCRIPTION LICENSES URL CREATED REVISION
 
@@ -20,7 +20,7 @@ RUN apk -U --no-cache add \
     git clone https://github.com/telekom-security/ewsposter /opt/ewsposter && \
     cd /opt/ewsposter && \
     mkdir -p spool log json && \
-    #git checkout dev_v1.24.0 && \
+    git checkout dev_v1.24.0 && \
     pip install --no-cache-dir hpfeeds3 xmljson influxdb-client influxdb && \
     adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     cp /opt/ewsposter/ews.cfg.docker /opt/ewsposter/ews.cfg && \
@@ -33,4 +33,4 @@ STOPSIGNAL SIGKILL
 USER ews:ews
 WORKDIR /opt/ewsposter
 
-CMD [ "python3", "ews.py",  "-l 0" ]
+CMD [ "python3", "ews.py",  "-l 1" ]

@@ -132,6 +132,7 @@ logfile = /data/honeysap/log/honeysap-external.log
 adbhoney = true
 nodeid = adbhoney-community-01
 logfile = /data/adbhoney/log/adbhoney.json
+malwaredir = /data/adbhoney/downloads
 
 [FATT]
 fatt = true
