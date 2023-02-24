@@ -17,7 +17,7 @@ import base64
 from urllib import parse
 
 name = "EWS Poster"
-version = "v1.23"
+version = "v1.24"
 
 
 def ipphoney():
@@ -156,11 +156,13 @@ def adbhoney():
                 adbhoneySessions[sid]['input'].append(line['input'] + "\n")
             except:
                 adbhoneySessions[sid]['input'] = line['input'] + "\n"
-                               
+
         if line['eventid'] == 'adbhoney.session.file_upload' and line['session'] in adbhoneySessions:
             adbhoneySessions[sid]['shasum'] = line['shasum']
             adbhoneySessions[sid]['outfile'] = line['outfile'][3:]  # remove "dl/"
             adbhoneySessions[sid]['filename'] = line['filename']
+
+    """ second loop """
 
     for session in adbhoneySessions:
         adbhoney.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
