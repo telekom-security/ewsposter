@@ -634,7 +634,7 @@ class EAlert:
 
         if len(self.malwareindex) == 0:
             with open(self.ECFG["homedir"] + os.sep + "malware.md5", "r", newline=None) as malwarefile:
-                self.malwareindex = list(filter(None, [md5filechecksum.rstrip("\n") for line in malwarefile]))
+                self.malwareindex = list(filter(None, [line.rstrip("\n") for line in malwarefile]))
                 malwarefile.close()
 
         if md5filechecksum in self.malwareindex:
