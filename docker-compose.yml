@@ -4,7 +4,21 @@ services:
   ewsposter:
     container_name: ewsposter
     restart: always
-    build: .
+    build:
+      context: .
+      args:
+        - VERSION=${VERSION}
+        - TITLE=${NAME}
+        - AUTHOR=${AUTHOR}
+        - DESCRIPTION=${DESCRIPTION}
+        - LICENSES=${LICENSES}
+        - URL=${URL}
+        - CREATED=${CREATED}
+        - REVISION=${REVISION}
+      tags:
+        - mtr.devops.telekom.de/markus_schroer/${NAME}:${VERSION}
+        - mtr.devops.telekom.de/markus_schroer/${NAME}:latest
+
     networks:
       - ewsposter_local
     environment:
@@ -16,7 +30,7 @@ services:
       - EWS_HPFEEDS_SECRET=${HPF_SECRET}
       - EWS_HPFEEDS_TLSCERT=${HPF_TLSCERT}
       - EWS_HPFEEDS_FORMAT=${HPF_FORMAT}
-    image: ${USERNAME}/${NAME}:${TAG}
+    image: ${USERNAME}/${NAME}:${VERSION}
     volumes:
       - /data:/data
       - /data/ews/config/ews.ip:/opt/ewsposter/ews.ip

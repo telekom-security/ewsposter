@@ -1,9 +1,9 @@
 FROM alpine:3.17
 
-ARG VERSION TITLE DESCRIPTION LICENSES URL CREATED REVISION
+ARG VERSION AUTHOR TITLE DESCRIPTION LICENSES URL CREATED REVISION
 
 LABEL org.opencontainers.image.version="$VERSION" \
-      org.opencontainers.image.authors="armedpot <armedpot@norad.de>" \
+      org.opencontainers.image.authors="$AUTHOR" \
       org.opencontainers.image.title="$TITLE" \
       org.opencontainers.image.description="$DESCRIPTION" \
       org.opencontainers.image.licenses="$LICENSES" \
