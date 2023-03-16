@@ -18,7 +18,6 @@ services:
       tags:
         - mtr.devops.telekom.de/markus_schroer/${NAME}:${VERSION}
         - mtr.devops.telekom.de/markus_schroer/${NAME}:latest
-
     networks:
       - ewsposter_local
     environment:

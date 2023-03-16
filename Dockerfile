@@ -20,7 +20,7 @@ RUN apk -U --no-cache add \
     git clone https://github.com/telekom-security/ewsposter /opt/ewsposter && \
     cd /opt/ewsposter && \
     mkdir -p spool log json && \
-    git checkout dev_v1.24.0 && \
+    git checkout dev_v1.25.0 && \
     pip install --no-cache-dir -r requirements.txt && \
     adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     cp /opt/ewsposter/ews.cfg.docker /opt/ewsposter/ews.cfg && \
