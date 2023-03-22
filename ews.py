@@ -158,9 +158,15 @@ def adbhoney():
                 adbhoneySessions[sid]['input'] = line['input'] + "\n"
 
         if line['eventid'] == 'adbhoney.session.file_upload' and line['session'] in adbhoneySessions:
-            adbhoneySessions[sid]['shasum'] = line['shasum']
-            adbhoneySessions[sid]['outfile'] = line['outfile'][3:]  # remove "dl/"
-            adbhoneySessions[sid]['filename'] = line['filename']
+            for index in ['shasum', 'outfile', 'filename']:
+                if index not in adbhoneySessions[sid]:
+                    adbhoneySessions[sid][index] = {}
+                if index == 'shasum':
+                    adbhoneySessions[sid][index][len(adbhoneySessions[sid][index])] = line['shasum']
+                if index == 'outfile':
+                    adbhoneySessions[sid][index][len(adbhoneySessions[sid][index])] = line['outfile'][3:]  # remove "dl/"
+                if index == 'filename':
+                    adbhoneySessions[sid][index][len(adbhoneySessions[sid][index])] = line['filename']
 
     """ second loop """
 
@@ -180,12 +186,17 @@ def adbhoney():
 
         adbhoney.request("description", "ADBHoney Honeypot")
 
-        if 'outfile' in adbhoneySessions[session] and ECFG['send_malware'] is True:
-            error, payload = adbhoney.malwarecheck(HONEYPOT['malwaredir'], adbhoneySessions[session]['outfile'], ECFG['del_malware_after_send'], str(adbhoneySessions[session]['shasum']))
-            if (error is True) and (len(payload) <= 5 * 1024) and (len(payload) > 0):
-                adbhoney.request('binary', payload.decode('utf-8'))
-            elif (error is True) and (ECFG["send_malware"] is True) and (len(payload) > 0):
-                adbhoney.request('largepayload', payload.decode('utf-8'))
+        if 'outfile' in adbhoneySessions[session]:
+            for index in range(len(adbhoneySessions[session]['outfile'])):
+                error, payload = adbhoney.malwarecheck(HONEYPOT['malwaredir'], adbhoneySessions[session]['outfile'][index], ECFG['del_malware_after_send'], str(adbhoneySessions[session]['shasum'][index]))
+                if (error is False):
+                    continue
+                elif (error is True) and (len(payload) <= 5 * 1024) and (len(payload) > 0):
+                    adbhoney.request('binary', payload.decode('utf-8'))
+                    break
+                elif (error is True) and (ECFG["send_malware"] is True) and (len(payload) > 0):
+                    adbhoney.request('largepayload', payload.decode('utf-8'))
+                    break
 
         adbhoney.adata('duration', adbhoneySessions[session]['duration']) if 'duration' in adbhoneySessions[session] else None
         adbhoney.adata('input', adbhoneySessions[session]['input']) if 'input' in adbhoneySessions[session] else None
