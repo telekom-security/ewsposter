@@ -984,13 +984,15 @@ def honeytrap():
 
         honeytrap.request('description', 'NetworkHoneypot Honeytrap v1.1')
 
-        if (HONEYPOT["newversion"].lower() == "true") and (md5 in payloadfilelist):
-            error, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], re.findall(f'.*{md5}*', payloadfilelist), False, md5)
-
-            if (error is True) and (len(payload) <= 5 * 1024) and (len(payload) > 0):
-                honeytrap.request('binary', payload.decode('utf-8'))
-            elif (error is True) and (ECFG["send_malware"] is True) and (len(payload) > 0):
-                honeytrap.request('largepayload', payload.decode('utf-8'))
+        if (HONEYPOT["newversion"].lower() == "true"):
+            for md5_file in payloadfilelist:
+                if (re.search(md5, md5_file)):
+                    error, payload = honeytrap.malwarecheck(HONEYPOT['payloaddir'], md5_file , False, md5)
+                    if (error is True) and (len(payload) <= 5 * 1024) and (len(payload) > 0):
+                        honeytrap.request('binary', payload.decode('utf-8'))
+                    elif (error is True) and (ECFG["send_malware"] is True) and (len(payload) > 0):
+                        honeytrap.request('largepayload', payload.decode('utf-8'))
+                    break
 
         honeytrap.adata('hostname', ECFG['hostname'])
         honeytrap.adata('externalIP', ECFG['ip_ext'])
