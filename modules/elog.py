@@ -30,7 +30,7 @@ class ELog:
         if configpath:
             ewsconfig = f'{configpath}/ews.cfg'
         else:
-            ewsconfig = f"{os.path.dirname(os.path.abspath(__file__)).replace('/moduls', '')}/ews.cfg"
+            ewsconfig = f"{os.path.dirname(os.path.abspath(__file__)).replace('/modules', '')}/ews.cfg"
 
         if os.path.isfile(ewsconfig) is False:
             print(f" => [ERROR] Configfile {ewsconfig} didn't exist. Abort!")

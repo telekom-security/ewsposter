@@ -44,142 +44,194 @@ token = <your token for influx 2.0>
 bucket = <your bucket/database for 2.0/1.8>
 org = <your org for influx 2.0>
 
-[GLASTOPFV3]
-glastopfv3 = false
-nodeid = <your unique analyzer id>
-sqlitedb = /opt/honeypot/glastopf/data/db/glastopf.db
-malwaredir = /opt/honeypot/glastopf/data/files
-
-[COWRIE]
-cowrie = false
-nodeid = <your unique analyzer id>
-logfile = /opt/cowrie/cowrie.json
-
-[DIONAEA]
-dionaea = false
-nodeid =  <your unique analyzer id>
-malwaredir = /opt/honeypot/dionaea/var/download
-sqlitedb = /opt/honeypot/dionaea/var/logsql.sqlite
-
-[HONEYTRAP]
-honeytrap = false
-nodeid =  <your unique analyzer id>
-newversion = true
-payloaddir = /opt/honeypot/honeytrap/attacks
-attackerfile = /opt/honeypot/honeytrap/log/attacker.log
-
-[EMOBILITY]
-eMobility = false
-nodeid = <your unique analyzer id>
-logfile = /work2/ewsposter/emobility/emobility.log
-
-[CONPOT]
-conpot = false
-nodeid = <your unique analyzer id>
-logfile = /opt/conpot/conpot.json
-
-[ELASTICPOT]
-elasticpot = false
-nodeid = <your unique analyzer id>
-logfile = /opt/elasticpot/log/elasticpot.json
-
-[SURICATA]
-suricata = false
-nodeid = <your unique analyzer id>
-logfile = /opt/suricata/logs/suricata_ews.log
-
-[MAILONEY]
-mailoney = false
-nodeid = <your unique analyzer id>
-logfile = /opt/mailoney/commands.log
-
-[RDPY]
-rdpy = false
-nodeid = <your unique analyzer id>
-logfile = /opt/rdpy/log/rdpy.log
-
-[VNCLOWPOT]
-vnclowpot = false
-nodeid = <your unique analyzer id>
-logfile = /opt/vnclowpot/log/vnclowpot.log
-
-[HERALDING]
-heralding = false
-nodeid = <your unique analyzer id>
-logfile = /opt/heralding/log/auth.csv
-
-[CISCOASA]
-ciscoasa = false
-nodeid = <your unique analyzer id>
-logfile = /opt/ciscoasa/log/ciscoasa.log
-
-[TANNER]
-tanner = false
-nodeid = <your unique analyzer id>
-logfile = /opt/tanner/log/tanner_report.json
-
-[GLUTTON]
-glutton = false
-nodeid = <your unique analyzer id>
-logfile = /opt/glutton/log/tanner.log
-
-[HONEYSAP]
-honeysap = false
-nodeid = <your unique analyzer id>
-logfile = /opt/honeysap/log/honeysap-external.log
-
 [ADBHONEY]
 adbhoney = false
 nodeid = <your unique analyzer id>
 logfile = /opt/adbhoney/log/adbhoney.json
 malwaredir = /opt/adbhoney/downloads
 
-[FATT]
-fatt = false
+[BEELZEBUB]
+beelzebub = false
 nodeid = <your unique analyzer id>
-logfile = /opt/fatt/log/fatt.log
+logfile = /opt/beelzebub/log/beelzebub.log
 
-[IPPHONEY]
-ipphoney = false
+[CISCOASA]
+ciscoasa = false
 nodeid = <your unique analyzer id>
-logfile = /opt/ipphoney/log/ipphoney.log
-
-[DICOMPOT]
-dicompot = false
-nodeid = <your unique analyzer id>
-logfile = /opt/dicompot/log/dicompot.log
-
-[MEDPOT]
-medpot = false
-nodeid = <your unique analyzer id>
-logfile = /opt/medpot/log/medpot.log
-
-[HONEYPY]
-honeypy = false
-nodeid = <your unique analyzer id>
-logfile = /opt/honeypy/log/json.log
+logfile = /opt/ciscoasa/log/ciscoasa.log
 
 [CITRIX]
 citrix = false
 nodeid = <your unique analyzer id>
 logfile = /opt/citrixhoneypot/log/server.log
 
-[REDISHONEYPOT]
-redishoneypot = false
+[CONPOT]
+conpot = false
 nodeid = <your unique analyzer id>
-logfile = /opt/redishoneypot/log/redishoneypot.log
+logfile = /opt/conpot/conpot.json
+
+[COWRIE]
+cowrie = false
+nodeid = <your unique analyzer id>
+logfile = /opt/cowrie/cowrie.json
+
+[DDOSPOT]
+ddospot = false
+nodeid = <your unique analyzer id>
+dbfiles = /opt/ddospot/db
+logfiles = /opt/ddospot/log
+
+[DICOMPOT]
+dicompot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/dicompot/log/dicompot.log
+
+[DIONAEA]
+dionaea = false
+nodeid =  <your unique analyzer id>
+malwaredir = /opt/dionaea/var/download
+sqlitedb = /opt/dionaea/var/logsql.sqlite
+
+[ELASTICPOT]
+elasticpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/elasticpot/log/elasticpot.json
+
+[EMOBILITY]
+eMobility = false
+nodeid = <your unique analyzer id>
+logfile = /opt/emobility/log/emobility.log
 
 [ENDLESSH]
 endlessh = false
 nodeid = <your unique analyzer id>
 logfile = /opt/endlessh/log/endlessh.log
 
-[SENTRYPEER]
-sentrypeer = false
+[FATT]
+fatt = false
 nodeid = <your unique analyzer id>
-logfile = /opt/sentrypeer/log/sentrypeer.json
+logfile = /opt/fatt/log/fatt.log
+
+[GALAH]
+galah = false
+nodeid = <your unique analyzer id>
+logfile = /opt/galah/log/galah.json
+
+[GLASTOPFV3]
+glastopfv3 = false
+nodeid = <your unique analyzer id>
+sqlitedb = /opt/glastopf/data/db/glastopf.db
+malwaredir = /opt/glastopf/data/files
+
+[GLUTTON]
+glutton = false
+nodeid = <your unique analyzer id>
+logfile = /opt/glutton/log/tanner.log
+
+[GOPOT]
+gopot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/go-pot/log/go-pot.json
+
+[H0NEYTR4P]
+h0neytr4p = false
+nodeid = <your unique analyzer id>
+logfile = /opt/h0neytr4p/log/log.json
+
+[HELLPOT]
+hellpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/hellpot/log/hellpot.log
+
+[HERALDING]
+heralding = false
+nodeid = <your unique analyzer id>
+logfile = /opt/heralding/log/auth.csv
+
+[HONEYAML]
+honeyaml = false
+nodeid = <your unique analyzer id>
+logfile = /opt/honeyaml/log/honeyaml.log
+
+[HONEYPOTS]
+honeypots = false
+nodeid = <your unique analyzer id>
+logfile = /opt/honeypots/log/honeypots.json
+
+[HONEYPY]
+honeypy = false
+nodeid = <your unique analyzer id>
+logfile = /opt/honeypy/log/json.log
+
+[HONEYSAP]
+honeysap = false
+nodeid = <your unique analyzer id>
+logfile = /opt/honeysap/log/honeysap-external.log
+
+[HONEYTRAP]
+honeytrap = false
+nodeid =  <your unique analyzer id>
+newversion = true
+payloaddir = /opt/honeytrap/attacks
+attackerfile = /opt/honeytrap/log/attacker.log
+
+[IPPHONEY]
+ipphoney = false
+nodeid = <your unique analyzer id>
+logfile = /opt/ipphoney/log/ipphoney.log
 
 [LOG4POT]
 log4pot = false
 nodeid = <your unique analyzer id>
 logfile = /opt/log4pot/log/log4pot.log
+
+[MAILONEY]
+mailoney = false
+nodeid = <your unique analyzer id>
+logfile = /opt/mailoney/commands.log
+
+[MEDPOT]
+medpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/medpot/log/medpot.log
+
+[MINIPRINT]
+miniprint = false
+nodeid = <your unique analyzer id>
+logfile = /opt/miniprint/log/miniprint.json
+uploaddir = /opt/miniprint/uploads
+
+[RDPY]
+rdpy = false
+nodeid = <your unique analyzer id>
+logfile = /opt/rdpy/log/rdpy.log
+
+[REDISHONEYPOT]
+redishoneypot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/redishoneypot/log/redishoneypot.log
+
+[SENTRYPEER]
+sentrypeer = false
+nodeid = <your unique analyzer id>
+logfile = /opt/sentrypeer/log/sentrypeer.json
+
+[SURICATA]
+suricata = false
+nodeid = <your unique analyzer id>
+logfile = /opt/suricata/logs/suricata_ews.log
+
+[TANNER]
+tanner = false
+nodeid = <your unique analyzer id>
+logfile = /opt/tanner/log/tanner_report.json
+
+[VNCLOWPOT]
+vnclowpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/vnclowpot/log/vnclowpot.log
+
+[WORDPOT]
+wordpot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/wordpot/log/wordpot.log

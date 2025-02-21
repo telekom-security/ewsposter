@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from moduls.elog import ELog
+from modules.elog import ELog
 import requests
 import configparser
 import ipaddress
@@ -16,7 +16,7 @@ logger = ELog('Etoolbox')
 def readcfg(MODUL, ITEMS, FILE):
     result = {}
 
-    config = configparser.SafeConfigParser(os.environ)
+    config = configparser.ConfigParser(os.environ)
     config.read(FILE)
 
     for item in ITEMS:
@@ -31,7 +31,7 @@ def readcfg(MODUL, ITEMS, FILE):
 def readcfg2(MODUL, ITEMS, FILE):
     result = {}
 
-    config = configparser.SafeConfigParser(os.environ)
+    config = configparser.ConfigParser(os.environ)
     config.read(FILE)
 
     for item in ITEMS:
@@ -41,7 +41,7 @@ def readcfg2(MODUL, ITEMS, FILE):
 
 
 def checkSECTIONcfg(MODUL, FILE):
-    config = configparser.SafeConfigParser(os.environ)
+    config = configparser.ConfigParser(os.environ)
     config.read(FILE)
 
     if config.has_section(MODUL):
@@ -51,7 +51,7 @@ def checkSECTIONcfg(MODUL, FILE):
 
 
 def readonecfg(MODUL, item, FILE):
-    config = configparser.SafeConfigParser(os.environ)
+    config = configparser.ConfigParser(os.environ)
     config.read(FILE)
 
     if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:

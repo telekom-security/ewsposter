@@ -1,5 +1,5 @@
 hpfeeds3
+influxdb-client
 lxml
 requests
-xmljson
-influxdb-client
+xmltodict

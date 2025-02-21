@@ -12,9 +12,9 @@ Take a look at the usage text.
 
     ./ews.py -h
     usage: ews.py [-h] [-c CONFIGPATH] [-v] [-d] [-l LOOP]
-              [-m {glastopfv3,dionaea,honeytrap,emobility,conpot,cowrie,elasticpot,suricata,rdpy,mailoney,
-                   vnclowpot,heralding,ciscoasa,tanner,glutton,honeysap,adbhoney,fatt,ipphoney,dicompot,
-                   medpot,honeypy,citrix,redishoneypot,endlessh,sentrypeer,log4pot}]
+              [-m {adbhoney,ciscoasa,citrix,conpot,cowrie,dicompot,dionaea,elasticpot,emobility,endlessh,
+                   fatt,glastopfv3,glutton,heralding,honeypy,honeysap,honeytrap,ipphoney,log4pot,mailoney,
+                   medpot,rdpy,redishoneypot,sentrypeer,suricata,tanner,vnclowpot,wordpot}]
               [-s] [-i] [-S] [-E] [-j JSONPATH] [-L SENDLIMIT] [-V]
 
     optional arguments:
@@ -23,16 +23,25 @@ Take a look at the usage text.
        -v, --verbose                               set output verbosity
        -d, --debug                                 set output debug
        -l LOOP, --loop LOOP                        endless loop. Set {xx} for seconds to wait for next loop
-       -m, --modul {glastopfv3, dionaea,           only send alerts for this modul
-                   honeytrap, emobility,
-                   conpot, cowrie, elasticpot,
-                   suricata, rdpy, mailoney,
-                   vnclowpot, heralding,
-                   ciscoasa, tanner, glutton,
-                   honeysap, adbhoney, fatt,
-                   ipphoney, dicompot, medpot,
-                   honeypy, citrix, redishoneypot,
-                   endlessh, sentrypeer, log4pot}
+       -m, --modul {adbhoney, beelzebub,           only send alerts for this modul
+                    ciscoasa, citrix,
+                    conpot, cowrie,
+                    ddospot, dicompot,
+                    dionaea, elasticpot,
+                    emobility, endlessh,
+                    fatt, galah,
+                    glastopfv3, glutton,
+                    gopot, h0neytr4p,
+                    hellpot, heralding,
+                    honeyaml, honeypots,
+                    honeypy, honeysap,
+                    honeytrap, ipphoney,
+                    log4pot, mailoney,
+                    medpot, miniprint,
+                    rdpy, redishoneypot,
+                    sentrypeer, suricata,
+                    tanner, vnclowpot,
+                    wordpot
        -s, --silent                                silent mode without output
        -i, --ignorecert                            ignore certificate warnings
        -S, --sendonly                              only send unsend alerts

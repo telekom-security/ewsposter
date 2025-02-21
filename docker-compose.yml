@@ -1,4 +1,5 @@
-version: '3.6'
+networks:
+  ewsposter_local:
 
 services:
   ewsposter:
@@ -16,8 +17,8 @@ services:
         - CREATED=${CREATED}
         - REVISION=${REVISION}
       tags:
-        - mtr.devops.telekom.de/markus_schroer/${NAME}:${VERSION}
-        - mtr.devops.telekom.de/markus_schroer/${NAME}:latest
+        - hub.docker.com/armedpot/${NAME}:${VERSION}
+        - hub.docker.com/armedpot/${NAME}:latest
     networks:
       - ewsposter_local
     environment:
@@ -35,6 +36,3 @@ services:
       - /data/ews/config/ews.ip:/opt/ewsposter/ews.ip
       - /data/ews/config/ews.cfg:/opt/ewsposter/ews.cfg
       - /data/ews/log:/opt/ewsposter/log
-
-networks:
-  ewsposter_local:

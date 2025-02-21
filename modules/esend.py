@@ -6,7 +6,7 @@ import random
 import requests
 import ssl
 import re
-from moduls.elog import ELog
+from modules.elog import ELog
 
 
 def ESend(ECFG):
