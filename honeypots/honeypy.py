@@ -2,6 +2,7 @@
 
 import time
 from modules.ealert import EAlert
+from datetime import datetime
 
 
 def honeypy(ECFG):
@@ -27,7 +28,7 @@ def honeypy(ECFG):
         honeypy.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
         if 'timestamp' in line:
-            honeypy.data('timestamp', f"{line['timestamp'][0:10]} {line['timestamp'][11:19]}")
+            honeypy.data('timestamp', datetime.fromisoformat(line['timestamp']).strftime('%Y-%m-%d %H:%M:%S'))
             honeypy.data("timezone", time.strftime('%z'))
 
         honeypy.data('source_address', line['src_ip']) if 'src_ip' in line else None

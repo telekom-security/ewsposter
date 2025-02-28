@@ -2,6 +2,7 @@
 
 import time
 from modules.ealert import EAlert
+from datetime import datetime
 
 
 def honeysap(ECFG):
@@ -25,7 +26,7 @@ def honeysap(ECFG):
         honeysap.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
         if 'timestamp' in line:
-            honeysap.data('timestamp', line['timestamp'][0:19])
+            honeysap.data('timestamp', datetime.fromisoformat(line['timestamp'][0:19]).strftime('%Y-%m-%d %H:%M:%S'))
             honeysap.data("timezone", time.strftime('%z'))
 
         honeysap.data('source_address', line['source_ip']) if 'source_ip' in line else None
