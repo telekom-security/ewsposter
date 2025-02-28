@@ -22,6 +22,7 @@ if __name__ == "__main__":
 
     name = "EWS Poster"
     version = "v1.30"
+
     functions = [adbhoney, beelzebub, ciscoasa, citrix, conpot, cowrie, ddospot, dicompot, dionaea,
                  elasticpot, emobility, endlessh, fatt, galah, glastopfv3, glutton, gopot, h0neytr4p,
                  hellpot, heralding, honeyaml, honeypots, honeypy, honeysap, honeytrap, ipphoney,
