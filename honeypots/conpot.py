@@ -1,35 +1,33 @@
 # honeypots/conpot.py
 
 import time
-import glob
 from modules.ealert import EAlert
 from datetime import datetime
+from pathlib import Path
 
 
 def conpot(ECFG):
     conpot = EAlert('conpot', ECFG)
 
-    ITEMS = ['conpot', 'nodeid', 'logfile']
+    ITEMS = ['conpot', 'nodeid', 'logdir']
     HONEYPOT = (conpot.readCFG(ITEMS, ECFG['cfgfile']))
 
     if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
         print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
         return()
 
-    logfiles = glob.glob(HONEYPOT['logfile'])
-    if len(logfiles) < 1:
-        print("[ERROR] Missing of correct LogFile for conpot. Skip!")
-        return()
+    logfiles = [f for f in Path(HONEYPOT['logdir']).glob('*.json') if f.stat().st_size > 0]
+    filetypes = ['conpot_IEC104', 'conpot_guardian_ast', 'conpot_ipmi', 'conpot_kamstrup_382']
 
     for logfile in logfiles:
-        index = ''
-        for indexsearch in ['IEC104', 'guardian_ast', 'ipmi', 'kamstrup_382']:
-            if indexsearch in logfile:
-                index = indexsearch
-              
-        while True:
-            line = conpot.lineREAD(logfile, 'json', None, index)
+        index = Path(logfile).stem
 
+        if  index not in filetypes:
+            print(f'    -> Filetype {index} in {logfile} not in list. Continue.')
+            continue
+        
+        while (line := conpot.lineREAD(str(logfile), 'json', None, index)):
+            
             if len(line) == 0:
                 break
             if line == 'jsonfail':

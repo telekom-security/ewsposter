@@ -11,22 +11,27 @@ LABEL org.opencontainers.image.version="$VERSION" \
       org.opencontainers.image.created="$CREATED" \
       org.opencontainers.image.revision="$REVISION"
 
+
+
 RUN apk -U --no-cache add \
     python3 \
+    py3-virtualenv \
     py3-pip \
-    py3-requests \
-    py3-lxml \
     git && \
     git clone https://github.com/telekom-security/ewsposter /opt/ewsposter && \
+    adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     cd /opt/ewsposter && \
     mkdir -p spool log json && \
     git checkout master && \
-    pip install --no-cache-dir -r requirements.txt && \
-    adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
     cp /opt/ewsposter/ews.cfg.docker /opt/ewsposter/ews.cfg && \
     chown -R ews:ews /opt/ewsposter && \
     apk del git
 
+RUN python3 -m venv /opt/ewsposter
+ENV PATH="/opt/ewsposter:$PATH"
+RUN cd /opt/ewsposter && \
+    source /opt/ewsposter/bin/activate && \
+    pip3 install -r requirements.txt
 
 STOPSIGNAL SIGKILL
 

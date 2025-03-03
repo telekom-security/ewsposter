@@ -68,7 +68,7 @@ logfile = /opt/citrixhoneypot/log/server.log
 [CONPOT]
 conpot = false
 nodeid = <your unique analyzer id>
-logfile = /opt/conpot/conpot.json
+logdir = /opt/conpot/log
 
 [COWRIE]
 cowrie = false

@@ -142,13 +142,9 @@ class EAlert:
                 elif len(config.get(self.MODUL, item)) == 0:
                     returndic[item] = None
 
-                # Conpot exception for Conpot
-                if item in files and re.search('.*\*.*', returndic[item], re.M):
-                    continue
-
                 if item in files and os.path.isfile(returndic[item]) is False:
                     returndic['error_files'] = False
-                    returndic['error_files_msg'] = f"Mission File! {item} = {returndic[item]}"
+                    returndic['error_files_msg'] = f"Missing File! {item} = {returndic[item]}"
                     # self.logger.error(f"checkCFG mission File! {item} = {returndic[item]}. Abort!", '1E')
 
                 if item in dirs and os.path.isdir(returndic[item]) is False:

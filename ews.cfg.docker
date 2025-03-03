@@ -68,7 +68,7 @@ logfile = /data/citrixhoneypot/log/server.log
 [CONPOT]
 conpot = true
 nodeid = conpot-community-01
-logfile = /data/conpot/log/conpot_*.json
+logdir = /data/conpot/log
 
 [COWRIE]
 cowrie = true
