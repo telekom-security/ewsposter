@@ -12,6 +12,7 @@ LABEL org.opencontainers.image.version="$VERSION" \
       org.opencontainers.image.revision="$REVISION"
 
 ENV PATH="/opt/ewsposter/bin:$PATH"
+ENV PYTHONWARNINGS="ignore:pkg_resources is deprecated"
 
 RUN apk -U --no-cache add \
     python3 \
