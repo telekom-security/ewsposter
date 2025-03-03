@@ -22,14 +22,13 @@ RUN apk -U --no-cache add \
     mkdir -p spool log json && \
     git checkout master && \
     cp /opt/ewsposter/ews.cfg.docker /opt/ewsposter/ews.cfg && \
+    python3 -m venv /opt/ewsposter && \
+    source /opt/ewsposter/bin/activate && \
+    pip3 install -r requirements.txt && \
     chown -R ews:ews /opt/ewsposter && \
     apk del git
 
-RUN python3 -m venv /opt/ewsposter
-ENV PATH="/opt/ewsposter:$PATH"
-RUN cd /opt/ewsposter && \
-    source /opt/ewsposter/bin/activate && \
-    pip3 install -r requirements.txt
+ENV PATH="/opt/ewsposter/bin:$PATH"
 
 STOPSIGNAL SIGKILL
 
