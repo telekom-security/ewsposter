@@ -11,6 +11,8 @@ LABEL org.opencontainers.image.version="$VERSION" \
       org.opencontainers.image.created="$CREATED" \
       org.opencontainers.image.revision="$REVISION"
 
+ENV PATH="/opt/ewsposter/bin:$PATH"
+
 RUN apk -U --no-cache add \
     python3 \
     py3-virtualenv \
@@ -28,7 +30,6 @@ RUN apk -U --no-cache add \
     chown -R ews:ews /opt/ewsposter && \
     apk del git
 
-ENV PATH="/opt/ewsposter/bin:$PATH"
 
 STOPSIGNAL SIGKILL
 
