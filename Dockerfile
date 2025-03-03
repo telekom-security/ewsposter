@@ -16,11 +16,9 @@ ENV PYTHONWARNINGS="ignore:pkg_resources is deprecated"
 
 RUN apk -U --no-cache add \
     python3 \
+    python3-dev \
     py3-virtualenv \
     py3-pip \
-    build-base \
-    libxml2-dev \
-    libxslt-dev \
     git && \
     git clone https://github.com/telekom-security/ewsposter /opt/ewsposter && \
     adduser --disabled-password --shell /bin/ash --uid 2000 ews && \
