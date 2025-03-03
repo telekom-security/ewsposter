@@ -26,8 +26,8 @@ RUN apk -U --no-cache add \
     cp /opt/ewsposter/ews.cfg.docker /opt/ewsposter/ews.cfg && \
     python3 -m venv /opt/ewsposter && \
     source /opt/ewsposter/bin/activate && \
-    pip3 install --upgrade pip pip3 setuptools wheel && \
-    pip3 install -r requirements.txt && \
+    pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt && \
     chown -R ews:ews /opt/ewsposter && \
     apk del git
 
