@@ -3,15 +3,16 @@ name: Docker Image CI ewsposter
 on:
   push:
     branches:
-      - main
+      - master
     tags:
-      - "v*.*.*"
+      - "v*.*"
 
   pull_request:
     branches:
-     - main
+     - master
     tags:
-      - "v*.*.*"
+      - "v*.*"
+
 jobs:
   docker:
     runs-on: ubuntu-latest

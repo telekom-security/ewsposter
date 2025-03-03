@@ -11,8 +11,6 @@ LABEL org.opencontainers.image.version="$VERSION" \
       org.opencontainers.image.created="$CREATED" \
       org.opencontainers.image.revision="$REVISION"
 
-
-
 RUN apk -U --no-cache add \
     python3 \
     py3-virtualenv \
