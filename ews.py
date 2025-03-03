@@ -21,7 +21,7 @@ from honeypots import (
 if __name__ == "__main__":
 
     name = "EWS Poster"
-    version = "v1.30"
+    version = "v1.31"
 
     functions = [adbhoney, beelzebub, ciscoasa, citrix, conpot, cowrie, ddospot, dicompot, dionaea,
                  elasticpot, emobility, endlessh, fatt, galah, glastopfv3, glutton, gopot, h0neytr4p,
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     ECFG = ecfg(name, version, functions)
     locksocket(name, ECFG['logdir'])
     logger = ELog('EMain')
-    
+
 
     while True:
         if ECFG["a.ewsonly"] is False:
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
             if ECFG["a.modul"] and ECFG["a.modul"] == honeypotname:
                if readonecfg(honeypotname.upper(), honeypotname, ECFG["cfgfile"]).lower() == "true":
-                   honeypot(ECFG)  
+                   honeypot(ECFG)
                    break
             elif ECFG["a.modul"]:
                 continue
