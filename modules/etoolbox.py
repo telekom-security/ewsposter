@@ -51,13 +51,13 @@ def getIP(MODUL, ECFG):
     myIP['file_ip_ext'] = ""
     if os.path.isfile(ECFG["path"] + os.sep + "ews.ip"):
         if checkSECTIONcfg("EWSIP", ECFG['path'] + os.sep + "ews.ip"):
-            ipfile = dict(readcfg('EWSIP', ('ip_int', 'ip_ext'), ECFG["path"] + os.sep + "ews.ip"))
+            ipfile = dict(readMYcfg('EWSIP', ('ip_int', 'ip_ext'), ECFG["path"] + os.sep + "ews.ip"))
             for dic in ipfile:
                 if ipfile[dic] != "" and ipfile[dic] is not None:
                     myIP['file_' + dic] = ipfile[dic]
 
         elif checkSECTIONcfg("MAIN", "ews.ip"):
-            ipfile = dict(readcfg('MAIN', ('ip',), ECFG['path'] + os.sep + "ews.ip"))
+            ipfile = dict(readMYcfg('MAIN', ('ip',), ECFG['path'] + os.sep + "ews.ip"))
             myIP['file_ip_ext'] = ipfile['ip']
 
         else:
