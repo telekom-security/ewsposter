@@ -7,7 +7,7 @@ import os
 import ipaddress
 import uuid
 from modules.elog import ELog
-from modules.etoolbox import readcfg, getHostname, getIP, readcfg2
+from modules.etoolbox import getHostname, getIP, readMYcfg
 
 logger = ELog('EInit')
 
@@ -82,8 +82,8 @@ def ecfg(name, version, functions):
     ITEMS = ("homedir", "spooldir", "logdir", "del_malware_after_send", "send_malware",
              "sendlimit", "contact", "proxy", "ip_int", "ip_ext")
 
-    MCFG = readcfg('MAIN', ITEMS, ECFG['cfgfile'])
-
+    MCFG = readMYcfg('MAIN', ITEMS, ECFG['cfgfile'])
+   
     # home dir available?
     if not os.path.isdir(MCFG["homedir"]):
         logger.error(f"Missing homedir {MCFG['homedir']}. Abort!", '1E')
@@ -142,7 +142,7 @@ def ecfg(name, version, functions):
     # Read EWS Config Parameter
 
     ITEMS = ("ews", "username", "token", "rhost_first", "rhost_second", "ignorecert")
-    EWSCFG = readcfg("EWS", ITEMS, ECFG["cfgfile"])
+    EWSCFG = readMYcfg("EWS", ITEMS, ECFG["cfgfile"])
 
     if EWSCFG["ews"].lower() == "true":
         EWSCFG["ews"] = True
@@ -165,7 +165,7 @@ def ecfg(name, version, functions):
     ITEMS = ("hpfeed", "host", "port", "channels", "ident", "secret", "hpfformat",
              "tlscert")
 
-    HCFG = readcfg("HPFEED", ITEMS, ECFG["cfgfile"])
+    HCFG = readMYcfg("HPFEED", ITEMS, ECFG["cfgfile"])
 
     if HCFG["hpfeed"].lower() == "true":
         HCFG["hpfeed"] = True
@@ -191,7 +191,7 @@ def ecfg(name, version, functions):
     # Read EWSJSON Config Parameter
 
     ITEMS = ("json", "jsondir")
-    EWSJSON = readcfg("EWSJSON", ITEMS, ECFG["cfgfile"])
+    EWSJSON = readMYcfg("EWSJSON", ITEMS, ECFG["cfgfile"])
 
     if ECFG["a.jsondir"] != "":
         EWSJSON["json"] = True
@@ -211,7 +211,7 @@ def ecfg(name, version, functions):
     # Read INFLUX Config Parameter
 
     ITEMS = ('influxdb', 'host', 'port', 'username', 'password', 'token', 'bucket', 'org')
-    ICFG = readcfg2("INFLUXDB", ITEMS, ECFG["cfgfile"])
+    ICFG = readMYcfg("INFLUXDB", ITEMS, ECFG["cfgfile"], loghandler='')
 
     if 'influxdb' not in ICFG:
         ICFG['influxdb'] = False

@@ -36,40 +36,40 @@ def cowrie(ECFG):
 
         if line['eventid'] == 'cowrie.session.connect' and line['session'] not in cowrieSessions:
             cowrieSessions[sid] = {}
-            cowrieSessions[sid]['timestamp_start'] = line['timestamp']
-            cowrieSessions[sid]['source_ip'] = line['src_ip']
-            cowrieSessions[sid]['source_port'] = line['src_port']
-            cowrieSessions[sid]['target_ip'] = line['dst_ip']
-            cowrieSessions[sid]['target_port'] = line['dst_port']
-            cowrieSessions[sid]['session_id'] = line['session']
-            cowrieSessions[sid]['protocol'] = line['protocol']
+            cowrieSessions[sid]['timestamp_start'] = line.get('timestamp')
+            cowrieSessions[sid]['source_ip'] = line.get('src_ip')
+            cowrieSessions[sid]['source_port'] = line.get('src_port')
+            cowrieSessions[sid]['target_ip'] = line.get('dst_ip')
+            cowrieSessions[sid]['target_port'] = line.get('dst_port')
+            cowrieSessions[sid]['session_id'] = line.get('session')
+            cowrieSessions[sid]['protocol'] = line.get('protocol')
 
         if line['eventid'] == 'cowrie.login.success' and line['session'] in cowrieSessions:
             cowrieSessions[sid]['login'] = "Success"
-            cowrieSessions[sid]['username'] = line['username']
-            cowrieSessions[sid]['password'] = line['password']
-            cowrieSessions[sid]['timestamp_login'] = line['timestamp']
+            cowrieSessions[sid]['username'] = line.get('username')
+            cowrieSessions[sid]['password'] = line.get('password')
+            cowrieSessions[sid]['timestamp_login'] = line.get('timestamp')
 
         if line['eventid'] == 'cowrie.login.failed' and line['session'] in cowrieSessions:
             cowrieSessions[sid]['login'] = "Fail"
-            cowrieSessions[sid]['username'] = line['username']
-            cowrieSessions[sid]['password'] = line['password']
-            cowrieSessions[sid]['timestamp_login'] = line['timestamp']
+            cowrieSessions[sid]['username'] = line.get('username')
+            cowrieSessions[sid]['password'] = line.get('password')
+            cowrieSessions[sid]['timestamp_login'] = line.get('timestamp')
 
         if line['eventid'] == 'cowrie.session.closed' and line['session'] in cowrieSessions:
-            cowrieSessions[sid]['timestamp_close'] = line['timestamp']
+            cowrieSessions[sid]['timestamp_close'] = line.get('timestamp')
 
         if line['eventid'] == 'cowrie.command.input' and line['session'] in cowrieSessions:
             try:
                 cowrieSessions[sid]['input'].append(line['input'])
             except:
-                cowrieSessions[sid]['input'] = [line['input']]
+                cowrieSessions[sid]['input'] = [line.get('input')]
 
         if line['eventid'] == 'cowrie.client.version' and line['session'] in cowrieSessions:
             if "b'" in line["version"]:
-                cowrieSessions[sid]['version'] = re.search(r"b'(.*)'", line["version"], re.M).group(1)
+                cowrieSessions[sid]['version'] = re.search(r"b'(.*)'", line.get("version"), re.M).group(1)
             else:
-                cowrieSessions[sid]['version'] = line["version"]
+                cowrieSessions[sid]['version'] = line.get("version")
 
     """ second loop """
 

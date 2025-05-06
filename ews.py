@@ -6,7 +6,7 @@ import sys
 
 from modules.einit import locksocket, ecfg
 from modules.elog import ELog
-from modules.etoolbox import readonecfg
+from modules.etoolbox import readMYcfg
 from modules.ealert import EAlert
 from modules.esend import ESend
 
@@ -21,7 +21,7 @@ from honeypots import (
 if __name__ == "__main__":
 
     name = "EWS Poster"
-    version = "v1.31"
+    version = "v1.32"
 
     functions = [adbhoney, beelzebub, ciscoasa, citrix, conpot, cowrie, ddospot, dicompot, dionaea,
                  elasticpot, emobility, endlessh, fatt, galah, glastopfv3, glutton, gopot, h0neytr4p,
@@ -42,13 +42,13 @@ if __name__ == "__main__":
             honeypotname = honeypot.__name__
 
             if ECFG["a.modul"] and ECFG["a.modul"] == honeypotname:
-               if readonecfg(honeypotname.upper(), honeypotname, ECFG["cfgfile"]).lower() == "true":
+               if readMYcfg(honeypotname.upper(), honeypotname, ECFG["cfgfile"]):
                    honeypot(ECFG)
                    break
             elif ECFG["a.modul"]:
                 continue
 
-            if readonecfg(honeypotname.upper(), honeypotname, ECFG["cfgfile"]).lower() == "true":
+            if readMYcfg(honeypotname.upper(), honeypotname, ECFG["cfgfile"]):
                 honeypot(ECFG)
 
         if int(ECFG["a.loop"]) == 0:

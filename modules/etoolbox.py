@@ -12,33 +12,27 @@ import string
 
 logger = ELog('Etoolbox')
 
-
-def readcfg(MODUL, ITEMS, FILE):
+def readMYcfg(MODUL, ITEMS, FILE, loghandler='1E'):
     result = {}
 
     config = configparser.ConfigParser(os.environ)
     config.read(FILE)
-
-    for item in ITEMS:
-        if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
-            result[item] = config.get(MODUL, item)
+ 
+    if isinstance(ITEMS, str):
+        if config.has_option(MODUL, ITEMS) and len(config.get(MODUL, ITEMS)) > 0:
+            return(True)
+        elif config.has_option(MODUL, ITEMS) and len(config.get(MODUL, ITEMS)) == 0:
+            return(None)
         else:
-            logger.error(f"Config MODUL [{MODUL}] parameter '{item}' didn't find or empty or not 'none' in {FILE} config file. Abort!", '1E')
-
-    return(result)
-
-
-def readcfg2(MODUL, ITEMS, FILE):
-    result = {}
-
-    config = configparser.ConfigParser(os.environ)
-    config.read(FILE)
-
-    for item in ITEMS:
-        if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
-            result[item] = config.get(MODUL, item)
-    return(result)
-
+            return(False)
+        
+    if isinstance(ITEMS, tuple):    
+        for item in ITEMS:
+            if config.has_option(MODUL, item) and len(config.get(MODUL, item)) > 0:
+                result[item] = config.get(MODUL, item)
+            elif loghandler == '1E':
+                logger.error(f"Config MODUL [{MODUL}] parameter '{item}' didn't find or empty or not 'none' in {FILE} config file. Abort!", '1E')
+        return(result)
 
 def checkSECTIONcfg(MODUL, FILE):
     config = configparser.ConfigParser(os.environ)
@@ -48,21 +42,6 @@ def checkSECTIONcfg(MODUL, FILE):
         return(True)
     else:
         return(False)
-
-
-def readonecfg(MODUL, item, FILE):
-    config = configparser.ConfigParser(os.environ)
-    config.read(FILE)
-
-    if config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) > 0:
-        return config.get(MODUL, item)
-    elif config.has_option(MODUL, item) is True and len(config.get(MODUL, item)) == 0:
-        return('NULL')
-    elif config.has_option(MODUL, item) is False:
-        return('FALSE')
-    else:
-        return ('UNKNOW')
-
 
 def getIP(MODUL, ECFG):
     myIP = {}
@@ -128,16 +107,12 @@ def getIP(MODUL, ECFG):
 
     return(myIP)
 
-
 def getHostname(MODUL, ECFG):
-    """ get Hostname from ENV/SOCKET/RANDOM """
-    if os.environ.get('MY_HOSTNAME') is not None:
-        return(os.environ.get('MY_HOSTNAME'))
-    elif socket.gethostname() is not None:
-        return(socket.gethostname())
-    else:
-        return("host-".join(random.choice(string.ascii_lowercase) for i in range(16)))
-
+    # get Hostname from ENV/SOCKET/RANDOM
+    hostname = os.environ.get('MY_HOSTNAME')
+    if hostname:
+        return hostname
+    return socket.gethostname() or f"host-{''.join(random.choices(string.ascii_lowercase, k=16))}"
 
 if __name__ == "__main__":
     pass
