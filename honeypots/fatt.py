@@ -10,8 +10,8 @@ def fatt(ECFG):
     ITEMS = ['fatt', 'nodeid', 'logfile']
     HONEYPOT = (fatt.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('fatt').lower() == "false":
+        print(f"    -> Honeypot FATT set to false. Skip Honeypot.")
         return()
 
     while True:

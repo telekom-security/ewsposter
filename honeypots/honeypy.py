@@ -11,8 +11,8 @@ def honeypy(ECFG):
     ITEMS = ['honeypy', 'nodeid', 'logfile']
     HONEYPOT = (honeypy.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('honeypy').lower() == "false":
+        print(f"    -> Honeypot Honeypy set to false. Skip Honeypot.")
         return()
 
     while True:

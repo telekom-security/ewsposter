@@ -11,8 +11,8 @@ def wordpot(ECFG):
     ITEMS = ['wordpot', 'nodeid', 'logfile']
     HONEYPOT = (wordpot.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('wordpot').lower() == "false":
+        print(f"    -> Honeypot Wordpot set to false. Skip Honeypot.")
         return()
 
     while True:

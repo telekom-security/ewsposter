@@ -12,8 +12,8 @@ def glutton(ECFG):
     ITEMS = ['glutton', 'nodeid', 'logfile']
     HONEYPOT = (glutton.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('glutton').lower() == "false":
+        print(f"    -> Honeypot Glutton set to false. Skip Honeypot.")
         return()
 
     while True:

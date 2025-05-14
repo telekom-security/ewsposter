@@ -10,8 +10,8 @@ def miniprint(ECFG):
     ITEMS = ['miniprint', 'nodeid', 'logfile']
     HONEYPOT = (miniprint.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('miniprint').lower() == "false":
+        print(f"    -> Honeypot Miniprint set to false. Skip Honeypot.")
         return()
     
     while True:

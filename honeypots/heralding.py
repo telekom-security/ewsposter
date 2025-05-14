@@ -11,8 +11,8 @@ def heralding(ECFG):
     ITEMS = ['heralding', 'nodeid', 'logfile']
     HONEYPOT = (heralding.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('heralding').lower() == "false":
+        print(f"    -> Honeypot Heralding set to false. Skip Honeypot.")
         return()
 
     while True:

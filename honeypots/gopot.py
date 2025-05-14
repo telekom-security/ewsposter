@@ -11,9 +11,9 @@ def gopot(ECFG):
     ITEMS = ['gopot', 'nodeid', 'logfile']
     HONEYPOT = (gopot.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
-        return
+    if HONEYPOT.get('gopot').lower() == "false":
+        print(f"    -> Honeypot GOPot set to false. Skip Honeypot.")
+        return()
 
     gopotSessionIDs = gopot.fileIndex('gopot.session', 'read')
     gopotSessions = {}

@@ -11,8 +11,8 @@ def sentrypeer(ECFG):
     ITEMS = ['sentrypeer', 'nodeid', 'logfile']
     HONEYPOT = (sentrypeer.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('sentrypeer').lower() == "false":
+        print(f"    -> Honeypot Sentrypeer set to false. Skip Honeypot.")
         return()
 
     while True:

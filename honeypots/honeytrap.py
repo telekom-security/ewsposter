@@ -13,8 +13,8 @@ def honeytrap(ECFG):
     ITEMS = ['honeytrap', 'nodeid', 'attackerfile', 'payloaddir', 'newversion']
     HONEYPOT = (honeytrap.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('honeytrap').lower() == "false":
+        print(f"    -> Honeypot Honeytrap set to false. Skip Honeypot.")
         return()
 
     if HONEYPOT["newversion"].lower() == "true":

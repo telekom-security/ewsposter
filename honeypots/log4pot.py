@@ -11,8 +11,8 @@ def log4pot(ECFG):
     ITEMS = ['log4pot', 'nodeid', 'logfile']
     HONEYPOT = (log4pot.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('log4pot').lower() == "false":
+        print(f"    -> Honeypot Log4pot set to false. Skip Honeypot.")
         return()
 
     while True:

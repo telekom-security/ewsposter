@@ -11,8 +11,8 @@ def emobility(ECFG):
     ITEMS = ['emobility', 'nodeid', 'logfile']
     HONEYPOT = (emobility.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('emobility').lower() == "false":
+        print(f"    -> Honeypot Emobility set to false. Skip Honeypot.")
         return()
 
     while True:

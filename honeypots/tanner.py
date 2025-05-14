@@ -12,8 +12,8 @@ def tanner(ECFG):
     ITEMS = ['tanner', 'nodeid', 'logfile']
     HONEYPOT = (tanner.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('tanner').lower() == "false":
+        print(f"    -> Honeypot Tanner set to false. Skip Honeypot.")
         return()
 
     while True:

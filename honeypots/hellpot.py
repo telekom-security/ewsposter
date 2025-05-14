@@ -10,9 +10,9 @@ def hellpot(ECFG):
     ITEMS = ['hellpot', 'nodeid', 'logfile']
     HONEYPOT = (hellpot.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
-        return
+    if HONEYPOT.get('hellpot').lower() == "false":
+        print(f"    -> Honeypot Hellpot set to false. Skip Honeypot.")
+        return()
 
     while True:
         line = hellpot.lineREAD(HONEYPOT['logfile'], 'json')

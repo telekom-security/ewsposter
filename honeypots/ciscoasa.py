@@ -10,8 +10,8 @@ def ciscoasa(ECFG):
     ITEMS = ['ciscoasa', 'nodeid', 'logfile']
     HONEYPOT = (ciscoasa.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('ciscoasa').lower() == "false":
+        print(f"    -> Honeypot Ciscosas set to false. Skip Honeypot.")
         return()
 
     while True:

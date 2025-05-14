@@ -10,8 +10,8 @@ def h0neytr4p(ECFG):
     ITEMS = ['h0neytr4p', 'nodeid', 'logfile', 'payloaddir']
     HONEYPOT = (h0neytr4p.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('h0neytr4p').lower() == "false":
+        print(f"    -> Honeypot h0neytr4p set to false. Skip Honeypot.")
         return()
 
     while True:

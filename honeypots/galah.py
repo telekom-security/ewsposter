@@ -11,9 +11,9 @@ def galah(ECFG):
     ITEMS = ['galah', 'nodeid', 'logfile']
     HONEYPOT = (galah.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
-        return
+    if HONEYPOT.get('galah').lower() == "false":
+        print(f"    -> Honeypot Galah set to false. Skip Honeypot.")
+        return()
 
     galahSessionIDs = galah.fileIndex('galah.session', 'read')
     galahSessions = {}

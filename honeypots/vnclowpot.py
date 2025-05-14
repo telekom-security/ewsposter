@@ -10,8 +10,8 @@ def vnclowpot(ECFG):
     ITEMS = ['vnclowpot', 'nodeid', 'logfile']
     HONEYPOT = (vnclowpot.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('vnclowpot').lower() == "false":
+        print(f"    -> Honeypot VNClowPot set to false. Skip Honeypot.")
         return()
 
     while True:

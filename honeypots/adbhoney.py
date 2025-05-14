@@ -10,8 +10,8 @@ def adbhoney(ECFG):
     ITEMS = ['adbhoney', 'nodeid', 'logfile', 'malwaredir']
     HONEYPOT = (adbhoney.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('adbhoney').lower() == "false":
+        print(f"    -> Honeypot Adbhoney set to false. Skip Honeypot.")
         return()
 
     adbhoneySessionIDs = adbhoney.fileIndex('adbhoney.session', 'read')

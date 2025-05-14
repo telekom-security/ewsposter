@@ -12,8 +12,8 @@ def conpot(ECFG):
     ITEMS = ['conpot', 'nodeid', 'logdir']
     HONEYPOT = (conpot.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('conpot').lower() == "false":
+        print(f"    -> Honeypot Conpot set to false. Skip Honeypot.")
         return()
 
     logfiles = [f for f in Path(HONEYPOT['logdir']).glob('*.json') if f.stat().st_size > 0]

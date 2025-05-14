@@ -11,9 +11,9 @@ def beelzebub(ECFG):
     ITEMS = ['beelzebub', 'nodeid', 'logfile']
     HONEYPOT = (beelzebub.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
-        return
+    if HONEYPOT.get('beelzebub').lower() == "false":
+        print(f"    -> Honeypot Beelzebub set to false. Skip Honeypot.")
+        return()
 
     beelzebubSessionIDs = beelzebub.fileIndex('beelzebub.session', 'read')
     beelzebubSessions = {}

@@ -11,8 +11,8 @@ def cowrie(ECFG):
     ITEMS = ['cowrie', 'nodeid', 'logfile']
     HONEYPOT = (cowrie.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('cowrie').lower() == "false":
+        print(f"    -> Honeypot Cowrie set to false. Skip Honeypot.")
         return()
 
     cowrieSessionIDs = cowrie.fileIndex('cowrie.session', 'read')

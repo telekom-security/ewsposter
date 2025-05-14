@@ -10,8 +10,8 @@ def rdpy(ECFG):
     ITEMS = ['rdpy', 'nodeid', 'logfile']
     HONEYPOT = (rdpy.readCFG(ITEMS, ECFG['cfgfile']))
 
-    if 'error_files' in HONEYPOT and HONEYPOT['error_files'] is False:
-        print(f"    -> {HONEYPOT['error_files_msg']}. Skip Honeypot.")
+    if HONEYPOT.get('rdpy').lower() == "false":
+        print(f"    -> Honeypot RDPY set to false. Skip Honeypot.")
         return()
 
     while True:
