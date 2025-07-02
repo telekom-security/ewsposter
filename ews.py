@@ -21,7 +21,7 @@ from honeypots import (
 if __name__ == "__main__":
 
     name = "EWS Poster"
-    version = "v1.32"
+    version = "v1.33"
 
     functions = [adbhoney, beelzebub, ciscoasa, citrix, conpot, cowrie, ddospot, dicompot, dionaea,
                  elasticpot, emobility, endlessh, fatt, galah, glastopfv3, glutton, gopot, h0neytr4p,

@@ -23,18 +23,37 @@ def sentrypeer(ECFG):
         if line == 'jsonfail':
             continue
 
-        sentrypeer.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
+        if HONEYPOT.get('nodeid'): sentrypeer.data('analyzer_id', HONEYPOT['nodeid'])
 
-        if 'event_timestamp' in line:
+        if line.get('event_timestamp'):
             sentrypeer.data('timestamp', datetime.fromisoformat(line['event_timestamp']).strftime('%Y-%m-%d %H:%M:%S'))
             sentrypeer.data("timezone", time.strftime('%z'))
 
-        sentrypeer.data('source_address', line['source_ip']) if 'source_ip' in line else None
-        sentrypeer.data('target_address', line['destination_ip']) if 'destination_ip' in line else None
-        sentrypeer.data('source_port', '5060')
-        sentrypeer.data('target_port', '5060')
-        sentrypeer.data('source_protocol', line['transport_type'].lower()) if 'transport_type' in line else None
-        sentrypeer.data('target_protocol', line['transport_type'].lower()) if 'transport_type' in line else None
+        if line.get('source_ip'):
+            if ':' in line['source_ip']:
+                ip, port = line['source_ip'].split(':', 1)
+                sentrypeer.data('source_address', str(ip))
+                sentrypeer.data('source_port', str(port))
+            else:
+                sentrypeer.data('source_address', line['source_ip'])
+                sentrypeer.data('source_port', '5060')
+
+        if line.get('destination_ip'):
+            if ':' in line['destination_ip']:
+                ip, port = line['destination_ip'].split(':', 1)
+                sentrypeer.data('target_address', str(ip))
+                sentrypeer.data('target_port', str(port))
+            else:
+                sentrypeer.data('target_address', line['destination_ip'])
+                sentrypeer.data('target_port', '5060')
+
+        if line.get('transport_type'):
+            sentrypeer.data('source_protocol', line['transport_type'].lower())
+            sentrypeer.data('target_protocol', line['transport_type'].lower())
+        else:
+            sentrypeer.data('source_protocol', 'udp')
+            sentrypeer.data('target_protocol', 'udp')
+
 
         sentrypeer.request('description', 'Sentrypeer Honeypot')
 
