@@ -41,7 +41,7 @@ def h0neytr4p(ECFG):
         h0neytr4p.adata('user-agent_browser_version', line['user-agent_browser_version']) if 'user-agent_browser_version' in line else None
         h0neytr4p.adata('user-agent_os', line['user-agent_os']) if 'user-agent_os' in line else None
         
-        h0neytr4p.adata('trappend', line['trappend']) if 'trappend' in line else None
+        h0neytr4p.adata('trapped', line['trapped']) if 'trapped' in line else None
         h0neytr4p.adata('trapped_for', line['trapped_for']) if 'trapped_for' in line else None
         h0neytr4p.adata('request_uri', line['request_uri']) if 'request_uri' in line else None
         
