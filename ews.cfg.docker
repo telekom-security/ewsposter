@@ -200,6 +200,11 @@ miniprint = true
 nodeid = miniprint-community-01
 logfile = /data/miniprint/log/miniprint.json
 
+[RDPHONEYPOT]
+rdphoneypot = true
+nodeid = rdphoneypot-community-01
+logfile = /data/rdphoneypot/log/rdphoneypot.json
+
 [RDPY]
 rdpy = true
 nodeid = rdpy-community-01
