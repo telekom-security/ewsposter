@@ -1,6 +1,6 @@
 # EWSPOSTER
 
-**EWSPoster** is a tool, written in Python to, to **collect logs** and **alers** from differents honeypots (eq [Glastopf v3](https://github.com/mushorg/glastopf), [Dionaea](https://github.com/DinoTools/dionaea), [Honeytrap](https://github.com/tillmannw/honeytrap), [eMobility](https://github.com/telekom-security/emobility), [Conpot](https://github.com/mushorg/conpot), [Cowrie](https://github.com/cowrie/cowrie), [Elasticpot](https://gitlab.com/bontchev/elasticpot), [Rdpy](https://github.com/citronneur/rdpy), [Mailoney](https://github.com/awhitehatter/mailoney), [Vnclowpot](https://github.com/magisterquis/vnclowpot), [Heralding](https://github.com/johnnykv/heralding), [Ciscoasa](https://github.com/Cymmetria/ciscoasa_honeypot), [Tanner](https://github.com/mushorg/tanner), [Snare](https://github.com/mushorg/snare), [Glutton](https://github.com/mushorg/glutton), [Honeysap](https://github.com/SecureAuthCorp/HoneySAP), [Adbhoney](https://github.com/huuck/ADBHoney), [Ipphoney](https://gitlab.com/bontchev/ipphoney), [Dicompot](https://github.com/nsmfoo/dicompot), [Medpot](https://github.com/schmalle/medpot), [Honeypy](https://github.com/foospidy/HoneyPy), [Citrixhoneypot](https://github.com/MalwareTech/CitrixHoneypot), [redishoneypot](https://github.com/cypwnpwnsocute/RedisHoneyPot), [endlessh](https://github.com/skeeto/endlessh)), [sentrypeer](https://github.com/SentryPeer/SentryPeer), [log4pot](https://github.com/thomaspatzke/Log4Pot) also network IDS (eg [Suricata](https://github.com/OISF/suricata), [Fatt](https://github.com/0x4D31/fatt)) and transmit them to InfluxDb, JSON, Hpfeed or an Honeypot backend (eg [Peba](https://github.com/telekom-security/PEBA) or Geba).
+**EWSPoster** is a tool, written in Python to, to **collect logs** and **alers** from differents honeypots (eq [Glastopf v3](https://github.com/mushorg/glastopf), [Dionaea](https://github.com/DinoTools/dionaea), [Honeytrap](https://github.com/tillmannw/honeytrap), [eMobility](https://github.com/telekom-security/emobility), [Conpot](https://github.com/mushorg/conpot), [Cowrie](https://github.com/cowrie/cowrie), [Elasticpot](https://gitlab.com/bontchev/elasticpot), [Rdpy](https://github.com/citronneur/rdpy), rdphoneypot, [Mailoney](https://github.com/awhitehatter/mailoney), [Vnclowpot](https://github.com/magisterquis/vnclowpot), [Heralding](https://github.com/johnnykv/heralding), [Ciscoasa](https://github.com/Cymmetria/ciscoasa_honeypot), [Tanner](https://github.com/mushorg/tanner), [Snare](https://github.com/mushorg/snare), [Glutton](https://github.com/mushorg/glutton), [Honeysap](https://github.com/SecureAuthCorp/HoneySAP), [Adbhoney](https://github.com/huuck/ADBHoney), [Ipphoney](https://gitlab.com/bontchev/ipphoney), [Dicompot](https://github.com/nsmfoo/dicompot), [Medpot](https://github.com/schmalle/medpot), [Honeypy](https://github.com/foospidy/HoneyPy), [Citrixhoneypot](https://github.com/MalwareTech/CitrixHoneypot), [redishoneypot](https://github.com/cypwnpwnsocute/RedisHoneyPot), [endlessh](https://github.com/skeeto/endlessh)), [sentrypeer](https://github.com/SentryPeer/SentryPeer), [log4pot](https://github.com/thomaspatzke/Log4Pot) also network IDS (eg [Suricata](https://github.com/OISF/suricata), [Fatt](https://github.com/0x4D31/fatt)) and transmit them to InfluxDb, JSON, Hpfeed or an Honeypot backend (eg [Peba](https://github.com/telekom-security/PEBA) or Geba).
 
 # Requirements
 You need to install the libarys list in requirements.txt
@@ -14,7 +14,7 @@ Take a look at the usage text.
     usage: ews.py [-h] [-c CONFIGPATH] [-v] [-d] [-l LOOP]
               [-m {adbhoney,ciscoasa,citrix,conpot,cowrie,dicompot,dionaea,elasticpot,emobility,endlessh,
                    fatt,glastopfv3,glutton,heralding,honeypy,honeysap,honeytrap,ipphoney,log4pot,mailoney,
-                   medpot,rdpy,redishoneypot,sentrypeer,suricata,tanner,vnclowpot,wordpot}]
+                   medpot,rdphoneypot,rdpy,redishoneypot,sentrypeer,suricata,tanner,vnclowpot,wordpot}]
               [-s] [-i] [-S] [-E] [-j JSONPATH] [-L SENDLIMIT] [-V]
 
     optional arguments:
@@ -38,7 +38,8 @@ Take a look at the usage text.
                     honeytrap, ipphoney,
                     log4pot, mailoney,
                     medpot, miniprint,
-                    rdpy, redishoneypot,
+                    rdphoneypot, rdpy,
+                    redishoneypot,
                     sentrypeer, suricata,
                     tanner, vnclowpot,
                     wordpot
@@ -54,5 +55,4 @@ Take a look at the usage text.
 Take a look at the example **ews.cfg.default** and copy it via
 
     cp ews.cfg.default ews.cfg
-
 

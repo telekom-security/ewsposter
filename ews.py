@@ -14,8 +14,8 @@ from honeypots import (
     adbhoney, beelzebub, ciscoasa, citrix, conpot, cowrie, ddospot, dicompot, dionaea,
     elasticpot, emobility, endlessh, fatt, galah, glastopfv3, glutton, gopot, h0neytr4p,
     hellpot, heralding, honeyaml, honeypots, honeypy, honeysap, honeytrap, ipphoney,
-    log4pot, mailoney, medpot, miniprint, rdpy, redishoneypot, sentrypeer, suricata,
-    tanner, vnclowpot, wordpot
+    log4pot, mailoney, medpot, miniprint, rdphoneypot, rdpy, redishoneypot, sentrypeer,
+    suricata, tanner, vnclowpot, wordpot
 )
 
 if __name__ == "__main__":
@@ -26,8 +26,8 @@ if __name__ == "__main__":
     functions = [adbhoney, beelzebub, ciscoasa, citrix, conpot, cowrie, ddospot, dicompot, dionaea,
                  elasticpot, emobility, endlessh, fatt, galah, glastopfv3, glutton, gopot, h0neytr4p,
                  hellpot, heralding, honeyaml, honeypots, honeypy, honeysap, honeytrap, ipphoney,
-                 log4pot, mailoney, medpot, miniprint, rdpy, redishoneypot, sentrypeer, suricata,
-                 tanner, vnclowpot, wordpot]
+                 log4pot, mailoney, medpot, miniprint, rdphoneypot, rdpy, redishoneypot,
+                 sentrypeer, suricata, tanner, vnclowpot, wordpot]
 
     ECFG = ecfg(name, version, functions)
     locksocket(name, ECFG['logdir'])
