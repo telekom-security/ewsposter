@@ -265,7 +265,12 @@ class EAlert:
         keywords = ("description", 'url', 'binary', 'request', 'raw', 'payload', 'largepayload')
 
         if key in keywords:
-            self.REQUEST[key] = value
+            if key in self.REQUEST:
+                if not isinstance(self.REQUEST[key], list):
+                    self.REQUEST[key] = [self.REQUEST[key]]
+                self.REQUEST[key].append(value)
+            else:
+                self.REQUEST[key] = value
         else:
             self.logger.error(f"Unknow keyword in request {key} = {value}.", '1E')
             return(False)
@@ -294,7 +299,11 @@ class EAlert:
             etree.SubElement(Alert, "Classification", origin=self.DATA["corigin"], ident=self.DATA["cident"], text=self.DATA["ctext"])
 
         for key, value in list(self.REQUEST.items()):
-            etree.SubElement(Alert, "Request", type=key).text = value
+            if isinstance(value, list):
+                for item in value:
+                    etree.SubElement(Alert, "Request", type=key).text = item
+            else:
+                etree.SubElement(Alert, "Request", type=key).text = value
 
         for key, value in list(self.ADATA.items()):
             if isinstance(value, int):
@@ -365,7 +374,11 @@ class EAlert:
         print(f'-- REQUEST ----------------------------------')
 
         for key, value in list(self.REQUEST.items()):
-            print(f'{key} : {value}')
+            if isinstance(value, list):
+                for item in value:
+                    print(f'{key} : {item}')
+            else:
+                print(f'{key} : {value}')
 
         print(f'-- ADATA ------------------------------------')
 

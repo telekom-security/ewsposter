@@ -188,7 +188,8 @@ logfile = /data/log4pot/log/log4pot.log
 [MAILONEY]
 mailoney = true
 nodeid = mailoney-community-01
-logfile = /data/mailoney/log/commands.log
+logfile = /data/mailoney/log/log.json
+malwaredir = /data/mailoney/log/mails
 
 [MEDPOT]
 medpot = true
