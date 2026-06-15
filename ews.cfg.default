@@ -188,7 +188,8 @@ logfile = /opt/log4pot/log/log4pot.log
 [MAILONEY]
 mailoney = false
 nodeid = <your unique analyzer id>
-logfile = /opt/mailoney/commands.log
+logfile = /opt/mailoney/log/log.json
+malwaredir = /opt/mailoney/log/mails
 
 [MEDPOT]
 medpot = false
