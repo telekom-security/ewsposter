@@ -199,7 +199,7 @@ logfile = /opt/medpot/log/medpot.log
 miniprint = false
 nodeid = <your unique analyzer id>
 logfile = /opt/miniprint/log/miniprint.json
-uploaddir = /opt/miniprint/uploads
+malwaredir = /opt/miniprint/uploads
 
 [RDPY]
 rdpy = false

@@ -199,6 +199,7 @@ logfile = /data/medpot/log/medpot.log
 miniprint = true
 nodeid = miniprint-community-01
 logfile = /data/miniprint/log/miniprint.json
+malwaredir = /data/miniprint/uploads
 
 [RDPY]
 rdpy = true
