@@ -233,4 +233,5 @@ logfile = /data/vnclowpot/log/vnclowpot.log
 [WORDPOT]
 wordpot = true
 nodeid = wordpot-community-01
-logfile = /data/wordpot/log/wordpot.log
+logfile = /data/wordpot/log/wordpot.json
+payloaddir = /data/wordpot/log/payloads

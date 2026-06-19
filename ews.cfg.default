@@ -234,4 +234,5 @@ logfile = /opt/vnclowpot/log/vnclowpot.log
 [WORDPOT]
 wordpot = false
 nodeid = <your unique analyzer id>
-logfile = /opt/wordpot/log/wordpot.log
+logfile = /opt/wordpot/logs/wordpot.json
+payloaddir = /opt/wordpot/logs/payloads
