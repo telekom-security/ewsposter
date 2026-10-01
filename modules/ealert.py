@@ -49,6 +49,11 @@ class EAlert:
         else:
             linecounter = linenumber
 
+        # Python >= 3.13 returns '\n' for line 1 of an empty file, not ''
+        if not os.path.isfile(filename) or os.path.getsize(filename) == 0:
+            linecache.clearcache()
+            return()
+
         lcache = linecache.getline(filename, linecounter)
 
         if linenumber is None and lcache != '':
