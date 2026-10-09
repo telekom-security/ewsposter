@@ -234,4 +234,4 @@ logfile = /data/vnclowpot/log/vnclowpot.log
 wordpot = true
 nodeid = wordpot-community-01
 logfile = /data/wordpot/log/wordpot.json
-payloaddir = /data/wordpot/log/payloads
+malwaredir = /data/wordpot/log/payloads

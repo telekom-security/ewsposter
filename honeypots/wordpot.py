@@ -1,100 +1,281 @@
-from datetime import datetime
+# honeypots/wordpot.py
+
+import base64
 import ipaddress
 import json
-import os
 import time
+from datetime import datetime
+from pathlib import Path
 from urllib import parse
 
-from modules.ealert import EAlert
+
+MAX_PAYLOAD_SIZE = 10 * 1024 * 1024
+SMALL_PAYLOAD_SIZE = 5 * 1024
+DEFAULT_TARGET_PORT = '80'
+URL_SAFE_CHARS = "/?&=%:@+;,"
+
+""" Wordpot JSONL fields forwarded as AdditionalData (plugin only exists in legacy lines) """
+ADATA_FIELDS = (
+    'browser_family',
+    'browser_version',
+    'os_family',
+    'os_version',
+    'device_family',
+    'user_agent',
+    'method',
+    'technique',
+    'component_type',
+    'component_slug',
+    'profile_id',
+    'request_id',
+    'response_status',
+    'username',
+    'password',
+    'payload_sha256',
+    'payload_size',
+    'details',
+    'plugin',
+)
+
+""" Techniques whose stored request body is an exploit payload worth submitting """
+EXPLOIT_TECHNIQUES = (
+    'upload_followup',
+    'webshell_login',
+    'webshell_command',
+    'xmlrpc_multicall',
+    'xmlrpc_pingback',
+    'rest_user_write_attempt',
+    'rest_post_write_attempt',
+    'admin_ajax_action',
+)
+
+""" Login bodies carry credentials only and are never submitted as payload """
+LOGIN_TECHNIQUES = ('credential_attempt', 'xmlrpc_login')
 
 
-SMALL_PAYLOAD_LIMIT = 5 * 1024
+def _parse_timestamp(value):
+    if not value:
+        return(None, None)
 
-
-def _compact(value):
-    if isinstance(value, (dict, list)):
-        return json.dumps(value, sort_keys=True, separators=(',', ':'))
-    if isinstance(value, bool):
-        return str(value).lower()
-    return value
-
-
-def _adata(alert, key, value):
-    if value is None or value == "":
-        return
-    alert.adata(key, _compact(value))
-
-
-def _event_ip(value, default):
+    timestamp = str(value)
     try:
-        ipaddress.ip_address(str(value))
-        return str(value)
-    except (ipaddress.AddressValueError, ValueError):
-        return default
-
-
-def _event_timestamp(value):
-    return datetime.fromisoformat(str(value).replace("Z", "+00:00")).strftime('%Y-%m-%d %H:%M:%S')
-
-
-def _event_port(value, default):
-    if value is None or value == "":
-        return str(default)
-    return str(value)
-
-
-def _safe_payload_ref(payload_ref):
-    if not payload_ref:
-        return None
-
-    payload_ref = os.path.normpath(str(payload_ref).replace("/", os.sep))
-    if os.path.isabs(payload_ref) or payload_ref == "." or payload_ref.startswith(".." + os.sep) or payload_ref == "..":
-        return None
-    return payload_ref
-
-
-def _payload_ref_from_event(line, payloaddir):
-    payload_ref = _safe_payload_ref(line.get('payload_ref'))
-    if payload_ref:
-        return payload_ref
-
-    payload_path = line.get('payload_path')
-    if not payload_path:
-        return None
-
-    payload_dir = os.path.realpath(payloaddir)
-    payload_path = os.path.realpath(str(payload_path))
-    try:
-        if os.path.commonpath([payload_dir, payload_path]) == payload_dir:
-            return _safe_payload_ref(os.path.relpath(payload_path, payload_dir))
+        if timestamp.endswith("Z"):
+            timestamp = timestamp[:-1] + "+00:00"
+        parsed = datetime.fromisoformat(timestamp)
     except ValueError:
-        return None
-    return None
+        return(None, None)
+
+    timezone = parsed.strftime('%z') or time.strftime('%z')
+    return(parsed.strftime('%Y-%m-%d %H:%M:%S'), timezone)
 
 
-def _send_payload(alert, honeypot, ecfg, line):
-    if ecfg.get('send_malware') is not True or line.get('payload_stored') is not True:
-        return
+def _normalize_ip(value):
+    """ IPv4-mapped IPv6 (::ffff:a.b.c.d) from dual-stack listeners -> IPv4, invalid -> None """
+    if not value:
+        return(None)
 
-    payload_ref = _payload_ref_from_event(line, honeypot['payloaddir'])
-    if not payload_ref:
-        return
+    try:
+        address = ipaddress.ip_address(str(value))
+    except ValueError:
+        return(None)
 
-    checksum = line.get('payload_sha256') or payload_ref
-    error, payload = alert.malwarecheck(honeypot['payloaddir'], payload_ref, False, checksum)
-    if error is not True or not payload:
-        return
+    if address.version == 6 and address.ipv4_mapped is not None:
+        return(str(address.ipv4_mapped))
+    return(str(address))
 
-    if len(payload) <= SMALL_PAYLOAD_LIMIT:
-        alert.request('binary', payload.decode('utf-8'))
+
+def _normalize_port(value, default):
+    if isinstance(value, bool):
+        return(default)
+
+    try:
+        port = int(str(value))
+    except (TypeError, ValueError):
+        return(default)
+
+    if 1 <= port <= 65535:
+        return(str(port))
+    return(default)
+
+
+def _compact_value(value):
+    if isinstance(value, bool):
+        return("true" if value else "false")
+    if isinstance(value, (dict, list)):
+        return(json.dumps(value, ensure_ascii=False, separators=(',', ':')))
+    return(value)
+
+
+def _is_empty(value):
+    return(value is None or value == "" or value == [] or value == {})
+
+
+def _event_url(line):
+    """ Request target as path?query; legacy lines carry an absolute url instead """
+    if line.get('path'):
+        url = str(line['path'])
+        if line.get('query'):
+            url = f"{url}?{line['query']}"
+    elif line.get('url'):
+        parts = parse.urlsplit(str(line['url']))
+        url = parts.path or "/"
+        if parts.query:
+            url = f"{url}?{parts.query}"
     else:
+        return(None)
+
+    return(parse.quote(url.encode('ascii', 'ignore'), safe=URL_SAFE_CHARS))
+
+
+def _event_additional_data(line):
+    adata = {}
+
+    for key in ADATA_FIELDS:
+        value = line.get(key)
+        if _is_empty(value):
+            continue
+        adata[key] = _compact_value(value)
+
+    return(adata)
+
+
+def _is_exploit_payload(line):
+    technique = str(line.get('technique') or "")
+
+    if technique in LOGIN_TECHNIQUES:
+        return(False)
+
+    return(line.get('component_type') == 'upload'
+           or technique in EXPLOIT_TECHNIQUES
+           or technique.endswith('_lure_payload'))
+
+
+def _resolve_malware_path(malwaredir, filename):
+    """ Only relative refs that resolve (incl. symlinks) inside malwaredir """
+    if not malwaredir or not filename:
+        return(None)
+
+    candidate = Path(str(filename))
+    if candidate.is_absolute():
+        return(None)
+
+    base = Path(malwaredir).resolve()
+    resolved = (base / candidate).resolve()
+
+    try:
+        resolved.relative_to(base)
+    except ValueError:
+        return(None)
+
+    return(resolved)
+
+
+def _payload_file(alert, malwaredir, filename):
+    payload_file = _resolve_malware_path(malwaredir, filename)
+
+    if payload_file is None:
+        alert.logger.warning(f"Wordpot payload_ref {filename} is outside malwaredir {malwaredir}. Not send.", '2')
+        return(None)
+
+    if not payload_file.is_file():
+        alert.logger.warning(f"Wordpot payload file {payload_file} does not exist. Not send.", '2')
+        return(None)
+
+    if payload_file.stat().st_size > MAX_PAYLOAD_SIZE:
+        alert.logger.warning(f"Wordpot payload file {payload_file} is bigger than 10 MB. Not send.", '2')
+        return(None)
+
+    return(payload_file)
+
+
+def _attach_payload(alert, payload_file, checksum, remove_after_send=False):
+    if alert.md5malware(checksum) is False:
+        alert.logger.warning(f"Wordpot payload {checksum} already submitted.", '2')
+        return(False)
+
+    payload = base64.b64encode(payload_file.read_bytes())
+    if remove_after_send is True:
+        payload_file.unlink()
+
+    if len(payload) <= SMALL_PAYLOAD_SIZE and len(payload) > 0:
+        alert.request('binary', payload.decode('utf-8'))
+    elif len(payload) > 0:
         alert.request('largepayload', payload.decode('utf-8'))
+    else:
+        return(False)
+
+    return(True)
+
+
+def _attach_event_payload(alert, line, HONEYPOT, ECFG):
+    """ One payload per alert: the stored exploit body referenced by payload_ref """
+    if ECFG.get('send_malware') is not True or line.get('payload_stored') is not True:
+        return(False)
+    if not _is_exploit_payload(line):
+        return(False)
+
+    checksum = line.get('payload_sha256')
+    if not checksum or not line.get('payload_ref'):
+        return(False)
+
+    payload_file = _payload_file(alert, HONEYPOT.get('malwaredir'), line['payload_ref'])
+    if payload_file is None:
+        return(False)
+
+    return(_attach_payload(alert, payload_file, str(checksum), ECFG.get('del_malware_after_send', False)))
+
+
+def _build_event(line, HONEYPOT, ECFG):
+    if not isinstance(line, dict):
+        return(None)
+
+    source_address = _normalize_ip(line.get('src_ip'))
+    if source_address is None:
+        return(None)
+
+    timestamp, timezone = _parse_timestamp(line.get('timestamp'))
+    if timestamp is None:
+        return(None)
+
+    """ dest_ip may be derived from the attacker controlled Host header, always report ip_ext """
+    event = {
+        'data': {
+            'timestamp': timestamp,
+            'timezone': timezone,
+            'source_address': source_address,
+            'target_address': ECFG['ip_ext'],
+            'source_port': _normalize_port(line.get('src_port'), '0'),
+            'target_port': _normalize_port(line.get('dest_port'), DEFAULT_TARGET_PORT),
+            'source_protocol': 'tcp',
+            'target_protocol': 'tcp',
+        },
+        'request': {
+            'description': "Wordpot Honeypot",
+        },
+        'adata': _event_additional_data(line),
+    }
+
+    url = _event_url(line)
+    if url:
+        event['request']['url'] = url
+
+    if HONEYPOT.get('nodeid'):
+        event['data']['analyzer_id'] = HONEYPOT['nodeid']
+
+    event['adata']['hostname'] = ECFG['hostname']
+    event['adata']['externalIP'] = ECFG['ip_ext']
+    event['adata']['internalIP'] = ECFG['ip_int']
+    event['adata']['uuid'] = ECFG['uuid']
+
+    return(event)
 
 
 def wordpot(ECFG):
+    from modules.ealert import EAlert
+
     wordpot = EAlert('wordpot', ECFG)
 
-    ITEMS = ['wordpot', 'nodeid', 'logfile', 'payloaddir']
+    ITEMS = ['wordpot', 'nodeid', 'logfile', 'malwaredir']
     HONEYPOT = (wordpot.readCFG(ITEMS, ECFG['cfgfile']))
 
     if HONEYPOT.get('wordpot').lower() == "false":
@@ -108,41 +289,22 @@ def wordpot(ECFG):
             break
         if line == 'jsonfail':
             continue
-        
-        if HONEYPOT.get('nodeid'): wordpot.data('analyzer_id', HONEYPOT['nodeid'])
 
-        if line.get('timestamp'):
-            wordpot.data('timestamp', _event_timestamp(line['timestamp']))
-            wordpot.data('timezone', time.strftime('%z'))
-        
-        if line.get('src_ip'): wordpot.data('source_address', line['src_ip']) 
-        wordpot.data('target_address', _event_ip(line.get('dest_ip'), ECFG['ip_ext']))
-        wordpot.data('source_port', _event_port(line.get('src_port'), 0))
-        wordpot.data('target_port', _event_port(line.get('dest_port'), 80))
-        wordpot.data('source_protocol', "tcp")
-        wordpot.data('target_protocol', "tcp")
+        event = _build_event(line, HONEYPOT, ECFG)
+        if event is None:
+            continue
 
-        wordpot.request("description", "Wordpot Honeypot")
-        if line.get('url'): wordpot.request("url", parse.quote(str(line['url']).encode('ascii', 'ignore')))
-        _send_payload(wordpot, HONEYPOT, ECFG, line)
+        for key, value in event['data'].items():
+            wordpot.data(key, value)
+        for key, value in event['request'].items():
+            wordpot.request(key, value)
+        for key, value in event['adata'].items():
+            wordpot.adata(key, value)
 
-        for element in [
-            'browser_family', 'browser_version', 'os_family', 'os_version', 'device_family',
-            'user_agent', 'url', 'method', 'path', 'query', 'profile_id', 'request_id',
-            'component_type', 'component_slug', 'technique', 'response_status',
-            'payload_sha256', 'payload_excerpt', 'payload_size', 'payload_stored',
-            'payload_ref', 'payload_path', 'username', 'password', 'plugin',
-            'dest_ip', 'headers_subset', 'details', 'credentials_observed',
-        ]:
-            _adata(wordpot, element, line.get(element))
-
-        wordpot.adata('hostname', ECFG['hostname'])
-        wordpot.adata('externalIP', ECFG['ip_ext'])
-        wordpot.adata('internalIP', ECFG['ip_int'])
-        wordpot.adata('uuid', ECFG['uuid'])
+        _attach_event_payload(wordpot, line, HONEYPOT, ECFG)
 
         if wordpot.buildAlert() == "sendlimit":
             break
 
     wordpot.finAlert()
-    return()            
+    return()

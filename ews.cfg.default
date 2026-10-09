@@ -235,4 +235,4 @@ logfile = /opt/vnclowpot/log/vnclowpot.log
 wordpot = false
 nodeid = <your unique analyzer id>
 logfile = /opt/wordpot/logs/wordpot.json
-payloaddir = /opt/wordpot/logs/payloads
+malwaredir = /opt/wordpot/logs/payloads
