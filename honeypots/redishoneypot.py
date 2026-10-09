@@ -31,6 +31,11 @@ REDIS_METADATA_FIELDS = (
     'module_subcommand', 'module_path',
     'auth_username', 'auth_password_length', 'auth_password_sha256',
     'client_subcommand',
+    'value_text', 'value_truncated',
+    'script_sha1', 'script_sha256', 'script_size', 'script_text',
+    'script_truncated', 'script_numkeys',
+    'target_dir', 'target_dbfilename',
+    'ioc_urls', 'ioc_ips', 'ioc_domains', 'ioc_count',
     'error', 'max_bulk_bytes', 'max_inline_bytes', 'max_array_elems',
 )
 
@@ -113,7 +118,9 @@ def redishoneypot(ECFG):
         redishoneypot.data('timestamp', timestamp)
         redishoneypot.data('timezone', time.strftime('%z'))
 
-        target_address = line.get('dest_ip') or ECFG['ip_ext']
+        # dest_ip is the container address on the Docker bridge, so the
+        # sensor's external IP is reported like for the other T-Pot honeypots.
+        target_address = ECFG['ip_ext']
         target_port = line.get('dest_port') or '6379'
         network = line.get('network') or 'tcp'
 
