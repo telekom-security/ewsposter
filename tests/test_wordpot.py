@@ -279,11 +279,12 @@ class WordpotPayloadTests(unittest.TestCase):
         self.assertEqual(alert.submitted, set())
 
     def test_login_bodies_are_not_sent(self):
-        for technique in ("credential_attempt", "xmlrpc_login"):
+        for technique in ("credential_attempt", "xmlrpc_login", "webshell_login"):
             with self.subTest(technique=technique):
                 alert = FakeAlert()
 
-                self.assertFalse(wordpot._attach_event_payload(alert, _line(technique=technique), self.hcfg, self.ecfg))
+                component_type = "upload" if technique == "webshell_login" else "core"
+                self.assertFalse(wordpot._attach_event_payload(alert, _line(technique=technique, component_type=component_type), self.hcfg, self.ecfg))
                 self.assertEqual(alert.requests, [])
                 self.assertEqual(alert.submitted, set())
 

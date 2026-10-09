@@ -40,7 +40,6 @@ ADATA_FIELDS = (
 """ Techniques whose stored request body is an exploit payload worth submitting """
 EXPLOIT_TECHNIQUES = (
     'upload_followup',
-    'webshell_login',
     'webshell_command',
     'xmlrpc_multicall',
     'xmlrpc_pingback',
@@ -50,7 +49,7 @@ EXPLOIT_TECHNIQUES = (
 )
 
 """ Login bodies carry credentials only and are never submitted as payload """
-LOGIN_TECHNIQUES = ('credential_attempt', 'xmlrpc_login')
+LOGIN_TECHNIQUES = ('credential_attempt', 'xmlrpc_login', 'webshell_login')
 
 
 def _parse_timestamp(value):
