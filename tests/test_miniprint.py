@@ -8,6 +8,7 @@ import tempfile
 import types
 import unittest
 from unittest import mock
+from datetime import UTC, datetime
 
 
 stub_ealert = types.ModuleType("modules.ealert")
@@ -22,6 +23,8 @@ SPEC.loader.exec_module(miniprint_module)
 
 class FakeEAlert:
     instances = []
+    counters = {}
+    indexes = {}
 
     def __init__(self, modul, ECFG):
         self.MODUL = modul.upper()
@@ -30,7 +33,7 @@ class FakeEAlert:
         self.REQUEST = {}
         self.ADATA = {}
         self.alerts = []
-        self.line_index = 0
+        self.line_index = FakeEAlert.counters.get(modul.upper(), 1) - 1
         self.lines = None
         self.malware_seen = set()
         self.fin_called = False
@@ -39,11 +42,7 @@ class FakeEAlert:
     def readCFG(self, items, file):
         config = configparser.ConfigParser()
         config.read(file)
-        return {
-            item: config.get(self.MODUL, item)
-            for item in items
-            if config.has_option(self.MODUL, item)
-        }
+        return {item: config.get(self.MODUL, item) for item in items if config.has_option(self.MODUL, item)}
 
     def lineREAD(self, filename, format="json", linenumber=None, item="index", debugoutput=False):
         del format, linenumber, item, debugoutput
@@ -51,10 +50,24 @@ class FakeEAlert:
             with open(filename, encoding="utf-8") as handle:
                 self.lines = handle.readlines()
         if self.line_index >= len(self.lines):
-            return()
+            return ()
         line = self.lines[self.line_index]
         self.line_index += 1
+        FakeEAlert.counters[self.MODUL] = self.line_index + 1
         return json.loads(line)
+
+    def alertCount(self, section, counting, item="index", setto=1):
+        if counting == "get_counter":
+            return FakeEAlert.counters.get(section, 1)
+        if counting == "set_counter":
+            FakeEAlert.counters[section] = setto
+
+    def fileIndex(self, filename, action, content=None):
+        index = FakeEAlert.indexes.setdefault(filename, [])
+        if action == "read":
+            return list(index)
+        if action == "write":
+            index.append(content)
 
     def data(self, key, value):
         self.DATA[key] = value
@@ -69,11 +82,13 @@ class FakeEAlert:
         return True
 
     def buildAlert(self):
-        self.alerts.append({
-            "data": dict(self.DATA),
-            "request": dict(self.REQUEST),
-            "adata": dict(self.ADATA),
-        })
+        self.alerts.append(
+            {
+                "data": dict(self.DATA),
+                "request": dict(self.REQUEST),
+                "adata": dict(self.ADATA),
+            }
+        )
         self.DATA.clear()
         self.REQUEST.clear()
         self.ADATA.clear()
@@ -84,16 +99,16 @@ class FakeEAlert:
 
     def malwarecheck(self, malwaredir, malwarefile, localremove, md5filechecksum=None):
         if md5filechecksum in self.malware_seen:
-            return(False, None)
+            return (False, None)
         self.malware_seen.add(md5filechecksum)
         path = os.path.join(malwaredir, malwarefile)
         if not os.path.isfile(path):
-            return(False, None)
+            return (False, None)
         with open(path, "rb") as handle:
             payload = handle.read()
         if localremove:
             os.remove(path)
-        return(True, base64.b64encode(payload))
+        return (True, base64.b64encode(payload))
 
 
 class MiniprintTest(unittest.TestCase):
@@ -104,6 +119,8 @@ class MiniprintTest(unittest.TestCase):
         self.uploads = os.path.join(self.root, "uploads")
         os.mkdir(self.uploads)
         FakeEAlert.instances = []
+        FakeEAlert.counters = {}
+        FakeEAlert.indexes = {}
         self.patch = mock.patch.object(miniprint_module, "EAlert", FakeEAlert)
         self.patch.start()
 
@@ -138,6 +155,162 @@ class MiniprintTest(unittest.TestCase):
         }
         miniprint_module.miniprint(ECFG)
         return FakeEAlert.instances[-1].alerts
+
+    def recent(self, sid, **fields):
+        return {
+            "session_id": sid,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "src_ip": "203.0.113.1",
+            "src_port": 1234,
+            "dest_ip": "198.51.100.2",
+            "dest_port": 80,
+            **fields,
+        }
+
+    def test_open_session_rewinds_and_closed_session_is_not_resent(self):
+        records = [
+            self.recent("open", event="connection"),
+            self.recent("closed", event="connection_closed", session_end="done"),
+        ]
+        alerts = self.run_miniprint(records)
+        self.assertEqual([a["adata"]["session_id"] for a in alerts], ["closed"])
+        self.assertEqual(FakeEAlert.counters["MINIPRINT"], 1)
+        records.append(self.recent("open", event="http_connection_closed", session_end="done"))
+        alerts = self.run_miniprint(records)
+        self.assertEqual([a["adata"]["session_id"] for a in alerts], ["open"])
+        self.assertEqual(self.run_miniprint(records), [])
+
+    def test_request_text_is_xml_compatible(self):
+        records = [
+            self.recent(
+                "binary-probe",
+                event="unknown_command",
+                command="\x1bPJL\x00",
+                payload_preview="probe\x00\x1b\uffff\ud800\t\ntext",
+            ),
+            self.recent("binary-probe", event="connection_closed", session_end="done"),
+        ]
+        alert = self.run_miniprint(records)[0]
+        self.assertEqual(alert["request"]["request"], "PJL")
+        self.assertEqual(alert["request"]["payload"], "probe\t\ntext")
+
+    def test_empty_connections_are_skipped_by_default(self):
+        alerts = self.run_miniprint([self.recent("empty", event="empty_connection", session_end="done")])
+        self.assertEqual(alerts, [])
+
+    def test_http_requests_secret_union_and_schema_fields(self):
+        records = [
+            self.recent(
+                "s",
+                event="serial_leak_probe",
+                request="GET",
+                url="/etc/mnt_info.csv",
+                persona="brother",
+                secret_supplied=False,
+                cve_hint="CVE-2024-51977",
+            ),
+            self.recent(
+                "s",
+                event="default_password_success",
+                request="POST",
+                url="/login",
+                secret_supplied=True,
+                cve_hint="CVE-2024-51978,CVE-2024-51977",
+            ),
+            self.recent("s", event="fsquery", virtual_path="/x"),
+            self.recent("s", event="http_connection_closed", session_end="done"),
+        ]
+        alert = self.run_miniprint(records)[0]
+        self.assertEqual(alert["request"]["request"], "GET /etc/mnt_info.csv\nPOST /login")
+        self.assertTrue(alert["adata"]["secret_supplied"])
+        self.assertEqual(alert["adata"]["cve_hint"], "CVE-2024-51977,CVE-2024-51978")
+        self.assertEqual(alert["adata"]["virtual_path"], "/x")
+        self.assertEqual(alert["adata"]["persona"], "brother")
+
+    def test_best_artifact_is_selected_and_all_are_summarized(self):
+        for name, payload in [("raw.prn", b"raw"), ("job.ps", b"print"), ("firmware.bin", b"firmware")]:
+            with open(os.path.join(self.uploads, name), "wb") as handle:
+                handle.write(payload)
+        records = [
+            self.recent("s", event="fsappend", file_name="/virtual", size=17),
+            self.recent(
+                "s", event="save_print_job", file_name="raw.prn", artifact_type="raw", payload_sha256="r", size=3
+            ),
+            self.recent(
+                "s",
+                event="save_print_job",
+                file_name="job.ps",
+                artifact_type="ps",
+                language="POSTSCRIPT",
+                payload_sha256="p",
+                size=5,
+            ),
+            self.recent(
+                "s",
+                event="save_firmware",
+                file_name="firmware.bin",
+                artifact_type="firmware",
+                payload_sha256="f",
+                size=8,
+            ),
+            self.recent("s", event="request_too_large", size=9000, limit=8000),
+            self.recent("s", event="connection_closed", session_end="done"),
+        ]
+        alert = self.run_miniprint(records)[0]
+        self.assertEqual(alert["request"]["binary"], base64.b64encode(b"firmware").decode())
+        self.assertEqual(alert["adata"]["artifact_size"], 8)
+        self.assertEqual(alert["adata"]["request_too_large_size"], 9000)
+        self.assertIn("job.ps:p", alert["adata"]["artifacts"])
+        self.assertNotIn("/virtual", alert["adata"]["file_name"])
+
+    def test_sendlimit_rewinds_only_remaining_sessions(self):
+        records = [
+            self.recent("s", event="connection_closed", session_end="done"),
+            self.recent("t", event="connection_closed", session_end="done"),
+        ]
+        original = FakeEAlert.buildAlert
+
+        def limited(instance):
+            original(instance)
+            return "sendlimit"
+
+        with mock.patch.object(FakeEAlert, "buildAlert", limited):
+            alerts = self.run_miniprint(records)
+        self.assertEqual([a["adata"]["session_id"] for a in alerts], ["s"])
+        self.assertEqual(FakeEAlert.counters["MINIPRINT"], 2)
+        alerts = self.run_miniprint(records)
+        self.assertEqual([a["adata"]["session_id"] for a in alerts], ["t"])
+
+    def test_empty_connections_can_be_enabled(self):
+        cfgfile = self.write_config()
+        with open(cfgfile, "a") as handle:
+            handle.write("send_empty_connections = true\n")
+        with mock.patch.object(self, "write_config", return_value=cfgfile):
+            alerts = self.run_miniprint([self.recent("empty", event="empty_connection", session_end="done")])
+        self.assertEqual(len(alerts), 1)
+
+    def test_abandoned_session_times_out_after_ten_minutes(self):
+        record = self.recent("abandoned", event="connection")
+        record["timestamp"] = "2020-01-01T00:00:00Z"
+        self.assertEqual(len(self.run_miniprint([record])), 1)
+
+    def test_larger_artifact_wins_within_same_priority(self):
+        records = []
+        for name, size in [("small.ps", 2), ("big.pdf", 7)]:
+            with open(os.path.join(self.uploads, name), "wb") as handle:
+                handle.write(b"x" * size)
+            records.append(
+                self.recent(
+                    "s",
+                    event="save_print_job",
+                    file_name=name,
+                    size=size,
+                    payload_sha256=name,
+                    artifact_type=name.split(".")[-1],
+                )
+            )
+        records.append(self.recent("s", event="connection_closed", session_end="done"))
+        self.assertEqual(self.run_miniprint(records)[0]["request"]["binary"], base64.b64encode(b"x" * 7).decode())
 
     def test_http_ssrf_session_builds_one_alert(self):
         session = "fa054f81-040f-41a1-a01f-2572ca7c7f83"
@@ -196,7 +369,7 @@ class MiniprintTest(unittest.TestCase):
         alert = alerts[0]
         self.assertEqual(alert["data"]["source_port"], "55456")
         self.assertEqual(alert["request"]["url"], "/network/config?url=http://169.254.169.254/probe")
-        self.assertEqual(alert["request"]["request"], "GET")
+        self.assertEqual(alert["request"]["request"], "GET /network/config?url=http://169.254.169.254/probe")
         self.assertEqual(alert["adata"]["session_id"], session)
         self.assertEqual(alert["adata"]["protocol"], "http")
         self.assertIn("ssrf_probe", alert["adata"]["event"])
@@ -340,7 +513,7 @@ class MiniprintTest(unittest.TestCase):
         self.assertEqual(alert["adata"]["append_raw_print_job_count"], 2)
         self.assertEqual(alert["adata"]["append_raw_print_job_bytes"], 8192)
         self.assertEqual(alert["adata"]["file_name"], file_name)
-        self.assertEqual(alert["adata"]["size"], 65536)
+        self.assertEqual(alert["adata"]["artifact_size"], 65536)
 
     def test_missing_artifact_does_not_drop_session_alert(self):
         records = [
