@@ -5,6 +5,12 @@ import re
 from modules.ealert import EAlert
 from datetime import datetime
 
+def cowrieTelnet(session):
+    """ Telnet by the protocol of cowrie.session.connect, else by the target port (an integer in cowrie.json) """
+    if session.get('protocol'):
+        return str(session['protocol']).lower() == "telnet"
+    return str(session.get('target_port')) in ("23", "2323")
+
 def cowrie(ECFG):
     cowrie = EAlert('cowrie', ECFG)
 
@@ -87,7 +93,7 @@ def cowrie(ECFG):
         cowrie.data('source_protocol', 'tcp')
         cowrie.data('target_protocol', 'tcp')
 
-        if cowrieSessions[session]['target_port'] == "23" or cowrieSessions[session]['target_port'] == "2323":
+        if cowrieTelnet(cowrieSessions[session]):
             cowrie.request("description", "Telnet Honeypot Cowrie")
         else:
             cowrie.request("description", "SSH Honeypot Cowrie")
