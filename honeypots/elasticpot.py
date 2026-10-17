@@ -27,7 +27,11 @@ def elasticpot(ECFG):
         elasticpot.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
         if 'timestamp' in line:
-            elasticpot.data('timestamp',datetime.fromisoformat(line['timestamp']).strftime('%Y-%m-%d %H:%M:%S'))
+            timestamp = line['timestamp']
+            if timestamp.endswith('+00:00Z'):
+                timestamp = timestamp[:-1]
+
+            elasticpot.data('timestamp', datetime.fromisoformat(timestamp).strftime('%Y-%m-%d %H:%M:%S'))
             elasticpot.data("timezone", time.strftime('%z'))
 
         elasticpot.data('source_address', line['src_ip']) if 'src_ip' in line else None
