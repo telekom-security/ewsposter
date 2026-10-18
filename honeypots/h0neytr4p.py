@@ -5,26 +5,6 @@ import time
 from modules.ealert import EAlert
 
 
-def _format_timezone(offset):
-    seconds = int(offset.total_seconds())
-    sign = '+' if seconds >= 0 else '-'
-    seconds = abs(seconds)
-    hours, seconds = divmod(seconds, 3600)
-    minutes = seconds // 60
-    return f"{sign}{hours:02d}{minutes:02d}"
-
-
-def _parse_timestamp(timestamp):
-    dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-
-    if dt.tzinfo is not None and dt.utcoffset() is not None:
-        timezone = _format_timezone(dt.utcoffset())
-    else:
-        timezone = time.strftime('%z')
-
-    return dt.strftime('%Y-%m-%d %H:%M:%S'), timezone
-
-
 def _payload_path(line, payloaddir):
     payload_filename = line.get('payload_filename')
     payload_hash = line.get('payload_hash_md5')
@@ -38,8 +18,7 @@ def _payload_path(line, payloaddir):
 
     if payloaddir and payload_filename:
         candidates.append(os.path.join(payloaddir, os.path.basename(payload_filename)))
-
-    if payloaddir and payload_hash:
+    elif payloaddir and payload_hash:
         candidates.append(os.path.join(payloaddir, payload_hash))
 
     for candidate in candidates:
@@ -81,10 +60,9 @@ def h0neytr4p(ECFG):
 
         h0neytr4p.data('analyzer_id', HONEYPOT['nodeid']) if 'nodeid' in HONEYPOT else None
 
-        if 'timestamp' in line:
-            timestamp, timezone = _parse_timestamp(line['timestamp'])
-            h0neytr4p.data('timestamp', timestamp)
-            h0neytr4p.data("timezone", timezone)
+        if line.get('timestamp'):
+            h0neytr4p.data('timestamp', datetime.fromisoformat(line['timestamp'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M:%S'))
+            h0neytr4p.data('timezone', time.strftime('%z'))
 
         h0neytr4p.data('source_address', line['src_ip'] ) if 'src_ip' in line else None
         h0neytr4p.data('target_address', ECFG['ip_ext'])
