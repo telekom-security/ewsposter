@@ -37,6 +37,7 @@ REDIS_METADATA_FIELDS = (
     'target_dir', 'target_dbfilename',
     'ioc_urls', 'ioc_ips', 'ioc_domains', 'ioc_count',
     'error', 'max_bulk_bytes', 'max_inline_bytes', 'max_array_elems',
+    'session_command_count', 'session_hints',
 )
 
 
@@ -57,7 +58,18 @@ def _format_timestamp(value):
         return None
 
 
+def _is_alert_event(line):
+    """ every command, and the close of a session without any command (port scans, protocol errors) """
+    if line.get('event') == 'command':
+        return True
+    count = line.get('session_command_count')
+    return line.get('event') == 'close' and not isinstance(count, bool) and count == 0
+
+
 def _request_text(line):
+    if line.get('event') == 'close':
+        return 'connection without command'
+
     command = line.get('command')
 
     if command and line.get('args_text'):
@@ -103,7 +115,7 @@ def redishoneypot(ECFG):
             continue
         if not isinstance(line, dict):
             continue
-        if line.get('event') != 'command':
+        if not _is_alert_event(line):
             continue
 
         timestamp = _format_timestamp(line.get('timestamp'))

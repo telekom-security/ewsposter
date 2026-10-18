@@ -471,3 +471,43 @@ def test_payload_script_and_ioc_fields_are_forwarded(monkeypatch):
 
     assert post_alert['additionaldata']['outcome'] == 'connection_closed'
     assert post_alert['request']['request'] == 'POST / HTTP/1.1'
+
+
+def test_session_without_command_is_reported_once_at_close(monkeypatch):
+    base = {
+        'level': 'INFO',
+        'protocol': 'redis',
+        'network': 'tcp',
+        'profile': 'redis74',
+        'client_id': 9,
+        'src_ip': '203.0.113.30',
+        'src_port': 40000,
+        'dest_ip': '172.20.0.13',
+        'dest_port': 6379,
+        'session_start': '2026-10-17T10:44:00.1Z',
+    }
+    lines = [
+        dict(base, timestamp='2026-10-17T10:44:00.1Z', event='connect', message='connect', session_id='scan'),
+        dict(base, timestamp='2026-10-17T10:44:00.2Z', event='protocol_error', message='protocol_error',
+             session_id='scan', error='invalid multibulk length', level='WARN'),
+        dict(base, timestamp='2026-10-17T10:44:00.3Z', event='close', message='close', session_id='scan',
+             session_end='2026-10-17T10:44:00.3Z', session_command_count=0),
+        dict(base, timestamp='2026-10-17T10:45:00Z', event='command', message='command', session_id='busy',
+             command='PING', src_port=40001),
+        dict(base, timestamp='2026-10-17T10:45:01Z', event='close', message='close', session_id='busy',
+             session_end='2026-10-17T10:45:01Z', session_command_count=1, src_port=40001),
+        dict(base, timestamp='2026-10-17T10:46:00Z', event='close', message='close', session_id='odd',
+             session_command_count=False, src_port=40002),
+    ]
+
+    fake_alert, _ = run_redishoneypot(monkeypatch, lines)
+
+    assert len(fake_alert.alerts) == 2
+    scan, busy = fake_alert.alerts
+    assert scan['data']['timestamp'] == '2026-10-17 10:44:00'
+    assert scan['data']['source_port'] == '40000'
+    assert scan['data']['target_port'] == '6379'
+    assert scan['request']['request'] == 'connection without command'
+    assert scan['additionaldata']['session_command_count'] == 0
+    assert scan['additionaldata']['session_id'] == 'scan'
+    assert busy['request']['request'] == 'PING'
