@@ -1,9 +1,12 @@
 import base64
 import importlib.util
 import os
+import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -396,6 +399,71 @@ class WordpotPayloadTests(unittest.TestCase):
 
         self.assertEqual(len(alert.requests), 1)
         self.assertFalse(self.payload.exists())
+
+
+class RunAlert(FakeAlert):
+    """ EAlert for wordpot(): readCFG ends the run on a missing key, as EAlert.readCFG does """
+
+    def __init__(self, lines):
+        super().__init__()
+        self.lines = list(lines)
+        self.alerts = []
+        self.current = {}
+
+    def readCFG(self, items, cfgfile):
+        values = {}
+        for line in Path(cfgfile).read_text().splitlines():
+            if "=" in line:
+                key, value = (part.strip() for part in line.split("=", 1))
+                values[key] = value
+        for item in items:
+            if item not in values:
+                raise SystemExit(1)
+        return({item: values[item] for item in items})
+
+    def lineREAD(self, filename, line_format):
+        return(self.lines.pop(0) if self.lines else ())
+
+    def data(self, key, value):
+        self.current[key] = value
+
+    def adata(self, key, value):
+        return(True)
+
+    def buildAlert(self):
+        self.alerts.append(self.current)
+        self.current = {}
+        return(True)
+
+    def finAlert(self):
+        return(True)
+
+
+class WordpotConfigTests(unittest.TestCase):
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.cfgfile = Path(self.tmpdir.name) / "ews.cfg"
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
+
+    def test_missing_malwaredir_still_sends_events(self):
+        self.cfgfile.write_text("[WORDPOT]\nwordpot = true\nnodeid = wordpot-node\nlogfile = /tmp/wordpot.json\n")
+        alert = RunAlert([_line(), _line(technique="xmlrpc_multicall", request_id="req-2")])
+        ealert = types.ModuleType("modules.ealert")
+        ealert.EAlert = lambda modul, ecfg: alert
+        with mock.patch.dict(sys.modules, {"modules": types.ModuleType("modules"), "modules.ealert": ealert}):
+            wordpot.wordpot(dict(ECFG, cfgfile=str(self.cfgfile), send_malware=True))
+
+        self.assertEqual(len(alert.alerts), 2)
+        self.assertEqual([key for key, value in alert.requests if key in ("binary", "largepayload")], [])
+
+    def test_malwaredir_is_read_when_set(self):
+        self.cfgfile.write_text("[WORDPOT]\nmalwaredir = /data/wordpot/log/payloads\n")
+        self.assertEqual(
+            wordpot._optional_option(str(self.cfgfile), "WORDPOT", "malwaredir"), "/data/wordpot/log/payloads")
+        self.cfgfile.write_text("[WORDPOT]\nmalwaredir =\n")
+        self.assertIsNone(wordpot._optional_option(str(self.cfgfile), "WORDPOT", "malwaredir"))
 
 
 if __name__ == "__main__":

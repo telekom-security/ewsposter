@@ -1,6 +1,7 @@
 # honeypots/wordpot.py
 
 import base64
+import configparser
 import ipaddress
 import json
 import time
@@ -206,9 +207,21 @@ def _attach_payload(alert, payload_file, checksum, remove_after_send=False):
     return(True)
 
 
+def _optional_option(cfgfile, section, option):
+    """ The value of an optional key, None when it is missing or empty (readCFG ends the run on a missing key) """
+    config = configparser.ConfigParser()
+    config.read(cfgfile)
+
+    if config.has_option(section, option) and config.get(section, option):
+        return(config.get(section, option))
+    return(None)
+
+
 def _attach_event_payload(alert, line, HONEYPOT, ECFG):
     """ One payload per alert: the stored exploit body referenced by payload_ref """
     if ECFG.get('send_malware') is not True or line.get('payload_stored') is not True:
+        return(False)
+    if not HONEYPOT.get('malwaredir'):
         return(False)
     if not _is_exploit_payload(line):
         return(False)
@@ -274,8 +287,10 @@ def wordpot(ECFG):
 
     wordpot = EAlert('wordpot', ECFG)
 
-    ITEMS = ['wordpot', 'nodeid', 'logfile', 'malwaredir']
+    """ malwaredir is optional: a config without it sends the events, but no stored payloads """
+    ITEMS = ['wordpot', 'nodeid', 'logfile']
     HONEYPOT = (wordpot.readCFG(ITEMS, ECFG['cfgfile']))
+    HONEYPOT['malwaredir'] = _optional_option(ECFG['cfgfile'], 'WORDPOT', 'malwaredir')
 
     if HONEYPOT.get('wordpot').lower() == "false":
         print(f"    -> Honeypot Wordpot set to false. Skip Honeypot.")
