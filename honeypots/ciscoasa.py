@@ -1,6 +1,7 @@
 # honeypots/ciscoasa.py
 
 import time
+from urllib import parse
 from modules.ealert import EAlert
 from datetime import datetime
 
@@ -10,6 +11,51 @@ def _port(value, default):
     except (TypeError, ValueError):
         return default
     return str(port) if 0 <= port <= 65535 else default
+
+
+def _joined(value):
+    if isinstance(value, list):
+        return ','.join(str(item) for item in value if item not in (None, ''))
+    return value
+
+
+def _v2_metadata(line):
+    """ (url, additional data) of a Ciscoasa v2 event: HTTP request, IKE exchange, client, upload """
+    adata = {}
+    for key in ('event_type', 'username', 'password'):
+        if line.get(key):
+            adata[key] = line[key]
+    if _joined(line.get('cve')):
+        adata['cve'] = _joined(line['cve'])
+
+    asa = line.get('asa') if isinstance(line.get('asa'), dict) else {}
+    http = asa.get('http') if isinstance(asa.get('http'), dict) else {}
+    ike = asa.get('ike') if isinstance(asa.get('ike'), dict) else {}
+    client = asa.get('client') if isinstance(asa.get('client'), dict) else {}
+    upload = asa.get('upload') if isinstance(asa.get('upload'), dict) else {}
+
+    url = http.get('uri') or None
+    for target, value in (
+        ('httpmethod', http.get('method')),
+        ('user_agent', http.get('user_agent')),
+        ('ike_version', ike.get('version')),
+        ('ike_exchange', ike.get('exchange')),
+        ('ike_group_name', ike.get('group_name')),
+        ('ike_vendor_ids', _joined(ike.get('vendor_ids'))),
+        ('ike_proposals', _joined(ike.get('proposals'))),
+        ('group', asa.get('group')),
+        ('client_version', client.get('version')),
+        ('client_platform', client.get('platform')),
+        ('upload_sha256', upload.get('sha256')),
+        ('upload_size', upload.get('size')),
+        ('chain_stage', asa.get('chain_stage')),
+        ('anomaly', asa.get('anomaly')),
+        ('count', asa.get('count')),
+    ):
+        if value not in (None, '', 0):
+            adata[target] = value
+
+    return url, adata
 
 
 def ciscoasa(ECFG):
@@ -51,6 +97,12 @@ def ciscoasa(ECFG):
         payload = line.get('payload', line.get('payload_printable'))
         if payload is not None:
             ciscoasa.request('payload', str(payload))
+
+        url, metadata = _v2_metadata(line)
+        if url:
+            ciscoasa.request('url', parse.quote(str(url).encode('ascii', 'ignore'), safe="/?&=%:@+;,"))
+        for key, value in metadata.items():
+            ciscoasa.adata(key, value)
 
         ciscoasa.adata('hostname', ECFG['hostname'])
         ciscoasa.adata('externalIP', ECFG['ip_ext'])
