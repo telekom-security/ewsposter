@@ -86,26 +86,36 @@ def getIP(MODUL, ECFG):
     finally:
         connection.close()
 
-    """ get external IP via connection """
-    try:
-        myIP["connect_ip_ext"] = requests.get('https://api.ipify.org', timeout=10).text
-    except requests.exceptions.Timeout:
-        logger.error(f'Timeout to get extern IP via https://api.ipify.org!', '1')
+    """ get external IP via connection, only when no other source names it """
+    if _isIP(ECFG.get('ip_ext')) or _isIP(myIP['env_ip_ext']) or _isIP(myIP['file_ip_ext']):
         myIP["connect_ip_ext"] = ""
-    except requests.exceptions.TooManyRedirects:
-        logger.error(f'TooManyRedirects to get extern IP via https://api.ipify.org!', '1')
-        myIP["connect_ip_ext"] = ""
-    except requests.exceptions.HTTPError:
-        logger.error(f'Could not determine a valid public IP using external service', '1')
-        myIP["connect_ip_ext"] = ""
-    except requests.exceptions.RequestException as e:
-        logger.error(f'RequestException to get extern IP via https://api.ipify.org!', '1')
-        myIP["connect_ip_ext"] = ""
-        raise SystemExit(e)
-    finally:
-        connection.close()
+    else:
+        myIP["connect_ip_ext"] = getExternalIP()
 
     return(myIP)
+
+def _isIP(value):
+    """ True for an IPv4/IPv6 address, False for None, '', 'none' and anything else """
+    try:
+        ipaddress.ip_address(str(value).strip())
+    except ValueError:
+        return(False)
+    return(True)
+
+def getExternalIP(url='https://api.ipify.org', timeout=10):
+    """ the external IP from a lookup service; '' and a warning when the lookup fails """
+    try:
+        answer = requests.get(url, timeout=timeout)
+        answer.raise_for_status()
+        address = answer.text.strip()
+    except requests.exceptions.RequestException as e:
+        logger.warning(f'Could not get the external IP via {url} ({type(e).__name__}).', '1')
+        return("")
+
+    if not _isIP(address):
+        logger.warning(f'The answer of {url} is no IP address.', '1')
+        return("")
+    return(address)
 
 def getHostname(MODUL, ECFG):
     # get Hostname from ENV/SOCKET/RANDOM
