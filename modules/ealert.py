@@ -7,6 +7,7 @@ from collections import OrderedDict
 from datetime import datetime
 from lxml import etree
 from modules.elog import ELog
+from modules.eindex import fileIdentity, sameFile
 import xmltodict
 import base64
 import configparser
@@ -44,6 +45,9 @@ class EAlert:
         self.logger = ELog('EAlert')
 
     def lineREAD(self, filename, format='json', linenumber=None, item='index', debugoutput=False):
+        if linenumber is None and hasattr(self, 'ECFG'):
+            self.checkFile(filename, item)
+
         if linenumber is None:
             linecounter = int(self.alertCount(self.MODUL, 'get_counter', item))
         else:
@@ -157,9 +161,43 @@ class EAlert:
 
         return(returndic)
 
+    def indexPath(self, name):
+        """ the index files (ews.idx, *.session, malware.md5) live in indexdir, by default in homedir """
+        return(os.path.join(self.ECFG.get('indexdir') or self.ECFG['homedir'], name))
+
+    def checkFile(self, filename, item='index'):
+        """ once per run and file: when filename is another file than at the last run (rotated or
+        truncated), its counter starts at line 1 again; the identity of the file is kept next to the counter """
+        checked = self.__dict__.setdefault('checkedfiles', set())
+        if (filename, item) in checked:
+            return()
+        checked.add((filename, item))
+
+        current = fileIdentity(filename)
+        if current is None:
+            return()
+
+        option = f"{item}_file"
+        count = configparser.ConfigParser(interpolation=None)
+        count.read(self.indexPath("ews.idx"))
+        stored = count.get(self.MODUL, option) if count.has_option(self.MODUL, option) else None
+
+        if stored is not None and not sameFile(stored, current):
+            self.alertCount(self.MODUL, "set_counter", item, 1)
+            self.logger.info(f"{filename} was rotated or truncated since the last run, it is read from line 1.", '2')
+            count = configparser.ConfigParser(interpolation=None)
+            count.read(self.indexPath("ews.idx"))
+
+        if count.has_section(self.MODUL) is False:
+            count.add_section(self.MODUL)
+        count.set(self.MODUL, option, current)
+        with open(self.indexPath("ews.idx"), 'w') as countfile:
+            count.write(countfile)
+        return()
+
     def alertCount(self, section, counting, item='index', setto=1):
         count = configparser.ConfigParser()
-        count.read(self.ECFG["homedir"] + os.sep + "ews.idx")
+        count.read(self.indexPath("ews.idx"))
 
         if count.has_section(section) is False:
             count.add_section(section)
@@ -182,14 +220,14 @@ class EAlert:
         elif isinstance(counting, str) and counting == "reset_counter":
             count.set(section, item, str(setto))
 
-        with open(self.ECFG["homedir"] + os.sep + "ews.idx", 'w') as countfile:
+        with open(self.indexPath("ews.idx"), 'w') as countfile:
             count.write(countfile)
             countfile.close
 
         return()
 
     def fileIndex(self, filename, action, content=None):
-        filename = self.ECFG['homedir'] + os.sep + filename
+        filename = self.indexPath(filename)
 
         """ check if file exist, else create file """
         if not os.path.isfile(filename):
@@ -625,19 +663,19 @@ class EAlert:
             return(False, None)
 
     def md5malware(self, md5filechecksum):
-        if os.path.isfile(self.ECFG["homedir"] + os.sep + "malware.md5") is False:
-            with open(self.ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
+        if os.path.isfile(self.indexPath("malware.md5")) is False:
+            with open(self.indexPath("malware.md5"), "a+") as malwarefile:
                 malwarefile.close()
 
         if len(self.malwareindex) == 0:
-            with open(self.ECFG["homedir"] + os.sep + "malware.md5", "r", newline=None) as malwarefile:
+            with open(self.indexPath("malware.md5"), "r", newline=None) as malwarefile:
                 self.malwareindex = list(filter(None, [line.rstrip("\n") for line in malwarefile]))
                 malwarefile.close()
 
         if md5filechecksum in self.malwareindex:
             return(False)
         else:
-            with open(self.ECFG["homedir"] + os.sep + "malware.md5", "a+") as malwarefile:
+            with open(self.indexPath("malware.md5"), "a+") as malwarefile:
                 malwarefile.write(f'{md5filechecksum}\n')
                 malwarefile.close()
             self.malwareindex.append(md5filechecksum)

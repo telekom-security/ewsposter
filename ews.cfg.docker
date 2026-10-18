@@ -2,6 +2,8 @@
 homedir = /opt/ewsposter
 spooldir = /opt/ewsposter/spool
 logdir = /opt/ewsposter/log
+# folder of ews.idx, *.session and malware.md5, default homedir; filled from homedir when it is empty
+# indexdir = /opt/ewsposter/index
 del_malware_after_send = false
 send_malware = true
 sendlimit = 5000
