@@ -51,6 +51,11 @@ class EAlert:
 
         lcache = linecache.getline(filename, linecounter)
 
+        if lcache != '' and self.partialLine(filename, linecounter):
+            """ the last line has no newline yet: it is still being written, read it on the next run """
+            linecache.clearcache()
+            return()
+
         if linenumber is None and lcache != '':
             self.alertCount(self.MODUL, "add_counter", item)
 
@@ -69,6 +74,23 @@ class EAlert:
         else:
             linecache.clearcache()
             return()
+
+    def partialLine(self, filename, linecounter):
+        """ True when linecounter is the last line linecache read and the file had no newline after it """
+        entry = linecache.cache.get(filename)
+        if not entry or len(entry) < 3 or linecounter != len(entry[2]):
+            return(False)
+
+        size = entry[0]
+        if size == 0:
+            return(True)
+
+        try:
+            with open(filename, 'rb') as logfile:
+                logfile.seek(size - 1)
+                return(logfile.read(1) != b'\n')
+        except OSError:
+            return(False)
 
     def lineSQLITE(self, filename, linenumber=None, item='index'):
         if linenumber is None:
