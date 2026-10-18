@@ -1,6 +1,7 @@
 # honeypots/mailoney.py
 
 import base64
+import configparser
 import hashlib
 import ipaddress
 import json
@@ -199,12 +200,24 @@ def _attach_payload(alert, payload_file, checksum, remove_after_send=False, cont
     return(True)
 
 
+def _optional_option(cfgfile, section, option):
+    """ The value of an optional key, None when it is missing or empty (readCFG ends the run on a missing key) """
+    config = configparser.ConfigParser()
+    config.read(cfgfile)
+
+    if config.has_option(section, option) and config.get(section, option):
+        return(config.get(section, option))
+    return(None)
+
+
 def _attach_event_payloads(alert, line, HONEYPOT, ECFG):
     """ One payload per alert: first new attachment, else the .eml of a mail without attachments """
     if ECFG.get('send_malware') is not True or line.get('event.type') != 'mail':
         return(False)
 
     malwaredir = HONEYPOT.get('malwaredir')
+    if not malwaredir:
+        return(False)
     remove = ECFG.get('del_malware_after_send', False)
 
     for filename, checksum in _attachment_refs(line):
@@ -269,8 +282,10 @@ def mailoney(ECFG):
 
     mailoney = EAlert('mailoney', ECFG)
 
-    ITEMS = ['mailoney', 'nodeid', 'logfile', 'malwaredir']
+    """ malwaredir is optional: a config without it sends the events, but no stored mails """
+    ITEMS = ['mailoney', 'nodeid', 'logfile']
     HONEYPOT = (mailoney.readCFG(ITEMS, ECFG['cfgfile']))
+    HONEYPOT['malwaredir'] = _optional_option(ECFG['cfgfile'], 'MAILONEY', 'malwaredir')
 
     if HONEYPOT.get('mailoney').lower() == "false":
         print(f"    -> Honeypot Mailoney set to false. Skip Honeypot.")

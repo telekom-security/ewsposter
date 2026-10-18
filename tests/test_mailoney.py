@@ -1,9 +1,12 @@
 import base64
 import hashlib
 import importlib.util
+import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -319,6 +322,82 @@ class MailoneyPayloadTests(unittest.TestCase):
 
         self.assertEqual(len(alert.requests), 1)
         self.assertFalse(self.attachment.exists())
+
+
+class RunAlert(FakeAlert):
+    """ EAlert for mailoney(): readCFG ends the run on a missing key, as EAlert.readCFG does """
+
+    def __init__(self, cfgfile, lines):
+        super().__init__()
+        self.cfgfile = cfgfile
+        self.lines = list(lines)
+        self.alerts = []
+        self.current = {}
+
+    def readCFG(self, items, cfgfile):
+        values = {}
+        for line in Path(cfgfile).read_text().splitlines():
+            if "=" in line:
+                key, value = (part.strip() for part in line.split("=", 1))
+                values[key] = value
+        for item in items:
+            if item not in values:
+                raise SystemExit(1)
+        return({item: values[item] for item in items})
+
+    def lineREAD(self, filename, line_format):
+        return(self.lines.pop(0) if self.lines else ())
+
+    def data(self, key, value):
+        self.current[key] = value
+
+    def adata(self, key, value):
+        return(True)
+
+    def buildAlert(self):
+        self.alerts.append(self.current)
+        self.current = {}
+        return(True)
+
+    def finAlert(self):
+        return(True)
+
+
+class MailoneyConfigTests(unittest.TestCase):
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.cfgfile = Path(self.tmpdir.name) / "ews.cfg"
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
+
+    def run_mailoney(self, section, lines):
+        self.cfgfile.write_text("[MAILONEY]\n" + section)
+        alert = RunAlert(str(self.cfgfile), lines)
+        ealert = types.ModuleType("modules.ealert")
+        ealert.EAlert = lambda modul, ecfg: alert
+        with mock.patch.dict(sys.modules, {"modules": types.ModuleType("modules"), "modules.ealert": ealert}):
+            mailoney.mailoney(dict(ECFG, cfgfile=str(self.cfgfile), send_malware=True))
+        return(alert)
+
+    def test_missing_malwaredir_still_sends_events(self):
+        alert = self.run_mailoney(
+            "mailoney = true\nnodeid = mailoney-node\nlogfile = /tmp/log.json\n",
+            [_base_line("session"), _mail_line()],
+        )
+
+        self.assertEqual(len(alert.alerts), 2)
+        self.assertEqual(alert.requests[-1], ("description", "Mail Honeypot mailoney (mail)"))
+        self.assertEqual([key for key, value in alert.requests if key in ("binary", "largepayload")], [])
+
+    def test_malwaredir_is_read_when_set(self):
+        self.assertEqual(
+            mailoney._optional_option(str(self.cfgfile), "MAILONEY", "malwaredir"), None)
+        self.cfgfile.write_text("[MAILONEY]\nmalwaredir = /data/mailoney/log/mails\n")
+        self.assertEqual(
+            mailoney._optional_option(str(self.cfgfile), "MAILONEY", "malwaredir"), "/data/mailoney/log/mails")
+        self.cfgfile.write_text("[MAILONEY]\nmalwaredir =\n")
+        self.assertIsNone(mailoney._optional_option(str(self.cfgfile), "MAILONEY", "malwaredir"))
 
 
 if __name__ == "__main__":
