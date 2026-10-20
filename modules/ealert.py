@@ -607,21 +607,23 @@ class EAlert:
             self.logger.warning(f"Malwaredir {malwaredir} does not exist!", '2')
             return(False, None)
 
+        # A sample that is not on disk must not be recorded as submitted,
+        # otherwise it is skipped for good once the file shows up later.
+        if os.path.isfile(malwaredir + os.sep + malwarefile) is False:
+            self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", '2')
+            return(False, None)
+
         if self.md5malware(md5filechecksum) is False:
             self.logger.warning(f"MD5File {md5filechecksum} already submitted.", '2')
             return(False, None)
 
-        if os.path.isfile(malwaredir + os.sep + malwarefile) is True:
-            if os.path.getsize(malwaredir + os.sep + malwarefile) <= 10 * 1024 * 1024:
-                payload = open(malwaredir + os.sep + malwarefile, "rb").read()
-                if localremove is True:
-                    os.remove(malwaredir + os.sep + malwarefile)
-                return(True, base64.b64encode(payload))
-            else:
-                self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 10 MB! Not send.", '2')
-                return(False, None)
+        if os.path.getsize(malwaredir + os.sep + malwarefile) <= 10 * 1024 * 1024:
+            payload = open(malwaredir + os.sep + malwarefile, "rb").read()
+            if localremove is True:
+                os.remove(malwaredir + os.sep + malwarefile)
+            return(True, base64.b64encode(payload))
         else:
-            self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} does not exist!", '2')
+            self.logger.warning(f"FILE {malwaredir}{os.sep}{malwarefile} is bigger than 10 MB! Not send.", '2')
             return(False, None)
 
     def md5malware(self, md5filechecksum):
