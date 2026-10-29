@@ -18,6 +18,8 @@ def _timestamp(line, session):
     if value is not None:
         if not isinstance(value, str):
             raise ValueError("invalid ISO timestamp")
+        # Python 3.9 accepts at most microseconds; Go emits RFC3339 nanoseconds.
+        value = re.sub(r"(\.\d{6})\d+(?=Z|[+-]\d{2}:?\d{2}$)", r"\1", value)
         stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
         if stamp.tzinfo is None or stamp.utcoffset() is None:
             raise ValueError("timestamp has no timezone")
