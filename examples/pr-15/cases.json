@@ -1,0 +1,8 @@
+[
+  {
+    "name": "rdphoneypot",
+    "module": "rdphoneypot",
+    "logs": "logs",
+    "logfile": "rdphoneypot.json"
+  }
+]

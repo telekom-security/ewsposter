@@ -1,0 +1,66 @@
+{
+  "rdphoneypot": [
+    {
+      "metadata": {
+        "duration": "0",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logouttime": "2026-10-30 16:12:47",
+        "message_closed": "Closed connection from 192.168.249.1:47016 [session: 541aa91178cc] after 0 seconds.",
+        "message_connect": "Connection from 192.168.249.1:47016 [session: 541aa91178cc].",
+        "sensor": "t-pot",
+        "sessionid": "541aa91178cc",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "RDP Honeypot rdphoneypot"
+      },
+      "source": {
+        "address": "192.168.249.1",
+        "category": "ipv4",
+        "port": "47016",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "3389",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:12:47",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "duration": "0",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logouttime": "2026-10-30 16:12:47",
+        "message_closed": "Closed connection from 192.168.249.250:37703 [session: 34bb544bf0de] after 0 seconds.",
+        "message_connect": "Connection from 192.168.249.250:37703 [session: 34bb544bf0de].",
+        "sensor": "t-pot",
+        "sessionid": "34bb544bf0de",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "RDP Honeypot rdphoneypot"
+      },
+      "source": {
+        "address": "192.168.249.250",
+        "category": "ipv4",
+        "port": "37703",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "3389",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:12:47",
+      "timezone": "+0000"
+    }
+  ]
+}
