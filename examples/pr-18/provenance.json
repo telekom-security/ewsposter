@@ -1,0 +1,18 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/miniprint/Dockerfile",
+  "smoke_test": "docker/_tests/tests/miniprint.sh",
+  "image_id": "sha256:7b5eed539ddb7aef218a147738ca4cac411884e87f13a7f1e23a444f92a74040",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/miniprint:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/miniprint.json": "42203749edbcb5c36dc9162c9f0f1825791940282a0ac15e2df89ef6bca60efa",
+    "payloads/2026-10-30_16-13-47-759542_8abda7afd9748c92.ps": "8abda7afd9748c9264e726d93f9908e9ff1b5a19002a1801eb222833dc965289"
+  },
+  "ewsposter_pr": 18,
+  "ewsposter_tested_head": "cba3252bde02300befbaab78abe0a39d68948dd7"
+}
