@@ -1,0 +1,18 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/cowrie/Dockerfile",
+  "smoke_test": "docker/_tests/tests/cowrie.sh",
+  "image_id": "sha256:4f306aafb49db279efdd101bdb33df09ca96c2a7aee705fc182200a5422a2ff8",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/cowrie:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/cowrie.json": "a12facee4d834c69cb31bcd20c10cc9fdcf1db546a47bad59bd8828d2ff008cd",
+    "payloads/5646b49752028cd82e6a9228ac4844a69b69dd8fa55781e37b6b0c83282878af": "5646b49752028cd82e6a9228ac4844a69b69dd8fa55781e37b6b0c83282878af"
+  },
+  "ewsposter_pr": 25,
+  "ewsposter_tested_head": "6c46950fde3f8f6935d9a8a7784009b9f1db6fdd"
+}

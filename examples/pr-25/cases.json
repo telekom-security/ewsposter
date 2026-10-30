@@ -1,0 +1,8 @@
+[
+  {
+    "name": "cowrie",
+    "module": "cowrie",
+    "logs": "logs",
+    "logfile": "cowrie.json"
+  }
+]
