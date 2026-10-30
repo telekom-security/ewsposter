@@ -1,6 +1,7 @@
 # honeypots/miniprint.py
 
 import configparser
+import json
 import re
 import time
 from datetime import UTC, datetime
@@ -27,6 +28,18 @@ LIST_FIELDS = (
     "url",
     "user_agent",
     "username",
+    "form_fields",
+    "passback_target",
+    "resource",
+)
+
+LIMIT_RESOURCES = (
+    "filesystem_bytes",
+    "filesystem_entries",
+    "path_bytes",
+    "variable_entries",
+    "variable_bytes",
+    "ready_message_bytes",
 )
 
 
@@ -132,15 +145,21 @@ def _update_session(session, line):
         elif key == "cve_hint":
             for hint in str(line.get(key) or "").split(","):
                 _append_unique(session, key, hint.strip())
+        elif key == "form_fields":
+            for field in line.get(key) or []:
+                _append_unique(session, key, json.dumps(field, ensure_ascii=False))
         else:
             _append_unique(session, key, line.get(key))
     if event.startswith("save_") and line.get("size") is not None:
         session["artifact_size"] = max(session.get("artifact_size", 0), int(line["size"]))
     if "limit" in line:
         _append_unique(session, "limit_event", event)
-        session[event + "_limit"] = line["limit"]
+        measurement = event
+        if event == "virtual_state_limit" and line.get("resource") in LIMIT_RESOURCES:
+            measurement += "_" + line["resource"]
+        session[measurement + "_limit"] = line["limit"]
         if "size" in line:
-            session[event + "_size"] = line["size"]
+            session[measurement + "_size"] = line["size"]
 
     if event.startswith("save_") and line.get("file_name"):
         artifact = {
@@ -210,7 +229,9 @@ def _add_common_adata(miniprint, session, ECFG):
             "artifacts", "\n".join("{}:{}".format(item["file_name"], item["sha256"] or "") for item in artifacts)
         )
     for key in LIST_FIELDS:
-        value = _joined(session, key, "\n" if key in ("payload_preview", "request_line", "url", "request") else ",")
+        value = _joined(
+            session, key, "\n" if key in ("payload_preview", "request_line", "url", "request", "form_fields") else ","
+        )
         if value:
             miniprint.adata(key, value)
 

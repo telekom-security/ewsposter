@@ -194,6 +194,34 @@ class MiniprintTest(unittest.TestCase):
         self.assertEqual(alert["request"]["request"], "PJL")
         self.assertEqual(alert["request"]["payload"], "probe\t\ntext")
 
+    def test_virtual_state_limits_keep_resource_measurements_separate(self):
+        records = [
+            self.recent("s", event="virtual_state_limit", resource="filesystem_bytes", size=300000, limit=262144),
+            self.recent("s", event="virtual_state_limit", resource="variable_entries", size=65, limit=64),
+            self.recent("s", event="connection_closed", session_end="done"),
+        ]
+        adata = self.run_miniprint(records)[0]["adata"]
+        self.assertEqual(adata.get("resource"), "filesystem_bytes,variable_entries")
+        self.assertEqual(adata["virtual_state_limit_filesystem_bytes_size"], 300000)
+        self.assertEqual(adata["virtual_state_limit_filesystem_bytes_limit"], 262144)
+        self.assertEqual(adata["virtual_state_limit_variable_entries_size"], 65)
+        self.assertEqual(adata["virtual_state_limit_variable_entries_limit"], 64)
+
+    def test_admin_form_and_passback_target_are_preserved(self):
+        records = [
+            self.recent(
+                "s",
+                event="passback_attempt",
+                form_fields=[{"name": "server", "value": "ldap.example.test"}],
+                passback_target="ldap.example.test",
+                secret_supplied=True,
+            ),
+            self.recent("s", event="http_connection_closed", session_end="done"),
+        ]
+        adata = self.run_miniprint(records)[0]["adata"]
+        self.assertEqual(adata.get("passback_target"), "ldap.example.test")
+        self.assertEqual(json.loads(adata["form_fields"]), {"name": "server", "value": "ldap.example.test"})
+
     def test_empty_connections_are_skipped_by_default(self):
         alerts = self.run_miniprint([self.recent("empty", event="empty_connection", session_end="done")])
         self.assertEqual(alerts, [])
