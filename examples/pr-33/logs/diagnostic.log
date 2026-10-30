@@ -1,0 +1,44 @@
+{"time":"2026-10-30T16:26:06.97666721Z","level":"INFO","msg":"Loading configurations","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","reporter":"glutton"}
+{"time":"2026-10-30T16:26:06.976802461Z","level":"INFO","msg":"Using configuration file","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","path":"config/","reporter":"glutton"}
+{"time":"2026-10-30T16:26:06.991043744Z","level":"INFO","msg":"Spicy runtime initialised successfully","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082"}
+{"time":"2026-10-30T16:26:06.991064453Z","level":"INFO","msg":"registered Spicy parser","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","protocol":"http","parser":"HTTP::Request"}
+{"time":"2026-10-30T16:26:06.991069119Z","level":"INFO","msg":"registered Spicy parser","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","protocol":"tcp","parser":"TCP::Protocol"}
+{"time":"2026-10-30T16:26:07.415708886Z","level":"INFO","msg":"HTTP 1.0 GET request handled: /tpot-glutton-1039924911969","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","handler":"spicy-http","dest_port":"31337","src_ip":"172.18.0.1","src_port":"44770","path":"/tpot-glutton-1039924911969","query":""}
+{"time":"2026-10-30T16:26:07.663879417Z","level":"INFO","msg":"Packet got handled by TCP handler","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","dest_port":"31338","src_ip":"172.18.0.1","src_port":"60076","handler":"tcp","payload_hash":"fc4d9117bfed37cb7d2913d648b065348b9441f143bc5eb6ec550e24528ac0c6","tls":false}
+{"time":"2026-10-30T16:26:07.931555024Z","level":"INFO","msg":"HTTP 1.0 GET request handled: /tls-tpot-glutton-1039924911969","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","handler":"spicy-http","dest_port":"31338","src_ip":"172.18.0.1","src_port":"60076","path":"/tls-tpot-glutton-1039924911969","query":""}
+{"time":"2026-10-30T16:26:07.957287526Z","level":"INFO","msg":"SIP UDP packet received","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","handler":"sip","src_ip":"172.18.0.1","src_port":39720,"dest_port":5060}
+{"time":"2026-10-30T16:26:07.957376985Z","level":"INFO","msg":"handling SIP request","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082","protocol":"sip","method":"OPTIONS"}
+{"time":"2026-10-30T16:26:08.797413984Z","level":"INFO","msg":"Monitoring stopped...","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082"}
+{"time":"2026-10-30T16:26:08.797436359Z","level":"INFO","msg":"Cleaning up and shutting down Spicy and HILTI runtimes","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082"}
+{"time":"2026-10-30T16:26:08.797580818Z","level":"INFO","msg":"All done","sensorID":"01eb7099-c6a0-4111-ac48-79578ce5d082"}
+{"time":"2026-10-30T16:26:09.178907064Z","level":"INFO","msg":"Loading configurations","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","reporter":"glutton"}
+{"time":"2026-10-30T16:26:09.178984689Z","level":"INFO","msg":"Using configuration file","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","path":"config/","reporter":"glutton"}
+{"time":"2026-10-30T16:26:09.180575702Z","level":"INFO","msg":"Spicy runtime initialised successfully","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d"}
+{"time":"2026-10-30T16:26:09.180619161Z","level":"INFO","msg":"registered Spicy parser","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","protocol":"http","parser":"HTTP::Request"}
+{"time":"2026-10-30T16:26:09.180641328Z","level":"INFO","msg":"registered Spicy parser","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","protocol":"tcp","parser":"TCP::Protocol"}
+{"time":"2026-10-30T16:26:09.665686297Z","level":"INFO","msg":"HTTP 1.0 GET request handled: /tpot-glutton-1042170158133","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","handler":"spicy-http","dest_port":"31337","src_ip":"172.18.0.1","src_port":"44784","path":"/tpot-glutton-1042170158133","query":""}
+{"time":"2026-10-30T16:26:09.84860171Z","level":"INFO","msg":"Packet got handled by TCP handler","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","dest_port":"31338","src_ip":"172.18.0.1","src_port":"60092","handler":"tcp","payload_hash":"29f5cdca09b7b9e9c526a9fbc88e77de9ce1057e383d284ab3ce370b925cb729","tls":false}
+{"time":"2026-10-30T16:26:10.100819941Z","level":"INFO","msg":"HTTP 1.0 GET request handled: /tls-tpot-glutton-1042170158133","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","handler":"spicy-http","dest_port":"31338","src_ip":"172.18.0.1","src_port":"60092","path":"/tls-tpot-glutton-1042170158133","query":""}
+{"time":"2026-10-30T16:26:10.125068598Z","level":"INFO","msg":"SIP UDP packet received","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","handler":"sip","src_ip":"172.18.0.1","src_port":42084,"dest_port":5060}
+{"time":"2026-10-30T16:26:10.125146265Z","level":"INFO","msg":"handling SIP request","sensorID":"aabc99cb-b94b-4a37-a68b-dfa0b8ec586d","protocol":"sip","method":"OPTIONS"}
+{"time":"2026-10-30T16:26:10.545989584Z","level":"INFO","msg":"Loading configurations","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","reporter":"glutton"}
+{"time":"2026-10-30T16:26:10.546090418Z","level":"INFO","msg":"Using configuration file","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","path":"config/","reporter":"glutton"}
+{"time":"2026-10-30T16:26:10.547605055Z","level":"INFO","msg":"Spicy runtime initialised successfully","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7"}
+{"time":"2026-10-30T16:26:10.547612014Z","level":"INFO","msg":"registered Spicy parser","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","protocol":"http","parser":"HTTP::Request"}
+{"time":"2026-10-30T16:26:10.547614722Z","level":"INFO","msg":"registered Spicy parser","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","protocol":"tcp","parser":"TCP::Protocol"}
+{"time":"2026-10-30T16:26:11.023908244Z","level":"INFO","msg":"HTTP 1.0 GET request handled: /tpot-glutton-1043531376605","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","handler":"spicy-http","dest_port":"31337","src_ip":"172.18.0.1","src_port":"43614","path":"/tpot-glutton-1043531376605","query":""}
+{"time":"2026-10-30T16:26:11.432224169Z","level":"INFO","msg":"Packet got handled by TCP handler","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","dest_port":"31338","src_ip":"172.18.0.1","src_port":"53620","handler":"tcp","payload_hash":"da278773ed41611f36195e8d158ab856f00ea6631830864e46fb1eea729f63c6","tls":false}
+{"time":"2026-10-30T16:26:11.710480613Z","level":"INFO","msg":"HTTP 1.0 GET request handled: /tls-tpot-glutton-1043531376605","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","handler":"spicy-http","dest_port":"31338","src_ip":"172.18.0.1","src_port":"53620","path":"/tls-tpot-glutton-1043531376605","query":""}
+{"time":"2026-10-30T16:26:11.734278307Z","level":"INFO","msg":"SIP UDP packet received","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","handler":"sip","src_ip":"172.18.0.1","src_port":39957,"dest_port":5060}
+{"time":"2026-10-30T16:26:11.734368683Z","level":"INFO","msg":"handling SIP request","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7","protocol":"sip","method":"OPTIONS"}
+{"time":"2026-10-30T16:26:11.779075757Z","level":"INFO","msg":"Monitoring stopped...","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7"}
+{"time":"2026-10-30T16:26:11.779114716Z","level":"INFO","msg":"Cleaning up and shutting down Spicy and HILTI runtimes","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7"}
+{"time":"2026-10-30T16:26:11.779202883Z","level":"INFO","msg":"All done","sensorID":"0fac4ec8-9459-4380-b966-e602934196b7"}
+{"time":"2026-10-30T16:26:12.17557521Z","level":"INFO","msg":"Loading configurations","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996","reporter":"glutton"}
+{"time":"2026-10-30T16:26:12.175645627Z","level":"INFO","msg":"Using configuration file","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996","path":"config/","reporter":"glutton"}
+{"time":"2026-10-30T16:26:12.177341016Z","level":"INFO","msg":"Spicy runtime initialised successfully","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996"}
+{"time":"2026-10-30T16:26:12.177401392Z","level":"INFO","msg":"registered Spicy parser","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996","protocol":"http","parser":"HTTP::Request"}
+{"time":"2026-10-30T16:26:12.177437809Z","level":"INFO","msg":"registered Spicy parser","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996","protocol":"tcp","parser":"TCP::Protocol"}
+{"time":"2026-10-30T16:26:12.769068817Z","level":"INFO","msg":"Monitoring stopped...","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996"}
+{"time":"2026-10-30T16:26:12.769188734Z","level":"INFO","msg":"Cleaning up and shutting down Spicy and HILTI runtimes","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996"}
+{"time":"2026-10-30T16:26:12.769287318Z","level":"INFO","msg":"All done","sensorID":"bdfb92b8-68c2-49df-bbbc-92bc10977996"}
