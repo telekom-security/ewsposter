@@ -8,6 +8,7 @@ import ipaddress
 import uuid
 from modules.elog import ELog
 from modules.etoolbox import getHostname, getIP, readMYcfg
+from modules.eindex import setupIndexDir
 
 logger = ELog('EInit')
 
@@ -71,9 +72,15 @@ def ecfg(name, version, functions):
     else:
         ECFG["cfgfile"] = ECFG["path"] + os.sep + "ews.cfg"
 
+    # Optional index dir for ews.idx, *.session and malware.md5 (default: homedir)
+
+    INDEXDIR = readMYcfg('MAIN', ('indexdir',), ECFG['cfgfile'], loghandler='').get('indexdir', '')
+    if INDEXDIR.lower() == "none":
+        INDEXDIR = ''
+
     # Create IDX File if not exist
 
-    if not os.path.isfile(ECFG["path"] + os.sep + "ews.idx"):
+    if not INDEXDIR and not os.path.isfile(ECFG["path"] + os.sep + "ews.idx"):
         os.open(ECFG["path"] + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
         logger.info(f"Create ews.idx counterfile.", '1')
 
@@ -89,6 +96,19 @@ def ecfg(name, version, functions):
         logger.error(f"Missing homedir {MCFG['homedir']}. Abort!", '1E')
     else:
         os.chdir(MCFG["homedir"])
+
+    # index dir: created, and filled with the index files of homedir when it has none yet
+    if INDEXDIR:
+        try:
+            copied = setupIndexDir(MCFG["homedir"], INDEXDIR)
+        except OSError as e:
+            logger.error(f"indexdir {INDEXDIR} cannot be used ({e}). Abort!", '1E')
+        if copied:
+            logger.info(f"Copied {', '.join(copied)} from homedir {MCFG['homedir']} to indexdir {INDEXDIR}.", '1')
+        if not os.path.isfile(INDEXDIR + os.sep + "ews.idx"):
+            os.open(INDEXDIR + os.sep + "ews.idx", os.O_RDWR | os.O_CREAT)
+            logger.info(f"Create ews.idx counterfile in {INDEXDIR}.", '1')
+    MCFG["indexdir"] = INDEXDIR or MCFG["homedir"]
 
     # spool dir available?
     if not os.path.isdir(MCFG["spooldir"]):
