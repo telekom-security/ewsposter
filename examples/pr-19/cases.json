@@ -1,0 +1,8 @@
+[
+  {
+    "name": "redishoneypot",
+    "module": "redishoneypot",
+    "logs": "logs",
+    "logfile": "redishoneypot.log"
+  }
+]
