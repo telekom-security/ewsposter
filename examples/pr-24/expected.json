@@ -1,0 +1,186 @@
+{
+  "answers": [
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Ddospot Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "51946",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "53",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:44",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Ddospot Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53216",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "19",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:44",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Ddospot Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "55075",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "123",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:44",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Ddospot Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "59222",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "1900",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:44",
+      "timezone": "+0000"
+    }
+  ],
+  "budget": [],
+  "dns": [],
+  "ntp": [],
+  "refused": [
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Ddospot Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53221",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "53",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:18:02",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Ddospot Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "59386",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "53",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:18:02",
+      "timezone": "+0000"
+    }
+  ],
+  "ssdp": [
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Ddospot Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "52722",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "1900",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:18:06",
+      "timezone": "+0000"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/ddospot/Dockerfile",
+  "smoke_test": "docker/_tests/tests/ddospot.sh",
+  "image_id": "sha256:de94ac64880649f5c7a83b9bf1c912c9b2a934ee530f3442dbc442fc0d3a3b8c",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/ddospot:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/answers/chargenpot.log": "e8839f22c1c3594cb914243ca81bc9729140f22a4903a44cbed4caa6a976b5c7",
+    "logs/answers/dnspot.log": "092f6110067708ab0cd028bce5586d7d9a764a5e39c2d4402f9bfa5dd71ebf36",
+    "logs/answers/ntpot.log": "b8b3247ce3c15883fd05d6d680f7cf9c3b649521eb5b5c21ab4c692840434178",
+    "logs/answers/ssdpot.log": "5d4518dea4fe1100f83d2eb1ba1e77929ae9af33ee2e82bdd3c3daa7a67a826e",
+    "logs/budget/targets.log": "5f382f5900b7471d13d852c1e9e1c156c9b9e4a004763c7b524cec702bc8427a",
+    "logs/dns/targets.log": "3dbc958b116e56291da1f6d1f51bc0c1c77a651446d05a5896940ced4976741a",
+    "logs/ntp/targets.log": "52b629d2a727bc5fc1c9bcb11979298b7a69e54735670d2d048e5e0ced186854",
+    "logs/refused/dnspot.log": "3b7fe3479b1f7ad5ef143c2c1fa5224feb85c46a0896f57eac2008b7f435e25c",
+    "logs/ssdp/ssdpot.log": "0bae0b43c503b1f3c2d32d0f5084571713cf51b0cf3121aa1d9a310a581c8139"
+  },
+  "ewsposter_pr": 24,
+  "ewsposter_tested_head": "8075a533f257dd4f8ab22f0ebb52575fae4ae1b7"
+}
