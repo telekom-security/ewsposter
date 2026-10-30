@@ -1,0 +1,8 @@
+[
+  {
+    "name": "ciscoasa",
+    "module": "ciscoasa",
+    "logs": "logs",
+    "logfile": "ciscoasa.json"
+  }
+]

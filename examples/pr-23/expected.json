@@ -1,0 +1,794 @@
+{
+  "ciscoasa": [
+    {
+      "metadata": {
+        "chain_stage": "bypass",
+        "cve": "CVE-2018-0296,CVE-2025-20362",
+        "event_type": "upload",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "upload_sha256": "4097889236a2af26c293033feb964c4cf118c0224e0d063fec0a89e9d0569ef2",
+        "upload_size": "11",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "placeholder",
+        "url": "/+CSCOU+//../+CSCOE+/files/file_action.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53808",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "chain_stage": "bypass",
+        "cve": "CVE-2018-0296,CVE-2025-20362",
+        "event_type": "upload",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "upload_sha256": "4097889236a2af26c293033feb964c4cf118c0224e0d063fec0a89e9d0569ef2",
+        "upload_size": "11",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "placeholder",
+        "url": "/+CSCOU+//../+CSCOE+/files/file_action.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53938",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "chain_stage": "upload",
+        "event_type": "upload",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "upload_sha256": "d0fd26a478a3da4c8b402a48852a4f6ca891a31cef555aa3878e2bf31d9b6e55",
+        "upload_size": "45",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "--ciscoasa-smoke-boundary\r\nContent-Disposition: form-data; name=\"file\"; filename=\"../../inert.txt\"\r\nContent-Type: application/octet-stream\r\n\r\nCiscoasa smoke test: inert uploaded evidence.\r\n--ciscoasa-smoke-boundary--\r\n",
+        "url": "/+CSCOE+/files/file_action.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53816",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "chain_stage": "upload",
+        "event_type": "upload",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "upload_sha256": "d0fd26a478a3da4c8b402a48852a4f6ca891a31cef555aa3878e2bf31d9b6e55",
+        "upload_size": "45",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "--ciscoasa-smoke-boundary\r\nContent-Disposition: form-data; name=\"file\"; filename=\"../../inert.txt\"\r\nContent-Type: application/octet-stream\r\n\r\nCiscoasa smoke test: inert uploaded evidence.\r\n--ciscoasa-smoke-boundary--\r\n",
+        "url": "/+CSCOE+/files/file_action.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53950",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client_version": "smoke",
+        "event_type": "anyconnect.init",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "<config-auth client=\"vpn\" type=\"init\"><version>smoke</version></config-auth>",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53772",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client_version": "smoke",
+        "event_type": "anyconnect.init",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "<config-auth client=\"vpn\" type=\"init\"><version>smoke</version></config-auth>",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53886",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "cve": "CVE-2020-3452",
+        "event_type": "exploit",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /+CSCOT+/translation-table?textdomain=../inert",
+        "url": "/+CSCOT+/translation-table?textdomain=../inert"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53806",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "cve": "CVE-2020-3452",
+        "event_type": "exploit",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /+CSCOT+/translation-table?textdomain=../inert",
+        "url": "/+CSCOT+/translation-table?textdomain=../inert"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53928",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "anyconnect.auth",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "password": "inert",
+        "username": "smoke",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "<config-auth type=\"auth-reply\"><auth><username>smoke</username><password>inert</password></auth></config-auth>",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53776",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "anyconnect.auth",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "password": "inert",
+        "username": "smoke",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "<config-auth type=\"auth-reply\"><auth><username>smoke</username><password>inert</password></auth></config-auth>",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53900",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "anyconnect.init",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53760",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "anyconnect.init",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53872",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "anyconnect.init",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "HEAD",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "HEAD /",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53758",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "anyconnect.init",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "HEAD",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "HEAD /",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53860",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "asdm.login",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "password": "inert",
+        "username": "smoke",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /admin/",
+        "url": "/admin/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53804",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "asdm.login",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "password": "inert",
+        "username": "smoke",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /admin/",
+        "url": "/admin/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53916",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "http.request",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53748",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "http.request",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53828",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "http.request",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /+CSCOE+/logon.html",
+        "url": "/+CSCOE+/logon.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53752",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "http.request",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "GET /+CSCOE+/logon.html",
+        "url": "/+CSCOE+/logon.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53844",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "ike.proposal",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "ike_exchange": "2",
+        "ike_proposals": "IKEv1 supported proposal DH=2",
+        "ike_version": "1",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "\ufffd...test...................H...,........... ............\ufffd...\ufffd...\ufffd...\ufffd..."
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "48571",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "4500",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "ike.proposal",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "ike_exchange": "2",
+        "ike_proposals": "IKEv1 supported proposal DH=2",
+        "ike_version": "1",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "\ufffd...test...................H...,........... ............\ufffd...\ufffd...\ufffd...\ufffd..."
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "49400",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "500",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "ike.proposal",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "ike_exchange": "2",
+        "ike_proposals": "IKEv1 supported proposal DH=2",
+        "ike_version": "1",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "\ufffd...test...................H...,........... ............\ufffd...\ufffd...\ufffd...\ufffd..."
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "49944",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "4500",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "ike.proposal",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "ike_exchange": "2",
+        "ike_proposals": "IKEv1 supported proposal DH=2",
+        "ike_version": "1",
+        "internalIP": "192.0.2.20",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "\ufffd...test...................H...,........... ............\ufffd...\ufffd...\ufffd...\ufffd..."
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "52266",
+        "protocol": "udp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "500",
+        "protocol": "udp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "webvpn.login",
+        "externalIP": "192.0.2.10",
+        "group": "Employees",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "password": "inert",
+        "username": "smoke",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "username=smoke&password=inert&group_list=Employees",
+        "url": "/+webvpn+/index.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53788",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "event_type": "webvpn.login",
+        "externalIP": "192.0.2.10",
+        "group": "Employees",
+        "hostname": "example-sensor",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "password": "inert",
+        "username": "smoke",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Cisco-ASA Honeypot",
+        "payload": "username=smoke&password=inert&group_list=Employees",
+        "url": "/+webvpn+/index.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53910",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:12",
+      "timezone": "+0000"
+    }
+  ]
+}
