@@ -1,0 +1,1239 @@
+{
+  "beelzebub": [
+    {
+      "metadata": {
+        "client": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:22:33",
+        "password": "123456",
+        "protocol": "SSH",
+        "service": "SSH interactive",
+        "sessionid": "0b70534b-4768-430b-b946-259553ac3b01",
+        "type": "New SSH attempt",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "33002",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "2222",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:22:33",
+        "password": "123456",
+        "protocol": "SSH",
+        "service": "SSH interactive",
+        "sessionid": "8569c70a-cc4c-4a19-a107-c6e7f9bdc10b",
+        "type": "New SSH attempt",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "32988",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "2222",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:16",
+        "password": "123456",
+        "protocol": "SSH",
+        "service": "SSH interactive LLM",
+        "sessionid": "ab13c78a-0da8-4560-ac69-311f3b9683d0",
+        "type": "New SSH attempt",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "35528",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "22",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:16",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:02",
+        "password": "123456",
+        "protocol": "SSH",
+        "service": "SSH interactive LLM",
+        "sessionid": "dfe0c995-23ca-4dfe-8341-3947218094e5",
+        "type": "New SSH attempt",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50412",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "22",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:02",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client_version": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "environ": "LANG=C.UTF-8",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "ls",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:22:33",
+        "logouttime": "2026-10-30 16:22:35",
+        "protocol": "SSH",
+        "service": "SSH interactive",
+        "sessionid": "42933470-8318-445a-8ebf-dfd2a52c325b",
+        "type": "End SSH Session",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "33002",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "2222",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client_version": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "environ": "LANG=C.UTF-8",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "uname",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:22:33",
+        "logouttime": "2026-10-30 16:22:33",
+        "protocol": "SSH",
+        "service": "SSH interactive",
+        "sessionid": "cda327a7-d8e8-4dcd-8807-7134b350a168",
+        "type": "End SSH Inline Session",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "32988",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "2222",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client_version": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "environ": "LANG=C.UTF-8",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "whoami",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:16",
+        "logouttime": "2026-10-30 16:27:16",
+        "protocol": "SSH",
+        "service": "SSH interactive LLM",
+        "sessionid": "f9d0c72b-eabb-4d1d-a448-d67cf7551d71",
+        "type": "End SSH Inline Session",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "35528",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "22",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:16",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "client_version": "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.6",
+        "environ": "LANG=C.UTF-8",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "whoami",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:02",
+        "logouttime": "2026-10-30 16:28:02",
+        "protocol": "SSH",
+        "service": "SSH interactive LLM",
+        "sessionid": "80f8c082-2de8-49e9-b01c-da898a6fe837",
+        "type": "End SSH Inline Session",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50412",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "22",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:02",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "http_host": "127.0.0.1:32825",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:22:32",
+        "protocol": "HTTP",
+        "service": "Apache 401",
+        "sessionid": "878ae527-5425-4ddd-b6c1-63f4f58c5631",
+        "type": "HTTP New request",
+        "user_agent": "tpot-smoke-test",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot",
+        "url": "/tpot-smoke-test"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39968",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8080",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:32",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "http_host": "172.18.0.2",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:57",
+        "protocol": "HTTP",
+        "service": "Wordpress 6.0 LLM",
+        "sessionid": "8ba75a7d-9c61-4f5e-85ab-14c45baa9b9c",
+        "type": "HTTP New request",
+        "user_agent": "ews-example-client",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot",
+        "url": "/ews-example"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "33162",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:57",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "http_host": "172.18.0.2:8081",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:57",
+        "protocol": "HTTP",
+        "service": "HTTP method example",
+        "sessionid": "3d3862a5-94d7-431b-b6b0-f8780956f838",
+        "type": "HTTP New request",
+        "user_agent": "ews-example-client",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot",
+        "url": "/ews-example"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43970",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8081",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:57",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "http_host": "172.18.0.2:8888",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:57",
+        "protocol": "HTTP",
+        "service": "Apache Directory Listing Maze Honeypot",
+        "sessionid": "060c002f-372f-479e-b9bc-33d07e103483",
+        "type": "HTTP New request",
+        "user_agent": "ews-example-client",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot",
+        "url": "/ews-example"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "42774",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8888",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:57",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "http_host": "172.19.0.2",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:11",
+        "protocol": "HTTP",
+        "service": "Wordpress 6.0 LLM",
+        "sessionid": "caa3caa8-63f7-4347-a800-7c0daf73c922",
+        "type": "HTTP New request",
+        "user_agent": "ews-example-client",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot",
+        "url": "/ews-example"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "52990",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "http_host": "172.19.0.2:8081",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:11",
+        "protocol": "HTTP",
+        "service": "HTTP method example",
+        "sessionid": "b7194e39-5604-44fd-9cbc-0b1523103700",
+        "type": "HTTP New request",
+        "user_agent": "ews-example-client",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot",
+        "url": "/ews-example"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "38520",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8081",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "http_host": "172.19.0.2:8888",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:11",
+        "protocol": "HTTP",
+        "service": "Apache Directory Listing Maze Honeypot",
+        "sessionid": "bc2abe1c-aa04-47e0-b4ec-8ecbb5a8ce8b",
+        "type": "HTTP New request",
+        "user_agent": "ews-example-client",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot",
+        "url": "/ews-example"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "54314",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8888",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "PING",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:15",
+        "logouttime": "2026-10-30 16:27:15",
+        "protocol": "TCP",
+        "service": "Memcached 1.6.17",
+        "sessionid": "e37bbf2e-d543-4a03-a534-ad6a4498f091",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "51964",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "11211",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:15",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "PING",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:15",
+        "logouttime": "2026-10-30 16:27:15",
+        "protocol": "TCP",
+        "service": "PostgreSQL 15.3 with LLM",
+        "sessionid": "eae2204e-cd83-4a8a-9d73-8fdd52292d24",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "59710",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "5432",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:15",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "PING",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:15",
+        "logouttime": "2026-10-30 16:27:15",
+        "protocol": "TCP",
+        "service": "Redis 7.0.12",
+        "sessionid": "eca5e472-b4d0-4ffb-982d-a9f13e02fb10",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "59558",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:15",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "PING",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:01",
+        "logouttime": "2026-10-30 16:28:01",
+        "protocol": "TCP",
+        "service": "Memcached 1.6.17",
+        "sessionid": "ac0c22b0-8ddd-4855-a4b5-b3020d3524d1",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "48904",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "11211",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:01",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "PING",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:01",
+        "logouttime": "2026-10-30 16:28:01",
+        "protocol": "TCP",
+        "service": "PostgreSQL 15.3 with LLM",
+        "sessionid": "0b016d9c-8ffb-4cd1-a75a-05d5add0ea4b",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "58744",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "5432",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:01",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "PING",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:01",
+        "logouttime": "2026-10-30 16:28:01",
+        "protocol": "TCP",
+        "service": "Redis 7.0.12",
+        "sessionid": "a8458b34-d5f4-413a-ac5b-c64494088bbd",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "33414",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:01",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "tpot-smoke-test\n",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:22:32",
+        "protocol": "TCP",
+        "service": "Mysql 8.0.29",
+        "sessionid": "6d2189d7-fe01-4624-b0d8-33852dbef73c",
+        "type": "New TCP attempt",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "51680",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "3306",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:32",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "whoami",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:15",
+        "logouttime": "2026-10-30 16:27:16",
+        "protocol": "TELNET",
+        "service": "TELNET interactive",
+        "sessionid": "18a7a510-7b94-4832-af2a-40870516536f",
+        "type": "End TELNET Session",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "40100",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "23",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:15",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "input": "whoami",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:01",
+        "logouttime": "2026-10-30 16:28:02",
+        "protocol": "TELNET",
+        "service": "TELNET interactive",
+        "sessionid": "921e92c3-04c5-4aa9-bc6f-b4310381be17",
+        "type": "End TELNET Session",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50132",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "23",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:01",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:11",
+        "logouttime": "2026-10-30 16:27:12",
+        "protocol": "TCP",
+        "service": "Active Directory LDAP Domain Controller",
+        "sessionid": "63950a92-6003-4b8f-9e53-d1eff614ae38",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "36212",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "389",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:12",
+        "logouttime": "2026-10-30 16:27:12",
+        "protocol": "TCP",
+        "service": "Windows SMB File Server",
+        "sessionid": "89fb5bdc-5f8a-418c-bf47-ab31fc53cc10",
+        "type": "New TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "45914",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "445",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:12",
+        "logouttime": "2026-10-30 16:27:13",
+        "protocol": "TCP",
+        "service": "Microsoft SQL Server 2019",
+        "sessionid": "353b0e6f-7e74-4816-b4c7-c7b3349c3bce",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "39784",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "1433",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:12",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:13",
+        "logouttime": "2026-10-30 16:27:14",
+        "protocol": "TCP",
+        "service": "MQTT Broker",
+        "sessionid": "f6546f29-b652-4f89-8a30-2d0dca79e5d7",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "50676",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "1883",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:13",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:14",
+        "logouttime": "2026-10-30 16:27:15",
+        "protocol": "TCP",
+        "service": "Windows Remote Desktop Service",
+        "sessionid": "b12a5d6d-b05d-410f-b154-d79136f093b9",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "43336",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "3389",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:14",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:15",
+        "logouttime": "2026-10-30 16:27:15",
+        "protocol": "TCP",
+        "service": "VNC Server (RFB Protocol) with VNC Authentication credential capture",
+        "sessionid": "6d55d83b-e8c2-4de1-a473-a81cf2112664",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "37928",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "5900",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:15",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:15",
+        "password": "123456",
+        "protocol": "TELNET",
+        "service": "TELNET interactive",
+        "sessionid": "a718a7aa-46dd-402a-a654-bb76487d79ca",
+        "type": "New TELNET Login Attempt",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.19.0.1",
+        "category": "ipv4",
+        "port": "40100",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "23",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:15",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:57",
+        "logouttime": "2026-10-30 16:27:58",
+        "protocol": "TCP",
+        "service": "Active Directory LDAP Domain Controller",
+        "sessionid": "566f0727-0c7d-40b4-82ab-bef26a8b7128",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "37024",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "389",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:57",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:58",
+        "logouttime": "2026-10-30 16:27:58",
+        "protocol": "TCP",
+        "service": "Windows SMB File Server",
+        "sessionid": "29402fbc-f780-45fc-83a6-fbd27c8e04f9",
+        "type": "New TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "51048",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "445",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:58",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:58",
+        "logouttime": "2026-10-30 16:27:59",
+        "protocol": "TCP",
+        "service": "Microsoft SQL Server 2019",
+        "sessionid": "930125fb-4137-4f5d-8677-69b3651a2572",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "53254",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "1433",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:58",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:27:59",
+        "logouttime": "2026-10-30 16:28:00",
+        "protocol": "TCP",
+        "service": "MQTT Broker",
+        "sessionid": "377b5eea-e36e-4098-a3eb-0c13f46b056d",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50116",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "1883",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:59",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:00",
+        "logouttime": "2026-10-30 16:28:01",
+        "protocol": "TCP",
+        "service": "Windows Remote Desktop Service",
+        "sessionid": "36d78d05-340f-4f25-9917-73f66987e527",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60886",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "3389",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:01",
+        "logouttime": "2026-10-30 16:28:01",
+        "protocol": "TCP",
+        "service": "VNC Server (RFB Protocol) with VNC Authentication credential capture",
+        "sessionid": "a6da228f-e1f2-48e5-9535-ac0d24277fab",
+        "type": "End TCP Session",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50672",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "5900",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:01",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "logintime": "2026-10-30 16:28:01",
+        "password": "123456",
+        "protocol": "TELNET",
+        "service": "TELNET interactive",
+        "sessionid": "1ef5f003-f39c-41dc-8203-8fd05102b179",
+        "type": "New TELNET Login Attempt",
+        "username": "root",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Beelzebub Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50132",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "23",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:28:01",
+      "timezone": "+0000"
+    }
+  ]
+}
