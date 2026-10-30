@@ -1,0 +1,17 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/heralding/Dockerfile",
+  "smoke_test": "docker/_tests/tests/heralding.sh",
+  "image_id": "sha256:3fac12f9d50b07ebf04d354aacded78ddd3a8b1b5484a81115edf4b8ead4efae",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/heralding:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/auth.csv": "d124dc844d20ab9a064890f7c22464704a9c97f0b7ab42c8ddca4ccb57edd380"
+  },
+  "ewsposter_pr": 29,
+  "ewsposter_tested_head": "e7295dbe41600c1c6e5cfcd8013aef2776fbe57b"
+}
