@@ -511,3 +511,54 @@ def test_session_without_command_is_reported_once_at_close(monkeypatch):
     assert scan['additionaldata']['session_command_count'] == 0
     assert scan['additionaldata']['session_id'] == 'scan'
     assert busy['request']['request'] == 'PING'
+
+
+def test_refused_connections_and_truncation_flags_are_reported(monkeypatch):
+    # Recorded from RedisHoneyPot v2.1.0 (redis74 persona).
+    lines = [
+        {
+            'timestamp': '2026-10-30T13:30:01.636985251Z', 'level': 'INFO', 'message': 'refused',
+            'event': 'refused', 'protocol': 'redis', 'network': 'tcp', 'profile': 'redis74',
+            'src_ip': '203.0.113.40', 'src_port': 56700, 'dest_ip': '172.17.0.3', 'dest_port': 6379,
+            'reason': 'max_clients_per_ip', 'refused_count': 5,
+        },
+        {
+            'timestamp': '2026-10-30T13:30:02Z', 'level': 'INFO', 'message': 'refused',
+            'event': 'refused', 'protocol': 'redis', 'network': 'tcp', 'profile': 'redis74',
+            'src_ip': '203.0.113.41', 'src_port': 56701, 'dest_ip': '172.17.0.3', 'dest_port': 6379,
+            'refused_count': 1,
+        },
+        {
+            'timestamp': '2026-10-30T13:29:55.056363221Z', 'level': 'INFO', 'message': 'command',
+            'event': 'command', 'protocol': 'redis', 'network': 'tcp', 'profile': 'redis74',
+            'session_id': '90d3d155b1fbb7e921e13dea0fdcb703', 'client_id': 2,
+            'src_ip': '203.0.113.42', 'src_port': 60566, 'dest_ip': '172.17.0.3', 'dest_port': 6379,
+            'session_start': '2026-10-30T13:29:55.054793721Z',
+            'client_name': 'A' * 128, 'client_name_truncated': True,
+            'command': 'GET', 'command_category': 'read', 'arg_count': 1,
+            'key': 'k' * 1024, 'key_truncated': True,
+            'outcome': 'connection_closed', 'reply_limited': True, 'log_truncated': True,
+        },
+    ]
+
+    fake_alert, _ = run_redishoneypot(monkeypatch, lines)
+
+    assert len(fake_alert.alerts) == 3
+    refused, refused_no_reason, command = fake_alert.alerts
+    assert refused['data']['timestamp'] == '2026-10-30 13:30:01'
+    assert refused['data']['source_address'] == '203.0.113.40'
+    assert refused['data']['source_port'] == '56700'
+    assert refused['data']['target_address'] == '198.51.100.20'
+    assert refused['data']['target_port'] == '6379'
+    assert refused['request']['request'] == 'connection refused (max_clients_per_ip)'
+    assert refused['additionaldata']['reason'] == 'max_clients_per_ip'
+    assert refused['additionaldata']['refused_count'] == 5
+    assert 'session_id' not in refused['additionaldata']
+    assert refused_no_reason['request']['request'] == 'connection refused'
+
+    data = command['additionaldata']
+    assert command['request']['request'] == 'GET'
+    assert data['client_name_truncated'] is True
+    assert data['key_truncated'] is True
+    assert data['reply_limited'] is True
+    assert data['log_truncated'] is True

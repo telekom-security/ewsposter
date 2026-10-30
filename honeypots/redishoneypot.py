@@ -38,6 +38,18 @@ REDIS_METADATA_FIELDS = (
     'ioc_urls', 'ioc_ips', 'ioc_domains', 'ioc_count',
     'error', 'max_bulk_bytes', 'max_inline_bytes', 'max_array_elems',
     'session_command_count', 'session_hints',
+    'reason', 'refused_count', 'reply_limited',
+    'log_truncated', 'ioc_truncated',
+    'client_name_truncated', 'client_library_name_truncated',
+    'client_library_version_truncated', 'user_agent_truncated',
+    'command_truncated', 'key_truncated', 'key_pattern_truncated',
+    'config_subcommand_truncated', 'config_key_truncated',
+    'auth_username_truncated', 'replica_host_truncated',
+    'replica_port_truncated', 'replconf_key_truncated',
+    'replconf_value_truncated', 'module_subcommand_truncated',
+    'module_path_truncated', 'client_subcommand_truncated',
+    'script_sha1_truncated', 'target_dir_truncated',
+    'target_dbfilename_truncated',
 )
 
 
@@ -59,8 +71,10 @@ def _format_timestamp(value):
 
 
 def _is_alert_event(line):
-    """ every command, and the close of a session without any command (port scans, protocol errors) """
-    if line.get('event') == 'command':
+    """ every command, every refused connection (RedisHoneyPot logs at most one
+    per source address and minute) and the close of a session without any
+    command (port scans, protocol errors) """
+    if line.get('event') in ('command', 'refused'):
         return True
     count = line.get('session_command_count')
     return line.get('event') == 'close' and not isinstance(count, bool) and count == 0
@@ -69,6 +83,9 @@ def _is_alert_event(line):
 def _request_text(line):
     if line.get('event') == 'close':
         return 'connection without command'
+    if line.get('event') == 'refused':
+        reason = line.get('reason')
+        return f"connection refused ({reason})" if reason else 'connection refused'
 
     command = line.get('command')
 
