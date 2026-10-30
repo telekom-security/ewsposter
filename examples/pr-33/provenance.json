@@ -1,0 +1,19 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/glutton/Dockerfile",
+  "smoke_test": "docker/_tests/tests/glutton.sh",
+  "image_id": "sha256:2a35311fccb1136819150065cbd04b0c0b422429b1142c800e451971a19ef1d3",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/glutton:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/diagnostic.log": "3de9c4d996c765a1b44502530c1b70954a1bf09ae8f7c368c2b83a7a743b28ab",
+    "logs/glutton.log": "54bbc4359f3077ae66fe70be4ca2d77d1350f62b6bc61cf0167b915b12c6402c"
+  },
+  "ewsposter_pr": 33,
+  "ewsposter_tested_head": "bba86131faccd25a3599b9ae6bcf4a8748d826fa",
+  "ewsposter_original_head": "a36c0d3ab20cc62d9c0a6f1fdfe1e14a9ec4bd0e"
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "name": "glutton",
+    "module": "glutton",
+    "logs": "logs",
+    "logfile": "glutton.log"
+  }
+]
