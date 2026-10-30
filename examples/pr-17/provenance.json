@@ -1,0 +1,21 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/mailoney/Dockerfile",
+  "smoke_test": "docker/_tests/tests/mailoney.sh",
+  "image_id": "sha256:27ecaab939b9adc475fef013032e3d34586eb55ab831f4ccc345bbfeca10cc32",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/mailoney:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/log.json": "a19bbefa99bb8a1a9b9d89b29c3e5d858066e982c025acab503c92a77e9bd8d6",
+    "payloads/2026-10-30/172.18.0.1/051a3ebe-a5d8-4075-a2ae-021ea5825303/1a0de694-77a3-47d8-a091-fbdc90089714.eml": "bee96b544d1d246ae4197fbaa8750f2be50426e8776fb0896299a639d28b83ae",
+    "payloads/2026-10-30/172.18.0.1/051a3ebe-a5d8-4075-a2ae-021ea5825303/attachments/1a0de694-77a3-47d8-a091-fbdc90089714-3-mailoney-test-1793376809-40626.bin": "5410a503fc24ab5d337f46eb5ef2005d69e538441728af82c837cd08c7707d11",
+    "payloads/2026-10-30/172.18.0.1/b4438ae9-b208-428b-9b70-4d85af7e7405/767dac35-b440-4629-ac63-704ff4573c03.eml": "ba4348d1f6f266cb15d9f81fe6abe268b40255f774caf8e90f3c89b96d59b07c",
+    "payloads/2026-10-30/172.18.0.1/b4438ae9-b208-428b-9b70-4d85af7e7405/attachments/767dac35-b440-4629-ac63-704ff4573c03-3-mailoney-test-1793376809-40626-again.bin": "0f3bf1460844f890eb3566245164fabf4502c836cb6715e7766679af0ffc8353"
+  },
+  "ewsposter_pr": 17,
+  "ewsposter_tested_head": "5de3309dbd17dfc0cbdd0bf28f41925619b5dfda"
+}

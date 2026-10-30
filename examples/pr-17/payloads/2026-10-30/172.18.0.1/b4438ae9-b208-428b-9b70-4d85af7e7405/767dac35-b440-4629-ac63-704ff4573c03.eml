@@ -1,0 +1,22 @@
+From: sender-mailoney-test-1793376809-40626-again@example.org
+To: recipient-mailoney-test-1793376809-40626-again@example.net
+Subject: smoke mailoney-test-1793376809-40626-again
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============8693022952530497444=="
+
+--===============8693022952530497444==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+body mailoney-test-1793376809-40626-again
+
+--===============8693022952530497444==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="mailoney-test-1793376809-40626-again.bin"
+MIME-Version: 1.0
+
+cGF5bG9hZCBtYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4K
+
+--===============8693022952530497444==--
