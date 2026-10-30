@@ -201,6 +201,11 @@ nodeid = <your unique analyzer id>
 logfile = /opt/miniprint/log/miniprint.json
 uploaddir = /opt/miniprint/uploads
 
+[RDPHONEYPOT]
+rdphoneypot = false
+nodeid = <your unique analyzer id>
+logfile = /opt/rdphoneypot/log/rdphoneypot.json
+
 [RDPY]
 rdpy = false
 nodeid = <your unique analyzer id>

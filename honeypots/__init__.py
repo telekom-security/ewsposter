@@ -32,6 +32,7 @@ from .log4pot import log4pot
 from .mailoney import mailoney
 from .medpot import medpot
 from .miniprint import miniprint
+from .rdphoneypot import rdphoneypot
 from .rdpy import rdpy
 from .redishoneypot import redishoneypot
 from .sentrypeer import sentrypeer
