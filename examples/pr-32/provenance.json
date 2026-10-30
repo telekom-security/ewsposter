@@ -1,0 +1,18 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/h0neytr4p/Dockerfile",
+  "smoke_test": "docker/_tests/tests/h0neytr4p.sh",
+  "image_id": "sha256:76787b4f7ae7f3343c37ed3c0b6b07d77adfe9c5f6597088b0cfffc1e0fe5d52",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/h0neytr4p:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/log.json": "fc344ea5d83772fdecc306cfc84787d1ca34fde6b2570b2543931f4fcbdc23ec",
+    "payloads/b92c00651b6cb82edbdb05b20a5c4931": "b536bb74b551ea35c29378bb30f41d33c3578d0ff956859157a784a45de95b19"
+  },
+  "ewsposter_pr": 32,
+  "ewsposter_tested_head": "2d4322e217845456289dd5117fe0ae6c45bd0c07"
+}
