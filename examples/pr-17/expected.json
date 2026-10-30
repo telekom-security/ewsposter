@@ -1,0 +1,334 @@
+{
+  "mailoney": [
+    {
+      "metadata": {
+        "attachment.count": "1",
+        "attachment.filenames": "[\"mailoney-test-1793376809-40626-again.bin\"]",
+        "attachment.sha256": "[\"0f3bf1460844f890eb3566245164fabf4502c836cb6715e7766679af0ffc8353\"]",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "smtp",
+        "listener.tls_mode": "starttls",
+        "mail.eml_size": "774",
+        "mail.envelope_from": "sender-mailoney-test-1793376809-40626-again@example.org",
+        "mail.envelope_to": "[\"recipient-mailoney-test-1793376809-40626-again@example.net\"]",
+        "mail.header_from": "sender-mailoney-test-1793376809-40626-again@example.org",
+        "mail.header_to": "recipient-mailoney-test-1793376809-40626-again@example.net",
+        "mail.message_id": "767dac35-b440-4629-ac63-704ff4573c03",
+        "mail.sending_mailserver": "smtp-mailoney-test-1793376809-40626-again.example",
+        "mail.sequence": "1",
+        "mail.subject": "smoke mailoney-test-1793376809-40626-again",
+        "mail.truncated": "false",
+        "session_duration": "0.002969",
+        "session_id": "b4438ae9-b208-428b-9b70-4d85af7e7405",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO smtp-mailoney-test-1793376809-40626-again.example\nAUTH LOGIN\ndXNlci1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4=\ncGFzcy1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4=\nMAIL FROM:<sender-mailoney-test-1793376809-40626-again@example.org>\nRCPT TO:<recipient-mailoney-test-1793376809-40626-again@example.net>\nDATA\nQUIT",
+        "smtp_input_count": "8",
+        "smtp_input_truncated": "false",
+        "tls.used": "false",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "binary": "cGF5bG9hZCBtYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4K",
+        "description": "Mail Honeypot mailoney (mail)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50074",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "25",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:30",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "attachment.count": "1",
+        "attachment.filenames": "[\"mailoney-test-1793376809-40626.bin\"]",
+        "attachment.sha256": "[\"5410a503fc24ab5d337f46eb5ef2005d69e538441728af82c837cd08c7707d11\"]",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "smtp",
+        "listener.tls_mode": "starttls",
+        "mail.eml_size": "734",
+        "mail.envelope_from": "sender-mailoney-test-1793376809-40626@example.org",
+        "mail.envelope_to": "[\"recipient-mailoney-test-1793376809-40626@example.net\"]",
+        "mail.header_from": "sender-mailoney-test-1793376809-40626@example.org",
+        "mail.header_to": "recipient-mailoney-test-1793376809-40626@example.net",
+        "mail.message_id": "1a0de694-77a3-47d8-a091-fbdc90089714",
+        "mail.sending_mailserver": "smtp-mailoney-test-1793376809-40626.example",
+        "mail.sequence": "1",
+        "mail.subject": "smoke mailoney-test-1793376809-40626",
+        "mail.truncated": "false",
+        "session_duration": "0.003084",
+        "session_id": "051a3ebe-a5d8-4075-a2ae-021ea5825303",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO smtp-mailoney-test-1793376809-40626.example\nAUTH LOGIN\ndXNlci1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjY=\ncGFzcy1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjY=\nMAIL FROM:<sender-mailoney-test-1793376809-40626@example.org>\nRCPT TO:<recipient-mailoney-test-1793376809-40626@example.net>\nDATA\nQUIT",
+        "smtp_input_count": "8",
+        "smtp_input_truncated": "false",
+        "tls.used": "false",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "binary": "cGF5bG9hZCBtYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYK",
+        "description": "Mail Honeypot mailoney (mail)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "57968",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "25",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:29",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "auth.count": "0",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "smtps",
+        "listener.tls_mode": "implicit",
+        "session_duration": "0.042789",
+        "session_id": "0a54bfee-5c6e-4149-8528-fc10bc2dbff1",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO smtps-mailoney-test-1793376809-40626-again.example\nQUIT",
+        "smtp_input_count": "2",
+        "smtp_input_truncated": "false",
+        "tls.cipher": "TLS_AES_256_GCM_SHA384",
+        "tls.used": "true",
+        "tls.version": "TLSv1.3",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Mail Honeypot mailoney (session)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "55594",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "465",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:30",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "auth.count": "0",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "smtps",
+        "listener.tls_mode": "implicit",
+        "session_duration": "0.042968",
+        "session_id": "59e62529-6f07-4295-bf01-15d8fdf0aac5",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO smtps-mailoney-test-1793376809-40626.example\nQUIT",
+        "smtp_input_count": "2",
+        "smtp_input_truncated": "false",
+        "tls.cipher": "TLS_AES_256_GCM_SHA384",
+        "tls.used": "true",
+        "tls.version": "TLSv1.3",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Mail Honeypot mailoney (session)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "42896",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "465",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:29",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "auth.count": "0",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "submission",
+        "listener.tls_mode": "starttls",
+        "session_duration": "0.04739",
+        "session_id": "50f0f6d9-f97a-40b0-a723-a0fe75f2c17f",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO submission-mailoney-test-1793376809-40626-again.example\nSTARTTLS\nEHLO submission-mailoney-test-1793376809-40626-again.example\nQUIT",
+        "smtp_input_count": "4",
+        "smtp_input_truncated": "false",
+        "tls.cipher": "TLS_AES_256_GCM_SHA384",
+        "tls.used": "true",
+        "tls.version": "TLSv1.3",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Mail Honeypot mailoney (session)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "38646",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "587",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:30",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "auth.count": "0",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "submission",
+        "listener.tls_mode": "starttls",
+        "session_duration": "0.051526",
+        "session_id": "abf69ada-b917-4feb-8f20-3b55db9984e1",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO submission-mailoney-test-1793376809-40626.example\nSTARTTLS\nEHLO submission-mailoney-test-1793376809-40626.example\nQUIT",
+        "smtp_input_count": "4",
+        "smtp_input_truncated": "false",
+        "tls.cipher": "TLS_AES_256_GCM_SHA384",
+        "tls.used": "true",
+        "tls.version": "TLSv1.3",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Mail Honeypot mailoney (session)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "47846",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "587",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:29",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "auth.method": "login",
+        "auth.password": "pass-mailoney-test-1793376809-40626",
+        "auth.raw": "dXNlci1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjY=:cGFzcy1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjY=",
+        "auth.sequence": "1",
+        "auth.username": "user-mailoney-test-1793376809-40626",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "smtp",
+        "listener.tls_mode": "starttls",
+        "session_duration": "0.003084",
+        "session_id": "051a3ebe-a5d8-4075-a2ae-021ea5825303",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO smtp-mailoney-test-1793376809-40626.example\nAUTH LOGIN\ndXNlci1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjY=\ncGFzcy1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjY=\nMAIL FROM:<sender-mailoney-test-1793376809-40626@example.org>\nRCPT TO:<recipient-mailoney-test-1793376809-40626@example.net>\nDATA\nQUIT",
+        "smtp_input_count": "8",
+        "smtp_input_truncated": "false",
+        "tls.used": "false",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Mail Honeypot mailoney (auth)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "57968",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "25",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:29",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "auth.method": "login",
+        "auth.password": "pass-mailoney-test-1793376809-40626-again",
+        "auth.raw": "dXNlci1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4=:cGFzcy1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4=",
+        "auth.sequence": "1",
+        "auth.username": "user-mailoney-test-1793376809-40626-again",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "listener.name": "smtp",
+        "listener.tls_mode": "starttls",
+        "session_duration": "0.002969",
+        "session_id": "b4438ae9-b208-428b-9b70-4d85af7e7405",
+        "session_last_response_code": "221",
+        "session_outcome": "ok",
+        "smtp_input": "EHLO smtp-mailoney-test-1793376809-40626-again.example\nAUTH LOGIN\ndXNlci1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4=\ncGFzcy1tYWlsb25leS10ZXN0LTE3OTMzNzY4MDktNDA2MjYtYWdhaW4=\nMAIL FROM:<sender-mailoney-test-1793376809-40626-again@example.org>\nRCPT TO:<recipient-mailoney-test-1793376809-40626-again@example.net>\nDATA\nQUIT",
+        "smtp_input_count": "8",
+        "smtp_input_truncated": "false",
+        "tls.used": "false",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Mail Honeypot mailoney (auth)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "50074",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "25",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:30",
+      "timezone": "+0000"
+    }
+  ]
+}

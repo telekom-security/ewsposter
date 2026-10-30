@@ -1,0 +1,8 @@
+[
+  {
+    "name": "mailoney",
+    "module": "mailoney",
+    "logs": "logs",
+    "logfile": "log.json"
+  }
+]
