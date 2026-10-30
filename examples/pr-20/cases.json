@@ -1,0 +1,8 @@
+[
+  {
+    "name": "wordpot",
+    "module": "wordpot",
+    "logs": "logs",
+    "logfile": "wordpot.json"
+  }
+]

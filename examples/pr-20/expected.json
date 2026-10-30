@@ -1,0 +1,445 @@
+{
+  "wordpot": [
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": ".env",
+        "component_type": "core",
+        "details": "{\"bait_file\":\"/.env\",\"http_host\":\"127.0.0.1:32781\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "GET",
+        "os_family": "Other",
+        "payload_size": "0",
+        "profile_id": "modern-business",
+        "request_id": "4eb63dd6-e5b5-4fc4-9cb1-0d577d792f14",
+        "response_status": "200",
+        "technique": "config_bait_served",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/.env"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60832",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "2026/10/report.php",
+        "component_type": "upload",
+        "details": "{\"http_host\":\"127.0.0.1:32781\",\"uploaded_files\":[{\"basename\":\"tpot-wordpot-smoke-1793376877-46692.php\",\"sha256\":\"af1dd746307fdefec634e6cf770ee4a75eaa2988ac38955a23f31437d8224411\"}]}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "POST",
+        "os_family": "Other",
+        "payload_sha256": "d10652342a262e1626193eb3382f12189d5de73a8a847356852a8543fc6a44a2",
+        "payload_size": "267",
+        "profile_id": "modern-business",
+        "request_id": "82c7b2fd-7be1-401e-b2f7-3618d5f4d28a",
+        "response_status": "404",
+        "technique": "upload_lure_payload",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "binary": "LS0xNTExMGU1YzljZjY0MTJkYTg1MDk1MWM2MTY1NzNkNQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InRwb3Qtd29yZHBvdC1zbW9rZS0xNzkzMzc2ODc3LTQ2NjkyLnBocCINCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtDQoNCjw/cGhwIGVjaG8gJ3Rwb3Qtd29yZHBvdC1zbW9rZS0xNzkzMzc2ODc3LTQ2NjkyJzsgPz4NCi0tMTUxMTBlNWM5Y2Y2NDEyZGE4NTA5NTFjNjE2NTczZDUtLQ0K",
+        "description": "Wordpot Honeypot",
+        "url": "/wp-content/uploads/2026/10/report.php"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60850",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "admin-ajax.php",
+        "component_type": "core",
+        "details": "{\"action\":\"duplicator_download\",\"http_host\":\"127.0.0.1:32781\",\"lure_params\":[{\"name\":\"url\",\"value\":\"http://tpot-wordpot-smoke-1793376877-46692/\"}]}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "GET",
+        "os_family": "Other",
+        "payload_size": "0",
+        "profile_id": "modern-business",
+        "request_id": "d00a2bd7-0644-4f79-8f51-1df6b661c447",
+        "response_status": "200",
+        "technique": "admin_ajax_action",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/wp-admin/admin-ajax.php?action=duplicator_download&url=http://tpot-wordpot-smoke-1793376877-46692/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60836",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "admin-ajax.php",
+        "component_type": "core",
+        "details": "{\"action\":\"heartbeat\",\"http_host\":\"127.0.0.1:32781\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "GET",
+        "os_family": "Other",
+        "payload_size": "0",
+        "profile_id": "modern-business",
+        "request_id": "6f35e544-c7bc-42a6-942c-81c5a9aa92cd",
+        "response_status": "200",
+        "technique": "admin_ajax_action",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/wp-admin/admin-ajax.php?action=heartbeat"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60840",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "elementor",
+        "component_type": "plugin",
+        "details": "{\"http_host\":\"127.0.0.1:32781\",\"subpath\":\"readme.txt\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "GET",
+        "os_family": "Other",
+        "payload_size": "0",
+        "profile_id": "modern-business",
+        "request_id": "a62eff59-55d0-4810-bb6d-351a044cc098",
+        "response_status": "200",
+        "technique": "plugin_probe",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/wp-content/plugins/elementor/readme.txt"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60816",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "readme.html",
+        "component_type": "core",
+        "details": "{\"http_host\":\"example.org:8080\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "GET",
+        "os_family": "Other",
+        "payload_size": "0",
+        "profile_id": "modern-business",
+        "request_id": "1d360bb6-ebb7-40a9-83e8-5027eab9cc16",
+        "response_status": "200",
+        "technique": "core_version_probe",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/readme.html"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60854",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "wp-login.php",
+        "component_type": "core",
+        "details": "{\"action\":\"login\",\"http_host\":\"127.0.0.1:32781\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "GET",
+        "os_family": "Other",
+        "payload_size": "0",
+        "profile_id": "modern-business",
+        "request_id": "5956d60f-1ec3-42e1-a5ea-a60a3a3f7ab6",
+        "response_status": "200",
+        "technique": "login_page",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/wp-login.php"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60758",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "wp-login.php",
+        "component_type": "core",
+        "details": "{\"action\":\"login\",\"http_host\":\"127.0.0.1:32781\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "POST",
+        "os_family": "Other",
+        "password": "tpot-wordpot-smoke-1793376877-46692-pw",
+        "payload_sha256": "8dc6a9d3a48e65f3960d75e9f47df72d95e1e862f8eb3ac5082e6f528e8bb818",
+        "payload_size": "69",
+        "profile_id": "modern-business",
+        "request_id": "5438e776-8666-486b-b8eb-86a82ccedf40",
+        "response_status": "200",
+        "technique": "credential_attempt",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "username": "admin",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/wp-login.php"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60772",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "wp/v2/users",
+        "component_type": "core",
+        "details": "{\"http_host\":\"127.0.0.1:32781\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "GET",
+        "os_family": "Other",
+        "payload_size": "0",
+        "profile_id": "modern-business",
+        "request_id": "d11c4c72-e6de-400b-a0d0-c08a863c0bbe",
+        "response_status": "200",
+        "technique": "rest_user_enumeration",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/wp-json/wp/v2/users"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60800",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "xmlrpc.php",
+        "component_type": "core",
+        "details": "{\"credential_pair_count\":1,\"credential_pairs\":[{\"password\":\"tpot-wordpot-smoke-1793376877-46692-mc\",\"username\":\"admin\"}],\"http_host\":\"127.0.0.1:32781\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "POST",
+        "os_family": "Other",
+        "password": "tpot-wordpot-smoke-1793376877-46692-mc",
+        "payload_sha256": "752abfdd8a4852d0d89fae301c95c9013eb61269c93cf6530d0fe67d62cf746e",
+        "payload_size": "468",
+        "profile_id": "modern-business",
+        "request_id": "a2a027b7-25ff-46a1-80e4-3683fe799645",
+        "response_status": "200",
+        "technique": "xmlrpc_multicall",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "username": "admin",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "binary": "PD94bWwgdmVyc2lvbj0iMS4wIj8+PG1ldGhvZENhbGw+PG1ldGhvZE5hbWU+c3lzdGVtLm11bHRpY2FsbDwvbWV0aG9kTmFtZT48cGFyYW1zPjxwYXJhbT48dmFsdWU+PGFycmF5PjxkYXRhPjx2YWx1ZT48c3RydWN0PjxtZW1iZXI+PG5hbWU+bWV0aG9kTmFtZTwvbmFtZT48dmFsdWU+PHN0cmluZz53cC5nZXRVc2Vyc0Jsb2dzPC9zdHJpbmc+PC92YWx1ZT48L21lbWJlcj48bWVtYmVyPjxuYW1lPnBhcmFtczwvbmFtZT48dmFsdWU+PGFycmF5PjxkYXRhPjx2YWx1ZT48c3RyaW5nPmFkbWluPC9zdHJpbmc+PC92YWx1ZT48dmFsdWU+PHN0cmluZz50cG90LXdvcmRwb3Qtc21va2UtMTc5MzM3Njg3Ny00NjY5Mi1tYzwvc3RyaW5nPjwvdmFsdWU+PC9kYXRhPjwvYXJyYXk+PC92YWx1ZT48L21lbWJlcj48L3N0cnVjdD48L3ZhbHVlPjwvZGF0YT48L2FycmF5PjwvdmFsdWU+PC9wYXJhbT48L3BhcmFtcz48L21ldGhvZENhbGw+",
+        "description": "Wordpot Honeypot",
+        "url": "/xmlrpc.php"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60776",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "browser_family": "Other",
+        "component_slug": "xmlrpc.php",
+        "component_type": "core",
+        "details": "{\"credential_pair_count\":1,\"credential_pairs\":[{\"password\":\"tpot-wordpot-smoke-1793376877-46692-x\",\"username\":\"editor\"}],\"http_host\":\"127.0.0.1:32781\"}",
+        "device_family": "Other",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "method": "POST",
+        "os_family": "Other",
+        "password": "tpot-wordpot-smoke-1793376877-46692-x",
+        "payload_sha256": "811d046d8136c93a65048cb90abedc497d390e90af6b9c8bf3dc5e28a6da675d",
+        "payload_size": "241",
+        "profile_id": "modern-business",
+        "request_id": "07dd25a8-3479-43ad-b84e-2cdc1ac76d15",
+        "response_status": "200",
+        "technique": "xmlrpc_login",
+        "user_agent": "tpot-wordpot-smoke-1793376877-46692",
+        "username": "editor",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Wordpot Honeypot",
+        "url": "/xmlrpc.php"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60786",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:42",
+      "timezone": "+0000"
+    }
+  ]
+}
