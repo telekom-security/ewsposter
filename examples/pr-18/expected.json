@@ -1,0 +1,210 @@
+{
+  "miniprint": [
+    {
+      "metadata": {
+        "action": "open_conn,request,print,saving,close_conn",
+        "artifact_size": "57",
+        "artifact_type": "ps",
+        "artifacts": "2026-10-30_16-13-47-759542_8abda7afd9748c92.ps:8abda7afd9748c9264e726d93f9908e9ff1b5a19002a1801eb222833dc965289",
+        "command": "JOB,EOJ",
+        "event": "connection,command_received,job_boundary,print_job,save_print_job,connection_closed",
+        "externalIP": "192.0.2.10",
+        "file_name": "2026-10-30_16-13-47-759542_8abda7afd9748c92.ps",
+        "hostname": "example-sensor",
+        "info": "Connection opened,PJL command received,Job boundary observed,Print language selected,Saved print artifact,Connection closed",
+        "internalIP": "192.0.2.20",
+        "language": "POSTSCRIPT",
+        "payload_preview": "@PJL JOB NAME=\"tpot\"\\r\\n\n@PJL EOJ\\r\\n",
+        "payload_sha256": "b05b4652bc293b93cab2806276c14b5b96365b32d2d0367597a6c84e2086259c,8abda7afd9748c9264e726d93f9908e9ff1b5a19002a1801eb222833dc965289,2070f7a01f058922069011513aabd8b5d9f483b936a6a112d49e9283a9412924",
+        "persona": "brother",
+        "protocol": "pjl",
+        "session_duration": "0.000745",
+        "session_end": "2026-10-30T16:13:47.759796Z",
+        "session_id": "8b941471-ebb1-410b-b274-99b9e6e54fe7",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "binary": "JSFQUy1BZG9iZS0zLjAKJSUgbWluaXByaW50LXBzLTE3OTMzNzY4MjYtNDE5NzgKc2hvd3BhZ2UK",
+        "description": "Miniprint Honeypot",
+        "payload": "@PJL JOB NAME=\"tpot\"\\r\\n",
+        "request": "JOB,EOJ"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "49810",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "9100",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:47",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "action": "open_conn,request,response,close_conn",
+        "command": "INFO,ECHO",
+        "event": "connection,command_received,response_sent,echo,connection_closed",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "info": "Connection opened,PJL command received,Response sent,Responding with echo,Connection closed",
+        "internalIP": "192.0.2.20",
+        "payload_preview": "@PJL INFO ID\\r\\n\n@PJL INFO STATUS\\r\\n\n@PJL ECHO miniprint-pjl-1793376826-41978\\r\\n",
+        "payload_sha256": "df6688c2ecb8dde66f555ac54a8f52dd234ca821f9d862664b9ee779c542a214,03639e66031d025e60ae5ad9b4f15eda22abd2086ebf58d211d4aeeda73b9052,4eea2200397fa21a06a6dcb3cdbee9f176af1059be5a88700b9e9266811dce8a",
+        "persona": "brother",
+        "protocol": "pjl",
+        "session_duration": "0.001797",
+        "session_end": "2026-10-30T16:13:47.738243Z",
+        "session_id": "393ebdbc-7d81-40c9-bcf6-92cca17aa084",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Miniprint Honeypot",
+        "payload": "@PJL INFO ID\\r\\n",
+        "request": "INFO,ECHO"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "49802",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "9100",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:47",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "action": "request,access,request_completed,close_conn",
+        "cve_hint": "CVE-2024-51977",
+        "event": "http_probe,serial_leak_probe,http_access,http_request_completed,http_connection_closed",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "info": "HTTP request received,Serial number CSV requested,HTTP access,HTTP request completed,HTTP connection closed",
+        "internalIP": "192.0.2.20",
+        "persona": "brother",
+        "protocol": "http",
+        "request": "GET /etc/mnt_info.csv",
+        "request_line": "\"GET /etc/mnt_info.csv HTTP/1.1\" 200 -",
+        "session_duration": "0.000808",
+        "session_end": "2026-10-30T16:13:47.789479Z",
+        "session_id": "50aa167f-514b-4cee-87ef-ec2e215dc82f",
+        "url": "/etc/mnt_info.csv",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Miniprint Honeypot",
+        "request": "GET /etc/mnt_info.csv",
+        "url": "/etc/mnt_info.csv"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "38224",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8000",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:47",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "action": "request,access,request_completed,close_conn",
+        "cve_hint": "CVE-2024-51984",
+        "event": "http_probe,passback_attempt,http_access,http_request_completed,http_connection_closed",
+        "externalIP": "192.0.2.10",
+        "form_fields": "{\"name\": \"server\", \"value\": \"miniprint-http-1793376826-41978.example.test\"}",
+        "hostname": "example-sensor",
+        "info": "HTTP request received,Admin settings received,HTTP access,HTTP request completed,HTTP connection closed",
+        "internalIP": "192.0.2.20",
+        "passback_target": "miniprint-http-1793376826-41978.example.test",
+        "payload_sha256": "ec953491c1c81d5d399e219940a87dd32400140a54747389ba685bf7ff820315",
+        "persona": "brother",
+        "protocol": "http",
+        "request": "POST /admin/ldap",
+        "request_line": "\"POST /admin/ldap HTTP/1.1\" 200 -",
+        "secret_supplied": "True",
+        "session_duration": "0.001016",
+        "session_end": "2026-10-30T16:13:47.902678Z",
+        "session_id": "e7e152a9-be3f-4976-9067-ec42a8d008d5",
+        "url": "/admin/ldap",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Miniprint Honeypot",
+        "request": "POST /admin/ldap",
+        "url": "/admin/ldap"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "38248",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8000",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:47",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "action": "request,auth,access,request_completed,close_conn",
+        "cve_hint": "CVE-2024-51978",
+        "event": "login_probe,default_password_success,http_access,http_request_completed,http_connection_closed",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "info": "HTTP request received,Login attempt observed,HTTP access,HTTP request completed,HTTP connection closed",
+        "internalIP": "192.0.2.20",
+        "payload_sha256": "d6d66bddf894f9346f98cb01b82ee6a99b925387b169a06b2647c24933198328",
+        "persona": "brother",
+        "protocol": "http",
+        "request": "POST /login",
+        "request_line": "\"POST /login HTTP/1.1\" 200 -",
+        "secret_supplied": "True",
+        "session_duration": "0.001232",
+        "session_end": "2026-10-30T16:13:47.901096Z",
+        "session_id": "d342ff7e-a47d-473d-bfe9-dd0a9a6c4d2e",
+        "url": "/login",
+        "username": "admin",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Miniprint Honeypot",
+        "request": "POST /login",
+        "url": "/login"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "38238",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "8000",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:47",
+      "timezone": "+0000"
+    }
+  ]
+}

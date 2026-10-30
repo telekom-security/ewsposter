@@ -196,10 +196,12 @@ nodeid = <your unique analyzer id>
 logfile = /opt/medpot/log/medpot.log
 
 [MINIPRINT]
+# Ignore empty port-scan connections unless explicitly enabled.
+send_empty_connections = false
 miniprint = false
 nodeid = <your unique analyzer id>
 logfile = /opt/miniprint/log/miniprint.json
-uploaddir = /opt/miniprint/uploads
+malwaredir = /opt/miniprint/uploads
 
 [RDPY]
 rdpy = false

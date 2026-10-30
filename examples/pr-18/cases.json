@@ -1,0 +1,8 @@
+[
+  {
+    "name": "miniprint",
+    "module": "miniprint",
+    "logs": "logs",
+    "logfile": "miniprint.json"
+  }
+]
