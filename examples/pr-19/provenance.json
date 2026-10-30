@@ -1,0 +1,17 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/redishoneypot/Dockerfile",
+  "smoke_test": "docker/_tests/tests/redishoneypot.sh",
+  "image_id": "sha256:f85e64067205d859b46071ecbe2a3cd67a839297b8033eb52f6149ff4ac0e3d4",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/redishoneypot:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/redishoneypot.log": "6bdedf499e2db540c745ba7f3a4289cab4df3547e3268229d963243fa809bfd1"
+  },
+  "ewsposter_pr": 19,
+  "ewsposter_tested_head": "b98cdc088ed78a614ad9721565731a6045833632"
+}

