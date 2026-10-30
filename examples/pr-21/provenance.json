@@ -1,0 +1,25 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/conpot/Dockerfile",
+  "smoke_test": "docker/_tests/tests/conpot.sh",
+  "image_id": "sha256:f5f1648c4fd71da1672658e29830272ca136700d018ddc2ba0d6b6379970151d",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/conpot:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/conpot_IEC104.json": "98cc037116caa3816f65cf840adc4e45dd7125243349a1f0a5fed0bd332ceb53",
+    "logs/conpot_beckhoff_cx.json": "37573a309e7f0a8c209d25112a6aca085bdd8b15522fc718611b7bf2029d8e4d",
+    "logs/conpot_building_automation.json": "f4bfe5c24fa00191ee9dcd74f965a9f5c84b3fe3b0895e99915ee641319aeeaa",
+    "logs/conpot_guardian_ast.json": "e7df03cc1895d2467e9f34fac2075383ed3b3c5656f08370903daa9a18c8f267",
+    "logs/conpot_hart_gateway.json": "ba251e091936e43e90d2c18e072b12c6449a802c40b37aaa446cebb17074efde",
+    "logs/conpot_iccp.json": "811dd6e30f6d36ee371a15c3cf203bf0d338432732591b2a057de1abfc938b10",
+    "logs/conpot_ipmi.json": "ea14b3f59b4ab0b1222823bc2ead72001e91e4b9a0ddb5a7e3f2200283a20916",
+    "logs/conpot_kamstrup_382.json": "3dccd1d8bc82afb60d783a0c663d5622a06d0b31a39448b9e0e82aadc3e34358",
+    "logs/conpot_plc_modbus.json": "f171194f7f084c46252fd5a8f584bfb1359a0587688e1c16f95dd76955b0db20"
+  },
+  "ewsposter_pr": 21,
+  "ewsposter_tested_head": "67c218c4c6b82886794463872a90b4b5bbbe895d"
+}
