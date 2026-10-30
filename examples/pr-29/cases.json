@@ -1,0 +1,8 @@
+[
+  {
+    "name": "heralding",
+    "module": "heralding",
+    "logs": "logs",
+    "logfile": "auth.csv"
+  }
+]

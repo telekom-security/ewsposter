@@ -1,0 +1,452 @@
+{
+  "heralding": [
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "ftp-pass-heralding-smoke-1793377320-65952",
+        "protocol": "ftp",
+        "username": "ftp-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "35792",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "21",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "http-pass-heralding-smoke-1793377320-65952",
+        "protocol": "http",
+        "username": "http-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "37282",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "https-pass-heralding-smoke-1793377320-65952",
+        "protocol": "https",
+        "username": "https-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "39110",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "443",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "imap-pass-heralding-smoke-1793377320-65952",
+        "protocol": "imap",
+        "username": "imap-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "41006",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "143",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "imaps-pass-heralding-smoke-1793377320-65952",
+        "protocol": "imaps",
+        "username": "imaps-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "43388",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "993",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "not-a-real-password",
+        "protocol": "http",
+        "username": "user\nsecond-line",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "48702",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "pass\"with\"quotes",
+        "protocol": "http",
+        "username": "user,with,commas",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "48690",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "pop3-pass-heralding-smoke-1793377320-65952",
+        "protocol": "pop3",
+        "username": "pop3-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "47876",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "110",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "pop3s-pass-heralding-smoke-1793377320-65952",
+        "protocol": "pop3s",
+        "username": "pop3s-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "44502",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "995",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "smtp-pass-heralding-smoke-1793377320-65952",
+        "protocol": "smtp",
+        "username": "smtp-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60674",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "25",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "smtps-pass-heralding-smoke-1793377320-65952",
+        "protocol": "smtps",
+        "username": "smtps-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "60904",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "465",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "socks5-pass-heralding-smoke-1793377320-65952",
+        "protocol": "socks5",
+        "username": "socks5-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "34750",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "1080",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "telnet-pass-heralding-smoke-1793377320-65952",
+        "protocol": "telnet",
+        "username": "telnet-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "35726",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "23",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "telnet-pass-heralding-smoke-1793377320-65952",
+        "protocol": "telnet",
+        "username": "telnet-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "35726",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "23",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "telnet-pass-heralding-smoke-1793377320-65952",
+        "protocol": "telnet",
+        "username": "telnet-user-heralding-smoke-1793377320-65952",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "35726",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "87.150.235.229",
+        "category": "ipv4",
+        "port": "23",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:22:00",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "hostname": "example-sensor",
+        "internalIP": "192.0.2.20",
+        "password": "timestamp",
+        "protocol": "http",
+        "username": "timestamp",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "Heralding Honeypot"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "48692",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "80",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:27:11",
+      "timezone": "+0000"
+    }
+  ]
+}
