@@ -1,0 +1,21 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/wordpot/Dockerfile",
+  "smoke_test": "docker/_tests/tests/wordpot.sh",
+  "image_id": "sha256:08da6d7048a8fc6e4dc79a791f460b552d8d420cbb8ca9f50e7c9aeadd6cf077",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/wordpot:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/wordpot.json": "78bc748c1a46750ab1a479ac0bb18c170e264640f0d889eb4bcc723ef31a3a66",
+    "payloads/75/752abfdd8a4852d0d89fae301c95c9013eb61269c93cf6530d0fe67d62cf746e.bin": "752abfdd8a4852d0d89fae301c95c9013eb61269c93cf6530d0fe67d62cf746e",
+    "payloads/81/811d046d8136c93a65048cb90abedc497d390e90af6b9c8bf3dc5e28a6da675d.bin": "811d046d8136c93a65048cb90abedc497d390e90af6b9c8bf3dc5e28a6da675d",
+    "payloads/8d/8dc6a9d3a48e65f3960d75e9f47df72d95e1e862f8eb3ac5082e6f528e8bb818.bin": "8dc6a9d3a48e65f3960d75e9f47df72d95e1e862f8eb3ac5082e6f528e8bb818",
+    "payloads/d1/d10652342a262e1626193eb3382f12189d5de73a8a847356852a8543fc6a44a2.bin": "d10652342a262e1626193eb3382f12189d5de73a8a847356852a8543fc6a44a2"
+  },
+  "ewsposter_pr": 20,
+  "ewsposter_tested_head": "d06a368ee037709c4b4211b37869c6b308dcc072"
+}
