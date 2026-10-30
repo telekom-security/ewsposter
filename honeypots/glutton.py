@@ -99,7 +99,7 @@ def glutton(ECFG):
         return
     while True:
         line = alert.lineREAD(honeypot['logfile'], 'json')
-        if line == '' or line == {}:
+        if line == '' or line == {} or line == ():
             break
         if line == 'jsonfail':
             continue

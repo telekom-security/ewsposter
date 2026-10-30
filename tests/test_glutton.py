@@ -109,6 +109,28 @@ class GluttonTest(unittest.TestCase):
             parser.glutton(config)
         alert.lineREAD.assert_not_called()
 
+    def test_loop_finishes_at_empty_tuple_eof(self):
+        alert = Mock()
+        alert.readCFG.return_value = {"glutton": "true", "nodeid": "g", "logfile": "/log"}
+        alert.lineREAD.side_effect = [self.session(), ()]
+        alert.buildAlert.return_value = True
+        config = {"cfgfile": "cfg", "ip_ext": "203.0.113.1", "hostname": "sensor", "ip_int": "192.0.2.10", "uuid": "uuid"}
+        with patch.object(parser, "EAlert", return_value=alert):
+            parser.glutton(config)
+        alert.buildAlert.assert_called_once()
+        alert.finAlert.assert_called_once()
+
+    def test_loop_skips_non_record_json_values(self):
+        alert = Mock()
+        alert.readCFG.return_value = {"glutton": "true", "nodeid": "g", "logfile": "/log"}
+        alert.lineREAD.side_effect = [[], False, 0, self.session(), ""]
+        alert.buildAlert.return_value = True
+        config = {"cfgfile": "cfg", "ip_ext": "203.0.113.1", "hostname": "sensor", "ip_int": "192.0.2.10", "uuid": "uuid"}
+        with patch.object(parser, "EAlert", return_value=alert):
+            parser.glutton(config)
+        alert.buildAlert.assert_called_once()
+        alert.finAlert.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
