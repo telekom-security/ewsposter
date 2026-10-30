@@ -1,0 +1,265 @@
+{
+  "h0neytr4p": [
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "header_accept-encoding": "identity",
+        "header_content-length": "184",
+        "header_content-type": "multipart/form-data",
+        "hostname": "127.0.0.1",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "payload_filename": "/data/h0neytr4p/payloads/b92c00651b6cb82edbdb05b20a5c4931",
+        "payload_hash_md5": "b92c00651b6cb82edbdb05b20a5c4931",
+        "payload_mime_type": "text/plain",
+        "protocol": "http",
+        "request_proto": "HTTP/1.1",
+        "request_uri": "/upload",
+        "trapped": "false",
+        "user-agent": null,
+        "user-agent_browser": "Other",
+        "user-agent_os": "Other",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "binary": "SGFybWxlc3MgZXdzcG9zdGVyIGV4YW1wbGUgdXBsb2FkLgo=",
+        "description": "H0neytr4p Honeypot",
+        "url": "/upload"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "0",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "32805",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:18:52",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "header_accept-encoding": "identity",
+        "header_content-length": "31",
+        "header_content-type": "application/x-www-form-urlencoded",
+        "header_user-agent": "ews-example-client",
+        "hostname": "127.0.0.1",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "protocol": "http",
+        "request_proto": "HTTP/1.1",
+        "request_uri": "/.env",
+        "trapped": "false",
+        "user-agent": "ews-example-client",
+        "user-agent_browser": "Other",
+        "user-agent_os": "Other",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "H0neytr4p Honeypot",
+        "url": "/.env"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "0",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "32803",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:18:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "header_accept-encoding": "identity",
+        "header_content-length": "31",
+        "header_content-type": "application/x-www-form-urlencoded",
+        "header_user-agent": "ews-example-client",
+        "hostname": "127.0.0.1",
+        "httpmethod": "POST",
+        "internalIP": "192.0.2.20",
+        "protocol": "http",
+        "request_proto": "HTTP/1.1",
+        "request_uri": "/.env",
+        "trapped": "false",
+        "user-agent": "ews-example-client",
+        "user-agent_browser": "Other",
+        "user-agent_os": "Other",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "H0neytr4p Honeypot",
+        "url": "/.env"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "0",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "32805",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:18:52",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "header_accept-encoding": "identity",
+        "hostname": "127.0.0.1",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "protocol": "http",
+        "request_proto": "HTTP/1.1",
+        "request_uri": "/",
+        "trapped": "false",
+        "user-agent": null,
+        "user-agent_browser": "Other",
+        "user-agent_os": "Other",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "H0neytr4p Honeypot",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "0",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "32803",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:18:11",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "header_accept-encoding": "identity",
+        "hostname": "127.0.0.1",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "protocol": "http",
+        "request_proto": "HTTP/1.1",
+        "request_uri": "/",
+        "trapped": "false",
+        "user-agent": null,
+        "user-agent_browser": "Other",
+        "user-agent_os": "Other",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "H0neytr4p Honeypot",
+        "url": "/"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "0",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "32805",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:18:52",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "header_connection": "close",
+        "header_user-agent": "tpot-h0neytr4p-smoke/h0neytr4p-http-test-1793376796-39989",
+        "hostname": "127.0.0.1",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "protocol": "http",
+        "request_proto": "HTTP/1.1",
+        "request_uri": "/.env?h0neytr4p_test=h0neytr4p-http-test-1793376796-39989",
+        "trapped": "true",
+        "trapped_for": "env_config_file",
+        "user-agent": "tpot-h0neytr4p-smoke/h0neytr4p-http-test-1793376796-39989",
+        "user-agent_browser": "Other",
+        "user-agent_os": "Other",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "H0neytr4p Honeypot",
+        "url": "/.env%3Fh0neytr4p_test%3Dh0neytr4p-http-test-1793376796-39989"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "0",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "32770",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:16",
+      "timezone": "+0000"
+    },
+    {
+      "metadata": {
+        "externalIP": "192.0.2.10",
+        "header_connection": "close",
+        "header_user-agent": "tpot-h0neytr4p-smoke/h0neytr4p-https-test-1793376796-39989",
+        "hostname": "127.0.0.1",
+        "httpmethod": "GET",
+        "internalIP": "192.0.2.20",
+        "protocol": "https",
+        "request_proto": "HTTP/1.1",
+        "request_uri": "/.env?h0neytr4p_test=h0neytr4p-https-test-1793376796-39989",
+        "trapped": "true",
+        "trapped_for": "env_config_file",
+        "user-agent": "tpot-h0neytr4p-smoke/h0neytr4p-https-test-1793376796-39989",
+        "user-agent_browser": "Other",
+        "user-agent_os": "Other",
+        "uuid": "00000000-0000-4000-8000-000000000001"
+      },
+      "requests": {
+        "description": "H0neytr4p Honeypot",
+        "url": "/.env%3Fh0neytr4p_test%3Dh0neytr4p-https-test-1793376796-39989"
+      },
+      "source": {
+        "address": "172.18.0.1",
+        "category": "ipv4",
+        "port": "0",
+        "protocol": "tcp"
+      },
+      "target": {
+        "address": "192.0.2.10",
+        "category": "ipv4",
+        "port": "32771",
+        "protocol": "tcp"
+      },
+      "timestamp": "2026-10-30 16:13:16",
+      "timezone": "+0000"
+    }
+  ]
+}
