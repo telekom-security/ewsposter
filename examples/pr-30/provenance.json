@@ -1,0 +1,17 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/beelzebub/Dockerfile",
+  "smoke_test": "docker/_tests/tests/beelzebub.sh",
+  "image_id": "sha256:023170cca909b2b618221aa56015fa41a5e5414a401e4cb08027a073fad0446f",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/beelzebub:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/beelzebub.json": "51db533dc909eaab354b8e7ac510891aec8ca3f33844bfb450111179a73263ef"
+  },
+  "ewsposter_pr": 30,
+  "ewsposter_tested_head": "f863eb53f74a7a698f19a0584791ecd31b972908"
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "name": "beelzebub",
+    "module": "beelzebub",
+    "logs": "logs",
+    "logfile": "beelzebub.json"
+  }
+]
