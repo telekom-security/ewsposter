@@ -158,6 +158,24 @@ class MailoneyEventTests(unittest.TestCase):
         self.assertEqual(adata["errors"], '["connection timed out after 30s"]')
         self.assertEqual(adata["auth.count"], 0)
 
+    def test_mailoney_31_limit_outcome_and_mail_errors_are_forwarded(self):
+        line = _base_line(
+            "session",
+            session_outcome="limit",
+            session_last_response_code=421,
+            smtp_input_count=1000,
+            smtp_input_truncated=True,
+            errors=["command limit of 1000 reached"],
+        )
+        line["auth.count"] = 0
+        adata = mailoney._build_event(line, HONEYPOT, ECFG)["adata"]
+        self.assertEqual(adata["session_outcome"], "limit")
+        self.assertEqual(adata["errors"], '["command limit of 1000 reached"]')
+
+        mail = _mail_line(errors=["3 attachments not saved (limit 50 per mail)", "mail body not saved: mail folder limit of 1073741824 bytes reached"])
+        adata = mailoney._build_event(mail, HONEYPOT, ECFG)["adata"]
+        self.assertEqual(adata["errors"], '["3 attachments not saved (limit 50 per mail)","mail body not saved: mail folder limit of 1073741824 bytes reached"]')
+
     def test_auth_fields_are_forwarded(self):
         line = _base_line(
             "auth",
