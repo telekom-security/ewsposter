@@ -1,0 +1,17 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/ciscoasa/Dockerfile",
+  "smoke_test": "docker/_tests/tests/ciscoasa.sh",
+  "image_id": "sha256:7c87f652c74993983ab5a261063fa8fb69e143656b6d1c34506fc132cc33b8ee",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/ciscoasa:69accabc",
+  "smoke_passed": false,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/ciscoasa.json": "5636bb8a7ccb674a52bb2971ed247b78c0d8e762b01200f93cf0f619a0641fd0"
+  },
+  "ewsposter_pr": 23,
+  "ewsposter_tested_head": "0569254a88e84c37f5be88ea4c2b586577b1fea2"
+}
