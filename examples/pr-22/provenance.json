@@ -1,0 +1,17 @@
+{
+  "kind": "real honeypot output from controlled harmless test traffic",
+  "capture_date_utc": "2026-10-30",
+  "tpot_commit": "69accabc24d58cbe75d8c382f06a84018251b679",
+  "dockerfile": "docker/rdphoneypot/Dockerfile",
+  "smoke_test": "docker/_tests/tests/rdphoneypot.sh",
+  "image_id": "sha256:b6fbde29b11d00acca15372c14b6c66fd6a7f4142f48e5d563eb5a49777ae517",
+  "architecture": "arm64",
+  "image_tag": "ews-examples/rdphoneypot:69accabc",
+  "smoke_passed": true,
+  "raw_logs_transformed": false,
+  "files_sha256": {
+    "logs/rdphoneypot.json": "f7e6831818f663163d296ad28a908671e75f3c5c9ef1804b4646139f64c337e3"
+  },
+  "ewsposter_pr": 22,
+  "ewsposter_tested_head": "d4b8c682c6488f9a54c4f1cb1bbfcbac6855558f"
+}
