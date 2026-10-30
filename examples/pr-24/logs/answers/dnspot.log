@@ -1,0 +1,1 @@
+{"dns_cls":"CH","dns_name":"version.bind.","dns_type":"TXT","opcode":0,"packets":1,"persona":"ubuntu2004","proto":"udp","req_pkt":"n00BAAABAAAAAAAAB3ZlcnNpb24EYmluZAAAEAAD","req_size":30,"resp_size":55,"role":"scanner","src_ip":"172.18.0.1","src_port":51946,"time":"2026-10-30 16:17:44.820237","verified":false}

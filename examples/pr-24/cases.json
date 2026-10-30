@@ -1,0 +1,38 @@
+[
+  {
+    "name": "answers",
+    "module": "ddospot",
+    "logs": "logs/answers",
+    "logfile": "unused"
+  },
+  {
+    "name": "budget",
+    "module": "ddospot",
+    "logs": "logs/budget",
+    "logfile": "unused"
+  },
+  {
+    "name": "dns",
+    "module": "ddospot",
+    "logs": "logs/dns",
+    "logfile": "unused"
+  },
+  {
+    "name": "ntp",
+    "module": "ddospot",
+    "logs": "logs/ntp",
+    "logfile": "unused"
+  },
+  {
+    "name": "refused",
+    "module": "ddospot",
+    "logs": "logs/refused",
+    "logfile": "unused"
+  },
+  {
+    "name": "ssdp",
+    "module": "ddospot",
+    "logs": "logs/ssdp",
+    "logfile": "unused"
+  }
+]

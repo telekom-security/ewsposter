@@ -17,7 +17,8 @@ def ddospot(ECFG):
         return()
     
     logfiles = [f for f in Path(HONEYPOT['logdir']).glob('*.log') if f.stat().st_size > 0]
-    filetypes = ['chargenpot', 'dnspot', 'genericpot', 'ntpot', 'ssdpot']
+    filetypes = ['chargenpot', 'dnspot', 'ntpot', 'ssdpot']
+    ports = {'chargenpot': 19, 'dnspot': 53, 'ntpot': 123, 'ssdpot': 1900}
 
     for logfile in logfiles:
         index = Path(logfile).stem
@@ -42,9 +43,10 @@ def ddospot(ECFG):
             if line.get('src_ip'): ddospot.data('source_address', line['src_ip'])             
             ddospot.data('target_address', ECFG['ip_ext'])
             if line.get('src_port'): ddospot.data('source_port', str(line['src_port'])) 
-            ddospot.data('target_port', "0")
-            ddospot.data('source_protocol', "tcp")
-            ddospot.data('target_protocol', "tcp")
+            ddospot.data('target_port', str(ports[index]))
+            proto = line.get('proto') if line.get('proto') in ('udp', 'tcp') else 'udp'
+            ddospot.data('source_protocol', proto)
+            ddospot.data('target_protocol', proto)
 
             ddospot.request("description", "Ddospot Honeypot") 
  
